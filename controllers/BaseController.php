@@ -7,11 +7,11 @@ use yii\filters\AccessControl;
 
 class BaseController extends Controller
 {
-    /*public function behaviors()
+    public function behaviors()
     {
         return [
             'access' => [
-                'class' => AccessControl::className(),
+                'class' => AccessControl::class,
                 'rules' => [
                     [
                         'actions' => ['login'],
@@ -38,5 +38,5 @@ class BaseController extends Controller
                 }
             ],
         ];
-    }*/
+    }
 }

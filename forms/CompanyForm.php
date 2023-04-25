@@ -147,11 +147,11 @@ class CompanyForm extends BaseForm
         return $is_valid;
     }
 
-    public function uploadDocs()
+    public function uploadDocs($id,$doumentFor,$kyc_details)
     {
-        if (!empty($this->kyc_details)) {
+        if (!empty($kyc_details)) {
             $documents = [];
-            foreach ($this->kyc_details as $key => $data) {
+            foreach ($kyc_details as $key => $data) {
                 $file = UploadedFile::getInstance($this, 'kyc_details[' . $key . '][doc]');
                 if (!empty($file)) {
                     $documents[] = [
@@ -167,7 +167,7 @@ class CompanyForm extends BaseForm
             }
 
             if (!empty($documents)) {
-                $this->saveProofs($this->id, C::DOCUMENT_FOR_VEHICLE, $documents);
+                $this->saveProofs($id,$doumentFor, $documents);
             }
         }
     }

@@ -83,7 +83,6 @@ class CompanyController extends BaseController
         }
 
         $model = new CompanyForm(['scenario' => CompanyMaster::SCENARIO_UPDATE]);
-        $model->scenario = CompanyMaster::SCENARIO_UPDATE;
         $model->load($company->attributes, '');
         $model->banks = $company->banks;
         $model->kyc_details = !empty($company->documents) ? ArrayHelper::index($company->documents, 'document_type') : [];

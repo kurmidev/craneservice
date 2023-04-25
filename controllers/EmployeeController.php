@@ -43,6 +43,7 @@ class EmployeeController extends BaseController
 
         if ($this->request->isPost) {
             if ($model->load($this->request->post()) && $model->save()) {
+                \Yii::$app->getSession()->setFlash('s', "Employee {$model->name} has been added successfully.");
                 return $this->redirect(['employee']);
             }
         } else {
@@ -72,6 +73,7 @@ class EmployeeController extends BaseController
 
         $model->scenario = EmployeeMaster::SCENARIO_UPDATE;
         if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
+            \Yii::$app->getSession()->setFlash('s', "Employee {$model->name} has been updated successfully.");
             return $this->redirect(['employee']);
         }
 

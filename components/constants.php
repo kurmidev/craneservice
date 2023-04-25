@@ -12,6 +12,7 @@ class Constants
 
     const DOCUMENT_FOR_COMPANY = 1;
     const DOCUMENT_FOR_VEHICLE = 2;
+    const DOCUMENT_FOR_CLIENT = 3;
     const PACKAGE_TAX = [
         "0"=>"0%",
         "5"=>"5%",
@@ -35,6 +36,21 @@ class Constants
         "reg"=>"reg",
         "others"=>"others"
     ];
+
+    const CLIENT_KYC_DETAILS = [
+        "gst"=>"GST",
+        "pan"=>"PAN",
+    ];
+
+    const CLIENT_TYPE_VENDOR = 1;
+    const CLIENT_TYPE_CUSTOMER = 2;
+    const CLIENT_IS_COMPANY = 1;
+    const CLIENT_IS_INDIVIDUAL = 2;
+    const CLIENT_IS_LABEL = [
+        self::CLIENT_IS_COMPANY=>"Company",
+        self::CLIENT_IS_INDIVIDUAL=>"Individual"
+    ];
+
     const LABEL_STATUS = [
         self::STATUS_INACTIVE => 'In Active',
         self::STATUS_ACTIVE => 'Active',

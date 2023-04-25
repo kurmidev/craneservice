@@ -38,13 +38,14 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <div class="row">
         <div class="col-8 p-10">
-            <?= $form->field($model, 'rememberMe', ['options' =>["class"=>"col-12"]])->checkbox([
+            <?= $form->field($model, 'rememberMe', ['options' => ["class" => "col-12"]])->checkbox([
                 'template' => "{input} {label}",
                 ['class' => 'form-control']
             ]) ?>
         </div>
         <div class="col-4">
-            <?= Html::submitButton('Login', ['class' => 'btn btn-primary', 'name' => 'login-button']) ?>
+            <?= Html::submitButton('LOGIN', ['class' => 'btn btn-secondary']) ?>
         </div>
     </div>
+    <?php ActiveForm::end(); ?>
 </div>

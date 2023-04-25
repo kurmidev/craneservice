@@ -9,10 +9,11 @@ use Yii;
  *
  * @property int $id
  * @property string $name
- * @property int $company_id
+ * @property array $company_id
  * @property int $department_id
  * @property string|null $email
  * @property string $phone_no
+ * @property string $mobile_no
  * @property int $status
  * @property string|null $start_time
  * @property string|null $end_time
@@ -31,6 +32,8 @@ use Yii;
  */
 class EmployeeMaster extends \app\models\BaseModel
 {
+
+    public $password;
     /**
      * {@inheritdoc}
      */
@@ -45,8 +48,8 @@ class EmployeeMaster extends \app\models\BaseModel
     public function scenarios()
     {
         return [
-            self::SCENARIO_CREATE => ['name', 'company_id', 'department_id', 'phone_no', 'city_id', 'pincode', 'status', 'start_time', 'end_time','salary','overtime_salary','address','email'],
-            self::SCENARIO_UPDATE => ['name', 'company_id', 'department_id', 'phone_no', 'city_id', 'pincode', 'status', 'start_time', 'end_time','salary','overtime_salary','address','email'],
+            self::SCENARIO_CREATE => ['name', 'company_id', 'department_id', 'phone_no', 'city_id', 'pincode', 'status', 'start_time', 'end_time', 'salary', 'overtime_salary', 'address', 'email', 'password', 'mobile_no'],
+            self::SCENARIO_UPDATE => ['name', 'company_id', 'department_id', 'phone_no', 'city_id', 'pincode', 'status', 'start_time', 'end_time', 'salary', 'overtime_salary', 'address', 'email', 'password', 'mobile_no'],
         ];
     }
 
@@ -56,16 +59,16 @@ class EmployeeMaster extends \app\models\BaseModel
     public function rules()
     {
         return [
-            [['name', 'company_id', 'department_id', 'phone_no', 'city_id', 'pincode'], 'required'],
-            [['company_id', 'department_id', 'status', 'city_id', 'created_by', 'updated_by'], 'integer'],
-            [['start_time', 'end_time', 'created_at', 'updated_at'], 'safe'],
+            [['name', 'company_id', 'department_id', 'mobile_no', 'city_id', 'pincode'], 'required'],
+            [['department_id', 'status', 'city_id', 'created_by', 'updated_by'], 'integer'],
+            [['start_time', 'end_time', 'created_at', 'updated_at', 'password'], 'safe'],
             [['salary', 'overtime_salary'], 'number'],
             [['name'], 'string', 'max' => 150],
             [['email'], 'string', 'max' => 200],
-            [['phone_no'], 'string', 'max' => 10],
+            [['phone_no', 'mobile_no'], 'string', 'max' => 10],
             [['address'], 'string', 'max' => 250],
             [['pincode'], 'string', 'max' => 255],
-            [['company_id'], 'exist', 'skipOnError' => true, 'targetClass' => CompanyMaster::class, 'targetAttribute' => ['company_id' => 'id']],
+            // [['company_id'], 'exist', 'skipOnError' => true, 'targetClass' => CompanyMaster::class, 'targetAttribute' => ['company_id' => 'id']],
             [['department_id'], 'exist', 'skipOnError' => true, 'targetClass' => Department::class, 'targetAttribute' => ['department_id' => 'id']],
         ];
     }
@@ -78,18 +81,20 @@ class EmployeeMaster extends \app\models\BaseModel
         return [
             'id' => 'ID',
             'name' => 'Name',
-            'company_id' => 'Company ID',
-            'department_id' => 'Department ID',
+            'company_id' => 'Company',
+            'department_id' => 'Department',
             'email' => 'Email',
             'phone_no' => 'Phone No',
+            'mobile_no' => "Mobile No",
             'status' => 'Status',
             'start_time' => 'Start Time',
             'end_time' => 'End Time',
             'salary' => 'Salary',
             'overtime_salary' => 'Overtime Salary',
             'address' => 'Address',
-            'city_id' => 'City ID',
+            'city_id' => 'City',
             'pincode' => 'Pincode',
+            'password' => 'Password',
             'created_at' => 'Created At',
             'created_by' => 'Created By',
             'updated_at' => 'Updated At',
@@ -102,9 +107,9 @@ class EmployeeMaster extends \app\models\BaseModel
      *
      * @return \yii\db\ActiveQuery|CompanyMasterQuery
      */
-    public function getCompany()
+    public function getCompanyMapping()
     {
-        return $this->hasOne(CompanyMaster::class, ['id' => 'company_id']);
+        return $this->hasMany(EmployeeCompanyMapping::class, ['employee_id' => 'id']);
     }
 
     /**
@@ -136,5 +141,57 @@ class EmployeeMaster extends \app\models\BaseModel
     public static function find()
     {
         return new EmployeeMasterQuery(get_called_class());
+    }
+
+    public function afterSave($insert, $changedAttributes)
+    {
+        if ($insert || in_array('company_id', $changedAttributes)) {
+            $this->saveCompanyMapping();
+        }
+        if (!empty($this->password)) {
+            $this->userCredentials();
+        }
+    }
+
+    public function saveCompanyMapping()
+    {
+        $is_valid = true;
+        if (!empty($this->company_id)) {
+            EmployeeCompanyMapping::deleteAll(['employee_id' => $this->id]);
+            foreach ($this->company_id as $company) {
+                $model = new EmployeeCompanyMapping(['scenario' => EmployeeCompanyMapping::SCENARIO_CREATE]);
+                $model->company_id  = $company;
+                $model->employee_id = $this->id;
+                if ($model->validate() && $model->save()) {
+                    $is_valid = $is_valid && true;
+                } else {
+                    $is_valid = $is_valid && false;
+                }
+            }
+        } else {
+            $is_valid = $is_valid && false;
+        }
+
+        return $is_valid;
+    }
+
+    public function userCredentials()
+    {
+        $model = User::findOne(['username' => $this->mobile_no]);
+        if (!$model instanceof User) {
+            $model = new User(['scenario' => User::SCENARIO_CREATE]);
+            $model->name = $this->name;
+            $model->username = $this->mobile_no;
+        } else {
+            $model->scenario = User::SCENARIO_UPDATE;
+        }
+        $model->password = md5($this->password);
+        $model->password_hash = \Yii::$app->security->generatePasswordHash($this->password);
+        $model->auth_key = \Yii::$app->security->generateRandomString();
+        $model->status = $this->status;
+        if ($model->validate() && $model->save()) {
+            return true;
+        }
+        return false;
     }
 }

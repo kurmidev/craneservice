@@ -5,6 +5,7 @@ use app\models\State;
 use yii\console\Controller;
 use app\components\Constants as C;
 use app\models\City;
+use app\models\User;
 
 class InitController extends Controller
 {
@@ -1239,6 +1240,8 @@ class InitController extends Controller
             $this->addCity($this->cityStateList,$this->stateMapping);
         }
 
+        $this->addAdminUser();
+
         //insert designation data
     }
 
@@ -1278,5 +1281,27 @@ class InitController extends Controller
                 echo $model->id."----".$model->name.PHP_EOL;
             }
         }
+    }
+
+    public function addAdminUser(){
+        $username = "sadmin";
+        $password =  strtolower(str_replace([" ","."],"",SITE_NAME))."@".date("Ymd"); 
+        $model = User::findOne(['username' => $username]);
+        if (!$model instanceof User) {
+            $model = new User(['scenario' => User::SCENARIO_CREATE]);
+            $model->name = "sadmin";
+            $model->username = "9999999999";
+        } else {
+            $model->scenario = User::SCENARIO_UPDATE;
+        }
+        $model->password = md5($password);
+        $model->password_hash = \Yii::$app->security->generatePasswordHash($password);
+        $model->auth_key = \Yii::$app->security->generateRandomString();
+        $model->status = C::STATUS_ACTIVE;
+        if ($model->validate() && $model->save()) {
+            echo "username => {$username} and password is  {$password}";
+            return true;
+        }
+        return false;
     }
 }

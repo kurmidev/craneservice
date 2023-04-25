@@ -19,13 +19,16 @@ class m230412_173303_create_user_table extends Migration
             "name"=>$this->string(250)->notNull(),
             "username"=>$this->string(250)->unique()->notNull(),
             "password"=>$this->string(250)->notNull(),
+            "password_hash"=>$this->string(250)->notNull(),
+            "auth_key"=>$this->string(250)->notNull(),
+            "password_reset_token"=>$this->string(250)->null(),
             "designation_id"=>$this->integer(),
             "status"=>$this->integer(1)->notNull()->defaultValue(1),
             "last_login_at"=>$this->dateTime(),
             "created_at"=>$this->dateTime()->notNull()->defaultExpression("now()"),
             "created_by"=>$this->integer(),
             "updated_at"=>$this->dateTime(),
-            "update_by"=>$this->integer()
+            "updated_by"=>$this->integer()
         ]);
     }
 

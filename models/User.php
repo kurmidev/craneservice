@@ -5,6 +5,7 @@ namespace app\models;
 use Yii;
 use yii\web\IdentityInterface;
 use app\components\Constants as C;
+
 /**
  * This is the model class for table "user".
  *
@@ -34,8 +35,8 @@ class User extends BaseModel implements IdentityInterface
     public function scenarios()
     {
         return [
-            self::SCENARIO_CREATE => ["name", "username", "password", "desgination_id", "status", "last_login_at","access_token"],
-            self::SCENARIO_UPDATE => ["name", "username", "password", "desgination_id", "status", "last_login_at","access_token"],
+            self::SCENARIO_CREATE => ["name", "username", "password", "desgination_id", "status", "last_login_at", "access_token", "auth_key", "password_reset_token"],
+            self::SCENARIO_UPDATE => ["name", "username", "password", "desgination_id", "status", "last_login_at", "access_token", "auth_key", "password_reset_token"],
             self::SCENARIO_DELETE => ["status"],
             self::SCENARIO_LOGIN => ["username", "password", "last_login_at"]
         ];
@@ -49,7 +50,7 @@ class User extends BaseModel implements IdentityInterface
         return [
             [['name', 'username', 'password'], 'required'],
             [['designation_id', 'status', 'created_by', 'update_by'], 'integer'],
-            [['last_login_at', 'created_at', 'updated_at',"access_token"], 'safe'],
+            [['last_login_at', 'created_at', 'updated_at', "auth_key", "password_reset_token"], 'safe'],
             [['name', 'username', 'password'], 'string', 'max' => 250],
             [['username'], 'unique'],
         ];
@@ -86,7 +87,7 @@ class User extends BaseModel implements IdentityInterface
 
     public static function findIdentity($id)
     {
-        return static::findOne(["id"=>$id, 'status' => C::STATUS_ACTIVE]);
+        return static::findOne(["id" => $id, 'status' => C::STATUS_ACTIVE]);
     }
 
     public static function findIdentityByAccessToken($token, $type = null)
@@ -100,7 +101,8 @@ class User extends BaseModel implements IdentityInterface
      * @param string $username
      * @return static|null
      */
-    public static function findByUsername($username) {
+    public static function findByUsername($username)
+    {
         return static::findOne(['username' => $username, 'status' => C::STATUS_ACTIVE]);
     }
 
@@ -111,21 +113,43 @@ class User extends BaseModel implements IdentityInterface
 
     public function getAuthKey()
     {
-        return $this->authKey;
+        return $this->auth_key;
     }
 
     public function validateAuthKey($authKey)
     {
-        return $this->authKey === $authKey;
+        return $this->auth_key === $authKey;
     }
 
-     /**
+    /**
+     * Finds user by password reset token
+     *
+     * @param  string      $token password reset token
+     * @return static|null
+     */
+    public static function findByPasswordResetToken($token)
+    {
+        $expire = \Yii::$app->params['user.passwordResetTokenExpire'];
+        $parts = explode('_', $token);
+        $timestamp = (int) end($parts);
+        if ($timestamp + $expire < time()) {
+            // token expired
+            return null;
+        }
+
+        return static::findOne([
+            'password_reset_token' => $token
+        ]);
+    }
+
+    /**
      * Validates password
      *
      * @param string $password password to validate
      * @return bool if password provided is valid for current user
      */
-    public function validatePassword($password) {
+    public function validatePassword($password)
+    {
         return Yii::$app->security->validatePassword($password, $this->password_hash);
     }
 
@@ -134,11 +158,37 @@ class User extends BaseModel implements IdentityInterface
      *
      * @param string $password
      */
-    public function setPassword($password) {
+    public function setPassword($password)
+    {
         $this->password_hash = Yii::$app->security->generatePasswordHash($password);
     }
 
-    public function afterValidate() {
+    /**
+     * Generates "remember me" authentication key
+     */
+    public function generateAuthKey()
+    {
+        $this->auth_key = Yii::$app->security->generateRandomKey();
+    }
+
+    /**
+     * Generates new password reset token
+     */
+    public function generatePasswordResetToken()
+    {
+        $this->password_reset_token = Yii::$app->security->generateRandomKey() . '_' . time();
+    }
+
+    /**
+     * Removes password reset token
+     */
+    public function removePasswordResetToken()
+    {
+        $this->password_reset_token = null;
+    }
+
+    public function afterValidate()
+    {
         if (in_array($this->scenario, [self::SCENARIO_CREATE, self::SCENARIO_UPDATE])) {
             $this->auth_key = !empty($this->auth_key) ? $this->auth_key : Yii::$app->security->generateRandomString();
             $this->password_hash = !empty($this->password_hash) ? $this->password_hash : Yii::$app->getSecurity()->generatePasswordHash($this->username . $this->password);
@@ -146,5 +196,4 @@ class User extends BaseModel implements IdentityInterface
 
         return parent::afterValidate();
     }
-
 }
