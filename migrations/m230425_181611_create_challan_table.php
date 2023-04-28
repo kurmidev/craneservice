@@ -31,6 +31,8 @@ class m230425_181611_create_challan_table extends Migration
             "from_destination" =>  $this->string(),
             "to_destination" => $this->string(),
             "amount" =>  $this->money(),
+            "tax" =>  $this->money(),
+            "total" =>  $this->money(),
             "break_time" => $this->integer()->defaultValue(0),
             "up_time" => $this->integer()->defaultValue(0),
             "down_time" => $this->integer()->defaultValue(0),

@@ -1256,7 +1256,7 @@ class InitController extends Controller
             }
 
             $model->state_id = !empty($stateMapping[$state])?$stateMapping[$state]:0;
-            $model->status = C::STATUS_ACTIVE;
+            $model->status =  C::STATUS_ACTIVE;
             if($model->validate() && $model->save()){
                 echo $model->id."----".$model->name.PHP_EOL;
             }else{

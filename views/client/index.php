@@ -14,7 +14,6 @@ use app\models\PlanAttributes;
 use app\models\State;
 
 
-
 ?>
 <div class="card">
     <div class="card-header">
@@ -70,8 +69,9 @@ use app\models\State;
                 'actionBy',
                 [
                     "label" => "Action",
-                    "content" => function ($data) use ($seditUrl) {
-                        return Html::a(Html::tag('span', '', ['class' => 'fa fa-edit']), \Yii::$app->urlManager->createUrl([$seditUrl, 'id' => $data['id']]), ['title' => "Update Record", 'class' => 'btn btn-primary-alt']);
+                    "content" => function ($data) use ($seditUrl,$viewUrl) {
+                        return Html::a(Html::tag('span', '', ['class' => 'fa fa-edit']), \Yii::$app->urlManager->createUrl([$seditUrl, 'id' => $data['id']]), ['title' => "Update Record", 'class' => 'btn btn-primary-alt']).
+                            Html::a(Html::tag('span', '', ['class' => 'fa fa-edit']), \Yii::$app->urlManager->createUrl([$viewUrl, 'id' => $data['id']]), ['title' => "View Record", 'class' => 'btn btn-primary-alt']);
                     }
                 ]
             ],
