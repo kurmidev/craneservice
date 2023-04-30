@@ -1,5 +1,14 @@
 <?php
-return [
+
+use yii\helpers\ArrayHelper;
+
+$confLocal = [];
+
+if(file_exists(__DIR__.'/db.local.php')){
+    $confLocal = include 'db.local.php'; 
+}
+
+$config= [
     'class' => 'yii\db\Connection',
     'dsn' => 'mysql:host=localhost;dbname=craneservice',
     'username' => 'root',
@@ -11,15 +20,5 @@ return [
     'schemaCache' => 'cache'
 ];
 
-return  [
-    'class' => 'yii\db\Connection',
-    'dsn' => 'mysql:host=localhost;dbname=yii2basic',
-    'username' => 'root',
-    'password' => '',
-    'charset' => 'utf8',
 
-    // Schema cache options (for production environment)
-    //'enableSchemaCache' => true,
-    //'schemaCacheDuration' => 60,
-    //'schemaCache' => 'cache',
-];
+return ArrayHelper::merge($config,$confLocal);

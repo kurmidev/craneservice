@@ -24,6 +24,9 @@ use Yii;
  * @property string|null $from_destination
  * @property string|null $to_destination
  * @property float|null $amount
+ * @property float|null $extra
+ * @property float|null $tax
+ * @property float|null $total
  * @property int|null $break_time
  * @property int|null $up_time
  * @property int|null $down_time
@@ -57,8 +60,8 @@ class Challan extends \app\models\BaseModel
      */
     public function scenarios(){
         return [
-            self::SCENARIO_CREATE=>['client_id','challan_date','site_address','operator_id','helper_id','plan_id','vehicle_id','challan_no','plan_start_time','plan_end_time','day_wise','plan_measure','plan_trip','from_destination','to_destination','amount','break_time','up_time','down_time','plan_extra_hours','plan_shift_type','challan_image','invoice_id','is_processed','status'],
-            self::SCENARIO_UPDATE=>['client_id','challan_date','site_address','operator_id','helper_id','plan_id','vehicle_id','challan_no','plan_start_time','plan_end_time','day_wise','plan_measure','plan_trip','from_destination','to_destination','amount','break_time','up_time','down_time','plan_extra_hours','plan_shift_type','challan_image','invoice_id','is_processed','status']
+            self::SCENARIO_CREATE=>['client_id','challan_date','site_address','operator_id','helper_id','plan_id','vehicle_id','challan_no','plan_start_time','plan_end_time','day_wise','plan_measure','plan_trip','from_destination','to_destination','amount','break_time','up_time','down_time','plan_extra_hours','plan_shift_type','challan_image','invoice_id','is_processed','status','extra','tax','total'],
+            self::SCENARIO_UPDATE=>['client_id','challan_date','site_address','operator_id','helper_id','plan_id','vehicle_id','challan_no','plan_start_time','plan_end_time','day_wise','plan_measure','plan_trip','from_destination','to_destination','amount','break_time','up_time','down_time','plan_extra_hours','plan_shift_type','challan_image','invoice_id','is_processed','status','extra','tax','total']
         ];
     }
 
@@ -71,7 +74,7 @@ class Challan extends \app\models\BaseModel
             [['client_id', 'challan_date', 'plan_id', 'vehicle_id', 'challan_no'], 'required'],
             [['client_id', 'plan_id', 'vehicle_id', 'day_wise', 'break_time', 'up_time', 'down_time', 'plan_extra_hours', 'plan_shift_type', 'invoice_id', 'is_processed', 'status', 'created_by', 'updated_by'], 'integer'],
             [['challan_date', 'plan_start_time', 'plan_end_time', 'challan_image', 'created_at', 'updated_on'], 'safe'],
-            [['amount','tax','total'], 'number'],
+            [['amount','extra','tax','total'], 'number'],
             [['site_address', 'operator_id', 'helper_id', 'challan_no', 'plan_measure', 'plan_trip', 'from_destination', 'to_destination'], 'string', 'max' => 255],
             [['client_id'], 'exist', 'skipOnError' => true, 'targetClass' => ClientMaster::class, 'targetAttribute' => ['client_id' => 'id']],
             [['plan_id'], 'exist', 'skipOnError' => true, 'targetClass' => PlanMaster::class, 'targetAttribute' => ['plan_id' => 'id']],
@@ -102,6 +105,7 @@ class Challan extends \app\models\BaseModel
             'from_destination' => 'From Destination',
             'to_destination' => 'To Destination',
             'amount' => 'Amount',
+            'extra' => 'Extra Charages',
             'tax' => 'Tax',
             'total' => 'Total',
             'break_time' => 'Break Time',

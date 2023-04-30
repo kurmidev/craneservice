@@ -10,4 +10,9 @@ class ConstFunc
     {
         return !empty($label[$values]) ? $label[$values] : null;
     }
+
+    public static function calculateTax($amount,$percentage){
+        return ($amount*$percentage)/100;
+    }
+
 }

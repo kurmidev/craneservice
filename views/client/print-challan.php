@@ -51,8 +51,9 @@
                         <th>Start Time</th>
                         <th>End Time</th>
                         <th>Hours</th>
-                        <th>Extra</th>
+                        <th>Charges</th>
                         <th>Extra Amt</th>
+                        <th>Tax Amt</th>
                         <th>Total Amt</th>
                     </tr>
                 </thead>
@@ -60,10 +61,11 @@
                     <tr>
                         <td><?=$model->plan_start_time?></td>
                         <td><?=$model->plan_end_time?></td>
-                        <td><?=floor((strtotime($model->plan_end_time)-strtotime($model->plan_start_time))/3600)?></td>
-                        <td></td>
+                        <td><?=date("H", strtotime($model->plan_end_time) - strtotime($model->plan_start_time))?></td>
+                        <td><?=$model->extra?></td>
                         <td><?=$model->amount?></td>
-                        <td><?=$model->amount?></td>
+                        <td><?=$model->tax?></td>
+                        <td><?=$model->total?></td>
                     </tr>
                 </tbody>
             </table>

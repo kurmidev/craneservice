@@ -19,14 +19,21 @@ class Constants
         "12" => "12%",
         "18" => "18%"
     ];
+    CONST PACKAGE_WISE_CHALLAN = 1;
+    CONST PACKAGE_WISE_DAY = 2;
+    CONST PACKAGE_WISE_TRIP = 3;
+    CONST PACKAGE_WISE_DESTINATION = 4;
+    CONST PACKAGE_WISE_MONTH = 5;
+    CONST PACKAGE_WISE_SHIFT = 6;
     const PACKAGE_WISE = [
-        "1" => "Challan Wise",
-        "2" => "Day Wise",
-        "3" => "Trip wise",
-        "4" => "Destination Wise",
-        "5" => "Month wise",
-        "6" => "Shift wise"
+        self::PACKAGE_WISE_CHALLAN => "Challan Wise",
+        self::PACKAGE_WISE_DAY => "Day Wise",
+        self::PACKAGE_WISE_TRIP => "Trip wise",
+        self::PACKAGE_WISE_DESTINATION => "Destination Wise",
+        self::PACKAGE_WISE_MONTH => "Month wise",
+        self::PACKAGE_WISE_SHIFT => "Shift wise"
     ];
+
 
     const KYC_DETAILS = [
         "gst" => "GST",
