@@ -83,7 +83,7 @@ use app\models\CompanyMaster;
                 <?= $form->field($model, 'phone_no', ['options' => ['class' => 'form-group']])->begin() ?>
                 <?= Html::activeLabel($model, 'phone_no', ['class' => 'col-lg-12 col-sm-12 col-xs-12 control-label']); ?>
                 <div class="col-lg-12 col-sm-12 col-xs-12">
-                    <?= Html::activeTextInput($model, 'phone_no', ['class' => 'form-control']) ?>
+                    <?= Html::activeTextInput($model, 'phone_no', ['class' => 'form-control','maxlength'=>10,'minlength'=>10]) ?>
                     <?= Html::error($model, 'phone_no', ['class' => 'error help-block']) ?>
                 </div>
                 <?= $form->field($model, 'phone_no')->end() ?>
@@ -151,7 +151,7 @@ use app\models\CompanyMaster;
                 <?= $form->field($model, 'city_id', ['options' => ['class' => 'form-group']])->begin() ?>
                 <?= Html::activeLabel($model, 'city_id', ['class' => 'col-lg-12 col-sm-12 col-xs-12 control-label']); ?>
                 <div class="col-lg-12 col-sm-12 col-xs-12">
-                    <?= Html::activeDropDownList($model, 'city_id', ArrayHelper::map(City::find()->active()->all(), 'id', 'name'), ['class' => 'form-control']) ?>
+                    <?= Html::activeDropDownList($model, 'city_id', ArrayHelper::map(City::find()->active()->all(), 'id', 'name'), ['class' => 'form-control',"prompt"=>"Select one"]) ?>
                     <?= Html::error($model, 'city_id', ['class' => 'error help-block']) ?>
                 </div>
                 <?= $form->field($model, 'city_id')->end() ?>
@@ -159,7 +159,7 @@ use app\models\CompanyMaster;
                 <?= $form->field($model, 'pincode', ['options' => ['class' => 'form-group']])->begin() ?>
                 <?= Html::activeLabel($model, 'pincode', ['class' => 'col-lg-12 col-sm-12 col-xs-12 control-label']); ?>
                 <div class="col-lg-12 col-sm-12 col-xs-12">
-                    <?= Html::activeTextInput($model, 'pincode', ['class' => 'form-control']) ?>
+                    <?= Html::activeTextInput($model, 'pincode', ['class' => 'form-control','maxlength'=>10]) ?>
                     <?= Html::error($model, 'pincode', ['class' => 'error help-block']) ?>
                 </div>
                 <?= $form->field($model, 'pincode')->end() ?>
@@ -187,7 +187,7 @@ use app\models\CompanyMaster;
                 <?= $form->field($model, 'site_city_id', ['options' => ['class' => 'form-group']])->begin() ?>
                 <?= Html::activeLabel($model, 'site_city_id', ['class' => 'col-lg-12 col-sm-12 col-xs-12 control-label']); ?>
                 <div class="col-lg-12 col-sm-12 col-xs-12">
-                    <?= Html::activeDropDownList($model, 'site_city_id', ArrayHelper::map(City::find()->active()->all(), 'id', 'name'), ['class' => 'form-control']) ?>
+                    <?= Html::activeDropDownList($model, 'site_city_id', ArrayHelper::map(City::find()->active()->all(), 'id', 'name'), ['class' => 'form-control',"prompt"=>"Select one"]) ?>
                     <?= Html::error($model, 'site_city_id', ['class' => 'error help-block']) ?>
                 </div>
                 <?= $form->field($model, 'site_city_id')->end() ?>
@@ -195,7 +195,7 @@ use app\models\CompanyMaster;
                 <?= $form->field($model, 'site_pincode', ['options' => ['class' => 'form-group']])->begin() ?>
                 <?= Html::activeLabel($model, 'site_pincode', ['class' => 'col-lg-12 col-sm-12 col-xs-12 control-label']); ?>
                 <div class="col-lg-12 col-sm-12 col-xs-12">
-                    <?= Html::activeTextInput($model, 'site_pincode', ['class' => 'form-control']) ?>
+                    <?= Html::activeTextInput($model, 'site_pincode', ['class' => 'form-control','maxlength'=>10]) ?>
                     <?= Html::error($model, 'site_pincode', ['class' => 'error help-block']) ?>
                 </div>
                 <?= $form->field($model, 'site_pincode')->end() ?>

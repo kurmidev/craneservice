@@ -46,9 +46,43 @@ class ClientForm extends BaseForm
             ->addRule(['doc'], 'file');
 
         return [
+            [["company_name"], "required", "when" => function () {
+                return $this->client_type == C::CLIENT_IS_COMPANY;
+            }],
             [['client_type', 'company_id', 'city_id', 'pincode', 'site_city_id', 'site_pincode', 'type', 'status'], 'integer'],
             [['client_type', 'company_name', 'first_name', 'last_name', 'email', 'mobile_no', 'phone_no', 'address', 'site_address'], "string"],
             [['kyc_details'], 'ValidateMulti', 'params' => ['isMulti' => TRUE, 'ValidationModel' => $kycValidations, 'allowEmpty' => true]],
+        ];
+    }
+
+
+    /**
+     * {@inheritdoc}
+     */
+    public function attributeLabels()
+    {
+        return [
+            'id' => 'ID',
+            'client_type' => 'Client Type',
+            'company_id' => 'Company',
+            'company_name' => 'Company Name',
+            'first_name' => 'First Name',
+            'last_name' => 'Last Name',
+            'email' => 'Email',
+            'mobile_no' => 'Mobile No',
+            'phone_no' => 'Phone No',
+            'address' => 'Address',
+            'city_id' => 'City',
+            'pincode' => 'Pincode',
+            'site_address' => 'Site Address',
+            'site_city_id' => 'Site City',
+            'site_pincode' => 'Site Pincode',
+            'type' => 'Type',
+            'status' => 'Status',
+            'created_at' => 'Created At',
+            'created_by' => 'Created By',
+            'updated_at' => 'Updated At',
+            'updated_by' => 'Updated By',
         ];
     }
 
@@ -86,9 +120,8 @@ class ClientForm extends BaseForm
         if ($model->validate() && $model->save()) {
             $this->uploadDocs($model->id, C::DOCUMENT_FOR_COMPANY, $this->kyc_details);
             return $model;
-        }else{
+        } else {
             print_R($model->errors);
-            
         }
         return false;
     }

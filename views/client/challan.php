@@ -16,13 +16,11 @@ use app\models\PlanMaster;
     <div class="card-header">
         <h3 class="card-title"></h3>
         <div class="card-tools">
-            <?= Html::a(Html::tag('span', '', ['class' => 'fa fa-plus']), \Yii::$app->urlManager->createUrl([$addUrl,"id"=>$model->id]), ['title' => 'Add Challan', 'class' => 'btn btn-primary btn-sm']) ?>
+            <?= Html::a(Html::tag('span', '', ['class' => 'fa fa-plus']), \Yii::$app->urlManager->createUrl([$addUrl, "id" => $model->id]), ['title' => 'Add Challan', 'class' => 'btn btn-primary btn-sm']) ?>
         </div>
     </div>
-    <div class="card-body p-0">
-        <?php Pjax::begin(); ?>
-        <?php // echo $this->render('_search', ['model' => $searchModel]); 
-        ?>
+    <div class="card-body p-0 table-responsive">
+
 
         <?= GridView::widget([
             'dataProvider' => $dataProvider,
@@ -34,7 +32,7 @@ use app\models\PlanMaster;
                 [
                     'attribute' => 'plan_id', 'label' => 'Plan',
                     'content' => function ($model) {
-                        return !empty($model->plan)?$model->plan->name:"";
+                        return !empty($model->plan) ? $model->plan->name : "";
                     },
                     'filter' => ArrayHelper::map(PlanMaster::find()->active()->all(), 'id', 'name'),
                 ],
@@ -47,20 +45,20 @@ use app\models\PlanMaster;
                 [
                     'attribute' => 'invoice_id', 'label' => 'Is Invoice Generated',
                     'content' => function ($model) {
-                        return !empty($model->invoice_id)?"No":"Yes";
+                        return !empty($model->invoice_id) ? "Yes" : "No";
                     },
                 ],
                 'actionOn',
                 'actionBy',
                 [
                     "label" => "Action",
-                    "content" => function ($data) {
-                        return Html::a(Html::tag('span', '', ['class' => 'fa fa-edit']), \Yii::$app->urlManager->createUrl(['plan/edit-plan', 'id' => $data['id']]), ['title' => 'Update ' . $data['name'], 'class' => 'btn btn-primary-alt']);
+                    "content" => function ($data) use ($editUrl,$printUrl) {
+                        return Html::a(Html::tag('span', '', ['class' => 'fa fa-edit']), \Yii::$app->urlManager->createUrl([$editUrl, 'id' => $data['id']]), ['title' => 'Update ' . $data['challan_no'], 'class' => 'btn btn-primary-alt'])
+                        .Html::a(Html::tag('span', '', ['class' => 'fa fa-print']), \Yii::$app->urlManager->createUrl([$printUrl, 'id' => $data['id']]), ['title' => 'Update ' . $data['challan_no'], 'class' => 'btn btn-primary-alt']);
                     }
                 ]
             ],
         ]); ?>
 
-        <?php Pjax::end(); ?>
     </div>
 </div>

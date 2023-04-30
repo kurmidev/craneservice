@@ -16,34 +16,36 @@ use app\components\ConstFunc as F;
         </div>
     </div>
     <div class="card-body p-0">
-        <?php Pjax::begin(); ?>
-        <?php // echo $this->render('_search', ['model' => $searchModel]); 
-        ?>
+        <div class="table-responsive">
+            <?php Pjax::begin(); ?>
+            <?php // echo $this->render('_search', ['model' => $searchModel]); 
+            ?>
 
-        <?= GridView::widget([
-            'dataProvider' => $dataProvider,
-            'filterModel' => $searchModel,
-            'columns' => [
-                ['class' => 'yii\grid\SerialColumn'],
-                'name',
-                [
-                    'attribute' => 'status', 'label' => 'Status',
-                    'content' => function ($model) {
-                        return F::getLabels(C::LABEL_STATUS, $model->status);
-                    },
-                    'filter' => C::LABEL_STATUS,
+            <?= GridView::widget([
+                'dataProvider' => $dataProvider,
+                'filterModel' => $searchModel,
+                'columns' => [
+                    ['class' => 'yii\grid\SerialColumn'],
+                    'name',
+                    [
+                        'attribute' => 'status', 'label' => 'Status',
+                        'content' => function ($model) {
+                            return F::getLabels(C::LABEL_STATUS, $model->status);
+                        },
+                        'filter' => C::LABEL_STATUS,
+                    ],
+                    'actionOn',
+                    'actionBy',
+                    [
+                        "label" => "Action",
+                        "content" => function ($data) {
+                            return Html::a(Html::tag('span', '', ['class' => 'fa fa-edit']), \Yii::$app->urlManager->createUrl(['plan/edit-plan-attributes', 'id' => $data['id']]), ['title' => 'Update ' . $data['name'], 'class' => 'btn btn-primary-alt']);
+                        }
+                    ],
                 ],
-                'actionOn',
-                'actionBy',
-                [
-                    "label" => "Action",
-                    "content" => function ($data) {
-                        return Html::a(Html::tag('span', '', ['class' => 'fa fa-edit']), \Yii::$app->urlManager->createUrl(['plan/edit-plan-attributes', 'id' => $data['id']]), ['title' => 'Update ' . $data['name'], 'class' => 'btn btn-primary-alt']);
-                    }
-                ],
-            ],
-        ]); ?>
+            ]); ?>
 
-        <?php Pjax::end(); ?>
+            <?php Pjax::end(); ?>
+        </div>
     </div>
 </div>

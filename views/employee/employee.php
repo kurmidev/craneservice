@@ -21,63 +21,65 @@ use app\models\Department;
         </div>
     </div>
     <div class="card-body p-0">
-        <?php Pjax::begin(); ?>
-        <?php // echo $this->render('_search', ['model' => $searchModel]); 
-        ?>
-        <?= GridView::widget([
-            'dataProvider' => $dataProvider,
-            'filterModel' => $searchModel,
-            'columns' => [
-                ['class' => 'yii\grid\SerialColumn'],
-                'name',
-                [
-                    'attribute' => 'company_id', 'label' => 'Company',
-                    'content' => function ($model) {
-                        return !empty($model->company) ? $model->company->name : "";
-                    },
-                    'filter' => ArrayHelper::map(CompanyMaster::find()->active()->all(), 'id', 'name'),
+        <div class="table-responsive">
+            <?php Pjax::begin(); ?>
+            <?php // echo $this->render('_search', ['model' => $searchModel]); 
+            ?>
+            <?= GridView::widget([
+                'dataProvider' => $dataProvider,
+                'filterModel' => $searchModel,
+                'columns' => [
+                    ['class' => 'yii\grid\SerialColumn'],
+                    'name',
+                    [
+                        'label' => 'Company',
+                        'content' => function ($model) {
+                            return !empty($model->company) ? implode(", ",ArrayHelper::getColumn($model->company,"company.name")) : "";
+                        },
+                        'filter' => ArrayHelper::map(CompanyMaster::find()->active()->all(), 'id', 'name'),
+                    ],
+                    [
+                        'attribute' => 'department_id', 'label' => 'Department',
+                        'content' => function ($model) {
+                            return !empty($model->department) ? $model->department->name : "";
+                        },
+                        'filter' => ArrayHelper::map(Department::find()->active()->all(), 'id', 'name'),
+                    ],
+                    'email:email',
+                    'phone_no',
+                    'start_time',
+                    'end_time',
+                    'salary',
+                    //'overtime_salary',
+                    //'address',
+                    [
+                        'attribute' => 'city_id', 'label' => 'City',
+                        'content' => function ($model) {
+                            return !empty($model->city) ? $model->city->name : "";
+                        },
+                        'filter' => ArrayHelper::map(City::find()->active()->all(), 'id', 'name'),
+                    ],
+                    //'pincode',
+                    [
+                        'attribute' => 'status', 'label' => 'Status',
+                        'content' => function ($model) {
+                            return F::getLabels(C::LABEL_STATUS, $model->status);
+                        },
+                        'filter' => C::LABEL_STATUS,
+                    ],
+                    'actionOn',
+                    'actionBy',
+                    [
+                        "label" => "Action",
+                        "content" => function ($data) {
+                            return Html::a(Html::tag('span', '', ['class' => 'fa fa-edit']), \Yii::$app->urlManager->createUrl(['employee/edit-employee', 'id' => $data['id']]), ['title' => 'Update ' . $data['name'], 'class' => 'btn btn-primary-alt']);
+                        }
+                    ]
                 ],
-                [
-                    'attribute' => 'department_id', 'label' => 'Department',
-                    'content' => function ($model) {
-                        return !empty($model->department) ? $model->department->name : "";
-                    },
-                    'filter' => ArrayHelper::map(Department::find()->active()->all(), 'id', 'name'),
-                ],
-                'email:email',
-                'phone_no',
-                'start_time',
-                'end_time',
-                'salary',
-                //'overtime_salary',
-                //'address',
-                [
-                    'attribute' => 'city_id', 'label' => 'City',
-                    'content' => function ($model) {
-                        return !empty($model->city) ? $model->city->name : "";
-                    },
-                    'filter' => ArrayHelper::map(City::find()->active()->all(), 'id', 'name'),
-                ],
-                //'pincode',
-                [
-                    'attribute' => 'status', 'label' => 'Status',
-                    'content' => function ($model) {
-                        return F::getLabels(C::LABEL_STATUS, $model->status);
-                    },
-                    'filter' => C::LABEL_STATUS,
-                ],
-                'actionOn',
-                'actionBy',
-                [
-                    "label" => "Action",
-                    "content" => function ($data) {
-                        return Html::a(Html::tag('span', '', ['class' => 'fa fa-edit']), \Yii::$app->urlManager->createUrl(['employee/edit-employee', 'id' => $data['id']]), ['title' => 'Update ' . $data['name'], 'class' => 'btn btn-primary-alt']);
-                    }
-                ]
-            ],
-        ]); ?>
+            ]); ?>
 
 
-        <?php Pjax::end(); ?>
+            <?php Pjax::end(); ?>
+        </div>
     </div>
 </div>

@@ -19,47 +19,55 @@ use app\models\PlanAttributes;
         </div>
     </div>
     <div class="card-body p-0">
-        <?php Pjax::begin(); ?>
-        <?php // echo $this->render('_search', ['model' => $searchModel]); 
-        ?>
+        <div class="table-responsive">
+            <?php Pjax::begin(); ?>
+            <?php // echo $this->render('_search', ['model' => $searchModel]); 
+            ?>
 
-        <?= GridView::widget([
-            'dataProvider' => $dataProvider,
-            'filterModel' => $searchModel,
-            'columns' => [
-                ['class' => 'yii\grid\SerialColumn'],
-                'name',
-                'code',
-                'price',
-                
-                //'type',
-                //'shift_hrs',
-                //'tax_slot',
-                [
-                    'attribute' => 'attrbute_id', 'label' => 'Attributes',
-                    'content' => function ($model) {
-                        return !empty($model->attr)?$model->attr->name:"";
-                    },
-                    'filter' => ArrayHelper::map(PlanAttributes::find()->active()->all(), 'id', 'name'),
+            <?= GridView::widget([
+                'dataProvider' => $dataProvider,
+                'filterModel' => $searchModel,
+                'columns' => [
+                    ['class' => 'yii\grid\SerialColumn'],
+                    'name',
+                    'code',
+                    'price',
+                    [
+                        'attribute' => 'type', 'label' => 'Plan Wise',
+                        'content' => function ($model) {
+                            return !empty(C::PACKAGE_WISE[$model->type]) ? C::PACKAGE_WISE[$model->type] : "";
+                        },
+                        'filter' => C::PACKAGE_WISE,
+                    ],
+                    //'type',
+                    //'shift_hrs',
+                    //'tax_slot',
+                    [
+                        'attribute' => 'attrbute_id', 'label' => 'Attributes',
+                        'content' => function ($model) {
+                            return !empty($model->attr) ? $model->attr->name : "";
+                        },
+                        'filter' => ArrayHelper::map(PlanAttributes::find()->active()->all(), 'id', 'name'),
+                    ],
+                    [
+                        'attribute' => 'status', 'label' => 'Status',
+                        'content' => function ($model) {
+                            return F::getLabels(C::LABEL_STATUS, $model->status);
+                        },
+                        'filter' => C::LABEL_STATUS,
+                    ],
+                    'actionOn',
+                    'actionBy',
+                    [
+                        "label" => "Action",
+                        "content" => function ($data) {
+                            return Html::a(Html::tag('span', '', ['class' => 'fa fa-edit']), \Yii::$app->urlManager->createUrl(['plan/edit-plan', 'id' => $data['id']]), ['title' => 'Update ' . $data['name'], 'class' => 'btn btn-primary-alt']);
+                        }
+                    ]
                 ],
-                [
-                    'attribute' => 'status', 'label' => 'Status',
-                    'content' => function ($model) {
-                        return F::getLabels(C::LABEL_STATUS, $model->status);
-                    },
-                    'filter' => C::LABEL_STATUS,
-                ],
-                'actionOn',
-                'actionBy',
-                [
-                    "label" => "Action",
-                    "content" => function ($data) {
-                        return Html::a(Html::tag('span', '', ['class' => 'fa fa-edit']), \Yii::$app->urlManager->createUrl(['plan/edit-plan', 'id' => $data['id']]), ['title' => 'Update ' . $data['name'], 'class' => 'btn btn-primary-alt']);
-                    }
-                ]
-            ],
-        ]); ?>
+            ]); ?>
 
-        <?php Pjax::end(); ?>
+            <?php Pjax::end(); ?>
+        </div>
     </div>
 </div>

@@ -28,6 +28,15 @@ class EmployeeCompanyMapping extends \app\models\BaseModel
     /**
      * {@inheritdoc}
      */
+    public function scenarios(){
+        return [
+            self::SCENARIO_CREATE=>["company_id","employee_id"],
+            self::SCENARIO_UPDATE=>["company_id","employee_id"],
+        ];
+    }
+    /**
+     * {@inheritdoc}
+     */
     public function rules()
     {
         return [
@@ -60,5 +69,13 @@ class EmployeeCompanyMapping extends \app\models\BaseModel
     public static function find()
     {
         return new EmployeeCompanyMappingQuery(get_called_class());
+    }
+
+    public function getCompany(){
+        return $this->hasOne(CompanyMaster::class,['id'=>'company_id']);
+    }
+
+    public function getEmployee(){
+        return $this->hasOne(EmployeeMaster::class,['id'=>'employee_id']);
     }
 }

@@ -31,7 +31,7 @@ use app\models\Department;
                 <?= $form->field($model, 'company_id', ['options' => ['class' => 'form-group']])->begin() ?>
                 <?= Html::activeLabel($model, 'company_id', ['class' => 'col-lg-12 col-sm-12 col-xs-12 control-label']); ?>
                 <div class="col-lg-12 col-sm-12 col-xs-12">
-                    <?= Html::activeDropDownList($model, 'company_id', ArrayHelper::map(CompanyMaster::find()->active()->all(), 'id', 'name'), ['class' => 'form-control',"prompt"=>"Select one"]) ?>
+                    <?= Html::activeDropDownList($model, 'company_id', ArrayHelper::map(CompanyMaster::find()->active()->all(), 'id', 'name'), ['class' => 'form-control',"prompt"=>"Select one","multiple"=>true]) ?>
                     <?= Html::error($model, 'company_id', ['class' => 'error help-block']) ?>
                 </div>
                 <?= $form->field($model, 'company_id')->end() ?>
@@ -51,6 +51,15 @@ use app\models\Department;
                     <?= Html::error($model, 'email', ['class' => 'error help-block']) ?>
                 </div>
                 <?= $form->field($model, 'email')->end() ?>
+
+                <?= $form->field($model, 'mobile_no', ['options' => ['class' => 'form-group']])->begin() ?>
+                <?= Html::activeLabel($model, 'mobile_no', ['class' => 'col-lg-12 col-sm-12 col-xs-12 control-label']); ?>
+                <div class="col-lg-12 col-sm-12 col-xs-12">
+                    <?= Html::activeTextInput($model, 'mobile_no', ['class' => 'form-control', "maxlength" => 10, "minlength" => 10]) ?>
+                    <?= Html::error($model, 'mobile_no', ['class' => 'error help-block']) ?>
+                </div>
+                <?= $form->field($model, 'mobile_no')->end() ?>
+
 
                 <?= $form->field($model, 'phone_no', ['options' => ['class' => 'form-group']])->begin() ?>
                 <?= Html::activeLabel($model, 'phone_no', ['class' => 'col-lg-12 col-sm-12 col-xs-12 control-label']); ?>

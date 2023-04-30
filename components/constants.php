@@ -72,4 +72,12 @@ class Constants
         self::PACKAGE_SHIFT_TYPE_SHIFT => 1,
         self::PACKAGE_SHIFT_TYPE_HOURS => 2
     ];
+
+    public static function getTimeList(){
+        $resp = [];
+        for($i=1;$i<61;$i++){
+            $resp[$i] = "{$i} minutes";
+        }
+        return $resp;
+    }
 }

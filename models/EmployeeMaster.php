@@ -133,7 +133,17 @@ class EmployeeMaster extends \app\models\BaseModel
         return $this->hasOne(City::class, ['id' => 'city_id']);
     }
 
+        /**
+     * Gets query for [[CompanyMapping]].
+     *
+     * @return \yii\db\ActiveQuery|DepartmentQuery
+     */
+    public function getCompany()
+    {
+        return $this->hasMany(EmployeeCompanyMapping::class, ['employee_id' => 'id'])->with(['company']);
+    }
 
+    
     /**
      * {@inheritdoc}
      * @return EmployeeMasterQuery the active query used by this AR class.

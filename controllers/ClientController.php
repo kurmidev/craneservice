@@ -8,8 +8,13 @@ use app\controllers\BaseController;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use app\components\Constants as C;
+use app\forms\ChallanForm;
 use app\forms\ClientForm;
+use app\models\Challan;
 use app\models\ChallanSearch;
+use app\models\ClientSiteSearch;
+use Symfony\Component\BrowserKit\Client;
+use Yii;
 
 /**
  * ClientController implements the CRUD actions for ClientMaster model.
@@ -36,7 +41,7 @@ class ClientController extends BaseController
             "seditUrl" => $this->clientType == C::CLIENT_TYPE_CUSTOMER ? "customer/edit-customer" : "vendor/edit-vendor",
             "title" => $this->clientType == C::CLIENT_TYPE_CUSTOMER ? "Customer" : "Vendor",
             "addUrl" => $this->clientType == C::CLIENT_TYPE_CUSTOMER ? "customer/add-customer" : "vendor/add-vendor",
-            
+
         ]);
     }
 
@@ -46,23 +51,40 @@ class ClientController extends BaseController
      * @return string
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionView($id)
+    public function actionView($id, $pg="")
     {
+        $pg = Yii::$app->request->get("pg");
         $title = $this->clientType == C::CLIENT_TYPE_CUSTOMER ? "Customer" : "Vendor";
-        $baseUrl = $this->clientType == C::CLIENT_TYPE_CUSTOMER ? "customer" : "vendor";
+        $baseUrl = $this->clientType == C::CLIENT_TYPE_CUSTOMER ? "customer/view-customer" : "vendor/view-vendor";
         $model = ClientMaster::findOne(['id' => $id]);
-
+        
         $searchModel = new ChallanSearch();
         $dataProvider = $searchModel->search($this->request->queryParams);
-        $dataProvider->query->andWhere(["client_id"=>$model->id]);
+        $dataProvider->query->andWhere(["client_id" => $model->id]);
+
+
+        $siteSearchModel = new ClientSiteSearch();
+        $siteDataProvider = $siteSearchModel->search($this->request->queryParams);
+        $siteDataProvider->query->andWhere(["client_id" => $model->id]);
         
+
         return $this->render('@app/views/client/view', [
             'model' => $model,
             "title" => $this->title,
             "baseUrl" => $baseUrl,
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
-            "addUrl" => $this->clientType == C::CLIENT_TYPE_CUSTOMER ? "customer/add-challan" : "vendor/add-challan",
+            "addUrl" => $this->clientType == C::CLIENT_TYPE_CUSTOMER ? "customer/add-customer" : "vendor/add-vendor",
+            "seditUrl" => $this->clientType == C::CLIENT_TYPE_CUSTOMER ? "customer/edit-customer" : "vendor/edit-vendor",
+            "viewUrl" => $this->clientType == C::CLIENT_TYPE_CUSTOMER ? "customer/view-customer" : "vendor/view-vendor",
+            "challanAddUrl" => $this->clientType == C::CLIENT_TYPE_CUSTOMER ? "customer/add-challan" : "vendor/add-challan",
+            "challanEditUrl" => $this->clientType == C::CLIENT_TYPE_CUSTOMER ? "customer/edit-challan" : "vendor/edit-challan",
+            "challanViewUrl" => $this->clientType == C::CLIENT_TYPE_CUSTOMER ? "customer/view-challan" : "vendor/view-challan",
+            "challanPrintUrl" => $this->clientType == C::CLIENT_TYPE_CUSTOMER ? "customer/print-challan" : "vendor/print-challan",
+            "company_id" => $this->clientType == C::CLIENT_TYPE_CUSTOMER ? "customer/view-challan" : "vendor/view-challan",
+            "pg" => $pg,
+            "siteDataProvider"=>$siteDataProvider,
+            "siteSearchModel"=>$siteSearchModel
         ]);
     }
 
@@ -152,10 +174,11 @@ class ClientController extends BaseController
         throw new NotFoundHttpException('The requested page does not exist.');
     }
 
-    public function actionPendingChallan($id){
+    public function actionPendingChallan($id)
+    {
         $searchModel = new ChallanSearch();
         $dataProvider = $searchModel->search($this->request->queryParams);
-        $dataProvider->query->andWhere(["client_id"=>$id,'invoice_id'=>null]);
+        $dataProvider->query->andWhere(["client_id" => $id, 'invoice_id' => null]);
         return $this->render('@app/views/client/challan', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
@@ -163,14 +186,14 @@ class ClientController extends BaseController
             "seditUrl" => $this->clientType == C::CLIENT_TYPE_CUSTOMER ? "customer/edit-challan" : "vendor/edit-challan",
             "title" => $this->clientType == C::CLIENT_TYPE_CUSTOMER ? "Customer" : "Vendor",
             "addUrl" => $this->clientType == C::CLIENT_TYPE_CUSTOMER ? "customer/add-challan" : "vendor/add-challan",
-            
         ]);
     }
 
-    public function actionChallan($id){
+    public function actionChallan($id)
+    {
         $searchModel = new ChallanSearch();
         $dataProvider = $searchModel->search($this->request->queryParams);
-        $dataProvider->query->andWhere(["client_id"=>$id,'invoice_id'=>null]);
+        $dataProvider->query->andWhere(["client_id" => $id])->andWhere(['not', ['invoice_id' => null]]);
         return $this->render('@app/views/client/challan', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
@@ -178,7 +201,7 @@ class ClientController extends BaseController
             "seditUrl" => $this->clientType == C::CLIENT_TYPE_CUSTOMER ? "customer/edit-challan" : "vendor/edit-challan",
             "title" => $this->clientType == C::CLIENT_TYPE_CUSTOMER ? "Customer" : "Vendor",
             "addUrl" => $this->clientType == C::CLIENT_TYPE_CUSTOMER ? "customer/add-challan" : "vendor/add-challan",
-            
+
         ]);
     }
 
@@ -187,28 +210,30 @@ class ClientController extends BaseController
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return string|\yii\web\Response
      */
-    public function actionAddChallan()
+    public function actionAddChallan($id)
     {
         $model = new ChallanForm(['scenario' => ClientMaster::SCENARIO_CREATE]);
-
+        $model->client_id = $id;
+        $model->client_type = $this->clientType;
+        $client = ClientMaster::findOne(['id' => $id]);
         if ($this->request->isPost) {
-            $model->client_type = $this->clientType;
+            $model->client_type = ($client instanceof ClientMaster) ? $client->client_type : 0;
             if ($model->load($this->request->post()) && $model->save()) {
                 $title = $this->clientType == C::CLIENT_TYPE_CUSTOMER ? "Customer" : "Vendor";
-                $redirectUrl = $this->clientType == C::CLIENT_TYPE_CUSTOMER ? "customer/index" : "vendor/index";
-                \Yii::$app->getSession()->setFlash('s', "{$title} has been added successfully.");
-                return $this->redirect([$redirectUrl]);
+                $redirectUrl = $this->clientType == C::CLIENT_TYPE_CUSTOMER ? "customer/view-customer" : "vendor/view-vendor";
+                \Yii::$app->getSession()->setFlash('s', "Challan has been added successfully.");
+                return $this->redirect([$redirectUrl, "id" => $id]);
             }
         }
 
-        return $this->render('@app/views/client/form-client', [
+        return $this->render('@app/views/challan/challan-form', [
             'model' => $model,
             "title" => $this->title
         ]);
     }
 
 
-     /**
+    /**
      * Creates a new ClientMaster model.
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return string|\yii\web\Response
@@ -232,4 +257,18 @@ class ClientController extends BaseController
             "title" => $this->title
         ]);
     }*/
+
+     /**
+     * Creates a new ClientMaster model.
+     * If creation is successful, the browser will be redirected to the 'view' page.
+     * @return string|\yii\web\Response
+     */
+    public function actionPrintChallan($id)
+    {
+        $model = Challan::findOne(['id'=>$id]);
+        
+        return $this->render('@app/views/client/print-challan', [
+            'model' => $model,
+        ]);
+    }
 }

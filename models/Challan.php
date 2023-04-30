@@ -52,6 +52,16 @@ class Challan extends \app\models\BaseModel
         return 'challan';
     }
 
+        /**
+     * {@inheritdoc}
+     */
+    public function scenarios(){
+        return [
+            self::SCENARIO_CREATE=>['client_id','challan_date','site_address','operator_id','helper_id','plan_id','vehicle_id','challan_no','plan_start_time','plan_end_time','day_wise','plan_measure','plan_trip','from_destination','to_destination','amount','break_time','up_time','down_time','plan_extra_hours','plan_shift_type','challan_image','invoice_id','is_processed','status'],
+            self::SCENARIO_UPDATE=>['client_id','challan_date','site_address','operator_id','helper_id','plan_id','vehicle_id','challan_no','plan_start_time','plan_end_time','day_wise','plan_measure','plan_trip','from_destination','to_destination','amount','break_time','up_time','down_time','plan_extra_hours','plan_shift_type','challan_image','invoice_id','is_processed','status']
+        ];
+    }
+
     /**
      * {@inheritdoc}
      */

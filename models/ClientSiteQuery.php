@@ -3,11 +3,11 @@
 namespace app\models;
 
 /**
- * This is the ActiveQuery class for [[VehicleMaster]].
+ * This is the ActiveQuery class for [[ClientSite]].
  *
- * @see VehicleMaster
+ * @see ClientSite
  */
-class VehicleMasterQuery extends BaseQuery
+class ClientSiteQuery extends \app\models\BaseQuery
 {
     /*public function active()
     {
@@ -16,7 +16,7 @@ class VehicleMasterQuery extends BaseQuery
 
     /**
      * {@inheritdoc}
-     * @return VehicleMaster[]|array
+     * @return ClientSite[]|array
      */
     public function all($db = null)
     {
@@ -25,7 +25,7 @@ class VehicleMasterQuery extends BaseQuery
 
     /**
      * {@inheritdoc}
-     * @return VehicleMaster|array|null
+     * @return ClientSite|array|null
      */
     public function one($db = null)
     {

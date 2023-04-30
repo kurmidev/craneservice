@@ -1,7 +1,7 @@
 <?php
 
 use yii\helpers\Html;
-
+use app\components\Constants as C;
 
 ?>
 <div class="container-fluid">
@@ -46,32 +46,50 @@ use yii\helpers\Html;
         <div class="col-md-9">
             <div class="card">
                 <div class="card-header p-2">
+
                     <ul class="nav nav-pills">
                         <li class="nav-item">
-                            <?= Html::a("Pending Challan", Yii::$app->urlManager->createUrl([$baseUrl . '/pending-challan', "id" => $model->id]), ["class" => "nav-link active " . (Yii::$app->controller->action->id == "pending-challan" ? "active" : "")]) ?>
+                            <?= Html::a("Pending Challan", Yii::$app->urlManager->createUrl([$baseUrl, "pg" => 'pending-challan', "id" => $model->id]), ["class" => "nav-link  " . ($pg == "pending-challan" ? "active" : "")]) ?>
                         </li>
                         <li class="nav-item">
-                            <?= Html::a("Challan List", Yii::$app->urlManager->createUrl([$baseUrl . '/challan-list', "id" => $model->id]), ["class" => "nav-link " . (Yii::$app->controller->action->id == "challan-list" ? "active" : "")]) ?>
+                            <?= Html::a("Challan List", Yii::$app->urlManager->createUrl([$baseUrl, "pg" => 'challan-list', "id" => $model->id]), ["class" => "nav-link " . ($pg == "challan-list" ? "active" : "")]) ?>
                         </li>
                         <li class="nav-item">
-                            <?= Html::a("Pending Invoice", Yii::$app->urlManager->createUrl([$baseUrl . '/pending-invoice', "id" => $model->id]), ["class" => "nav-link " . (Yii::$app->controller->action->id == "pending-invoice" ? "active" : "")]) ?>
+                            <?= Html::a("Pending Invoice", Yii::$app->urlManager->createUrl([$baseUrl, "pg" => 'pending-invoice', "id" => $model->id]), ["class" => "nav-link " . ($pg == "pending-invoice" ? "active" : "")]) ?>
                         </li>
                         <li class="nav-item">
-                            <?= Html::a("Invoice History", Yii::$app->urlManager->createUrl([$baseUrl . '/invoice', "id" => $model->id]), ["class" => "nav-link " . (Yii::$app->controller->action->id == "invoice" ? "active" : "")]) ?>
+                            <?= Html::a("Invoice History", Yii::$app->urlManager->createUrl([$baseUrl, "pg" => 'invoice', "id" => $model->id]), ["class" => "nav-link " . ($pg == "invoice" ? "active" : "")]) ?>
                         </li>
                         <li class="nav-item">
-                            <?= Html::a("Payment History", Yii::$app->urlManager->createUrl([$baseUrl . '/payment', "id" => $model->id]), ["class" => "nav-link " . (Yii::$app->controller->action->id == "payment" ? "active" : "")]) ?>
+                            <?= Html::a("Payment History", Yii::$app->urlManager->createUrl([$baseUrl, "pg" => 'payment', "id" => $model->id]), ["class" => "nav-link " . ($pg == "payment" ? "active" : "")]) ?>
                         </li>
+                        <?php if ($model->client_type == C::CLIENT_TYPE_CUSTOMER) { ?>
+                            <li class="nav-item">
+                                <?= Html::a("Add Site", Yii::$app->urlManager->createUrl([$baseUrl, "pg" => 'add-site', "id" => $model->id]), ["class" => "nav-link " . ($pg == "add-site" ? "active" : "")]) ?>
+                            </li>
+                        <?php  } ?>
                     </ul>
                 </div>
                 <div class="card-body">
                     <div class="tab-content">
-                        <?= $this->render("@app/views/client/challan", [
-                            'searchModel' => $searchModel,
-                            'dataProvider' => $dataProvider,
-                            "addUrl" => $addUrl,
-                            "model" => $model
-                        ]) ?>
+                        <?php if (in_array($pg, ["pending-challan", "challan-list", ""])) { ?>
+                            <?= $this->render("@app/views/client/challan", [
+                                'searchModel' => $searchModel,
+                                'dataProvider' => $dataProvider,
+                                "model" => $model,
+                                "addUrl" => $challanAddUrl,
+                                "editUrl" => $challanEditUrl,
+                                "viewUrl" => $challanViewUrl,
+                                "printUrl" => $challanPrintUrl
+                            ]) ?>
+                        <?php } else if ($pg == "add-site") { ?>
+                            <?= $this->render("@app/views/client/site-address", [
+                                'searchModel' => $siteSearchModel,
+                                'dataProvider' => $siteDataProvider,
+                                "model" => $model,
+                            ]) ?>
+                        <?php } ?>
+
                     </div>
                 </div>
             </div>

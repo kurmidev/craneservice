@@ -3,7 +3,7 @@ return [
     'class' => 'yii\db\Connection',
     'dsn' => 'mysql:host=localhost;dbname=craneservice',
     'username' => 'root',
-    'password' => 'chandrap',
+    'password' => 'apple',
     'charset' => 'utf8',
     'attributes' => [PDO::ATTR_CASE => PDO::CASE_LOWER],
     'enableSchemaCache' => true,

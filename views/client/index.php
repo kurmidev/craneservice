@@ -23,7 +23,7 @@ use app\models\State;
         </div>
     </div>
     <div class="card-body p-0">
-        <?php Pjax::begin(); ?>
+        <div class="table-responsive">   
         <?php // echo $this->render('_search', ['model' => $searchModel]); 
         ?>
     
@@ -71,12 +71,11 @@ use app\models\State;
                     "label" => "Action",
                     "content" => function ($data) use ($seditUrl,$viewUrl) {
                         return Html::a(Html::tag('span', '', ['class' => 'fa fa-edit']), \Yii::$app->urlManager->createUrl([$seditUrl, 'id' => $data['id']]), ['title' => "Update Record", 'class' => 'btn btn-primary-alt']).
-                            Html::a(Html::tag('span', '', ['class' => 'fa fa-edit']), \Yii::$app->urlManager->createUrl([$viewUrl, 'id' => $data['id']]), ['title' => "View Record", 'class' => 'btn btn-primary-alt']);
+                            Html::a(Html::tag('span', '', ['class' => 'fa fa-desktop']), \Yii::$app->urlManager->createUrl([$viewUrl, 'id' => $data['id']]), ['title' => "View Record", 'class' => 'btn btn-primary-alt']);
                     }
                 ]
             ],
         ]); ?>
-
-        <?php Pjax::end(); ?>
+    </div>
     </div>
 </div>
