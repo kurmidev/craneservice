@@ -81,7 +81,7 @@ class PlanController extends BaseController
 
         if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
             \Yii::$app->getSession()->setFlash('s', "Plan $model->name added successfully.");
-            return $this->redirect(['view', 'id' => $model->id]);
+            return $this->redirect(['plan']);
         }
 
         return $this->render('form-plan', [
