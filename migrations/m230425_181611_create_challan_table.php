@@ -41,7 +41,7 @@ class m230425_181611_create_challan_table extends Migration
             "is_processed" =>  $this->integer()->notNull()->defaultValue(0),
             "status" => $this->integer()->notNull()->defaultValue(1),
             'created_at' => $this->dateTime()->notNull()->defaultExpression('now()'),
-            'updated_on' => $this->dateTime()->null(),
+            'updated_at' => $this->dateTime()->null(),
             'created_by' => $this->integer(),
             'updated_by' => $this->integer()
         ]);

@@ -19,7 +19,7 @@ class m230414_130353_create_employee_master_table extends Migration
             "company_id"=> $this->integer()->notNull(),
             "department_id"=> $this->integer()->notNull(),
             "email"=> $this->string(200),
-            "phone_no" => $this->string(10)->unique()->notNull(),
+            "mobile_no" => $this->string(10)->unique()->notNull(),
             "phone_no" => $this->string(10)->null(),
             "status" =>  $this->integer()->notNull()->defaultValue(1),
             "start_time" => $this->time(),

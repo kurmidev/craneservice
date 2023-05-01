@@ -57,7 +57,7 @@ class PlanMaster extends \app\models\BaseModel
             'name' => 'Name',
             'code' => 'Code',
             'price' => 'Price',
-            'attribute_id' => 'Attribute ID',
+            'attribute_id' => 'Attribute',
             'type' => 'Type',
             'shift_hrs' => 'Shift Hrs',
             'tax_slot' => 'Tax Slot',

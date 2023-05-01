@@ -57,6 +57,32 @@ class CompanyForm extends BaseForm
         ];
     }
 
+ /**
+     * {@inheritdoc}
+     */
+    public function attributeLabels()
+    {
+        return [
+            'id' => 'ID',
+            'name' => 'Name',
+            'mobile_no' => 'Mobile No',
+            'phone_no' => 'Phone No',
+            'email' => 'Email',
+            'billing_address' => 'Billing Addresss',
+            'city_id' => 'City',
+            'pincode' => 'Pincode',
+            'gst_in' => 'Gst',
+            'pan_no' => 'Pan No',
+            'supply_place' => 'Supply Place',
+            'state_code' => 'State Code',
+            'status' => 'Status',
+            'created_at' => 'Created At',
+            'created_by' => 'Created By',
+            'updated_at' => 'Updated At',
+            'updated_by' => 'Update By',
+        ];
+    }
+
     public function save()
     {
         if(!$this->hasErrors()){

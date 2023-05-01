@@ -22,7 +22,7 @@ class m230414_141911_create_plugins_master_table extends Migration
             "description" => $this->string(),
             "status" => $this->integer()->notNull()->defaultValue(1),
             'created_at' => $this->dateTime()->notNull()->defaultExpression('now()'),
-            'updated_on' => $this->dateTime()->null(),
+            'updated_at' => $this->dateTime()->null(),
             'created_by' => $this->integer(),
             'updated_by' => $this->integer()
         ]);
