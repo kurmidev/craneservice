@@ -43,7 +43,7 @@ class PlanAttributes extends \app\models\BaseModel
     public function rules()
     {
         return [
-            [['name'], 'required'],
+            [['name','status'], 'required'],
             [['status', 'created_by', 'updated_by'], 'integer'],
             [['created_at', 'updated_at'], 'safe'],
             [['name'], 'string', 'max' => 200],
