@@ -42,7 +42,7 @@ class PlanController extends BaseController
     public function actionView($id)
     {
         return $this->render('view', [
-            'model' => $this->findModel($id),
+            'model' => PlanMaster::findOne(['id'=>$id]),
         ]);
     }
 
@@ -77,7 +77,7 @@ class PlanController extends BaseController
      */
     public function actionEditPlan($id)
     {
-        $model = $this->findModel($id);
+        $model = PlanMaster::findOne(['id'=>$id]);
 
         if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
             \Yii::$app->getSession()->setFlash('s', "Plan $model->name added successfully.");
