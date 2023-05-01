@@ -37,7 +37,7 @@ class PlanMaster extends \app\models\BaseModel
     public function rules()
     {
         return [
-            [['price', 'type'], 'required'],
+            [['price', 'type','status','attribute_id','type','tax_slot','name','code'], 'required'],
             [['price'], 'number'],
             [['attribute_id', 'type', 'shift_hrs', 'tax_slot', 'status', 'created_by', 'updated_by'], 'integer'],
             [['created_at', 'updated_at'], 'safe'],
