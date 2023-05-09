@@ -60,6 +60,9 @@ class ChallanForm extends BaseForm
             } else {
                 return $this->create();
             }
+        }else{
+            print_r($this->errors);
+            exit;
         }
         return false;
     }
@@ -93,25 +96,46 @@ class ChallanForm extends BaseForm
                     $model->break_time = !empty($item['break_time']) ? $item['break_time'] : null;
                     $model->up_time = !empty($item['up_time']) ? $item['up_time'] : null;
                     $model->down_time = !empty($item['down_time']) ? $item['down_time'] : null;
-                    $model->plan_extra_hours = !empty($item['plan_extra_hours']) ? $item['plan_extra_hours'] : null;
+                    $model->plan_extra_hours = !empty($item['plan_extra_hours']) && $item['plan_extra_hours']!='NaN'? $item['plan_extra_hours'] : null;
                     $model->plan_shift_type = !empty($item['plan_shift_type']) ? $item['plan_shift_type'] : null;
                     $model->challan_image = !empty($item['challan_image']) ? $item['challan_image'] : null;
                     $model->invoice_id = null;
                     $model->is_processed = "1";
                     $model->status = C::STATUS_ACTIVE;
-
-                    $model->amount = $plan->amount;
+                    $model->base_amount = $plan->price;
+                    $model->amount = $plan->price;
                     $model->extra = 0;
                     if ($plan->type == C::PACKAGE_WISE_SHIFT) {
                         $totalHrs =  date("H", strtotime($model->plan_end_time) - strtotime($model->plan_start_time));
-                        $model->extra = ($totalHrs < $plan->shift_hrs) ? 0 : ((($totalHrs - $plan->shift_hrs) > 4 ? $plan->amount : ($plan->amount / 2)));
+                        if($item['plan_shift_type']==C::PACKAGE_SHIFT_TYPE_HOURS){
+                            $perhrs = $plan->price /$plan->shift_hrs;
+                            $model->extra =  ($totalHrs - $plan->shift_hrs)* $perhrs;
+                        }else{
+                            $model->extra = ($totalHrs < $plan->shift_hrs) ? 0 : ((($totalHrs - $plan->shift_hrs) > 4 ? $plan->price : ($plan->price / 2)));
+                        }
+                        
+                    }else if($plan->type== C::PACKAGE_WISE_TRIP){
+                        $model->amount = $plan->price * $item['plan_trip'] * $item['plan_measure'];
+                    }else if($plan->type==C::PACKAGE_WISE_CHALLAN){
+                        $totalMinutes = (strtotime($model->plan_end_time) - strtotime($model->plan_start_time))/60;
+                        $model->amount =  ($plan->price/60)*$totalMinutes;
+                    }else if($plan->type==C::PACKAGE_WISE_DESTINATION){
+
+                    }else if($plan->type==C::PACKAGE_WISE_MONTH){
+                        //do nothings
+                    }else if($plan->type==C::PACKAGE_WISE_DAY){
+                        //do nothings
                     }
                     $totalAmount = $model->amount + $model->extra;
-                    $model->tax = F::calculateTax($totalAmount, $plan->tax_slot);
-                    $model->total = $model->amount  + $model->extra + $model->tax;
+                    //$model->tax = F::calculateTax($totalAmount, $plan->tax_slot);
+                    $model->total = $totalAmount;
                     if ($model->validate() && $model->save()) {
                         $is_valid = $is_valid &&  true;
                     } else {
+                        echo "<pre>";
+                        print_r($model->attributes);
+                        print_r($model->errors);
+                        exit;
                         $is_valid = $is_valid && false;
                     }
                 }

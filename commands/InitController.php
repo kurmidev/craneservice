@@ -1,10 +1,13 @@
 <?php
+
 namespace app\commands;
 
+use app\models\Department;
 use app\models\State;
 use yii\console\Controller;
 use app\components\Constants as C;
 use app\models\City;
+use app\models\Department;
 use app\models\User;
 
 class InitController extends Controller
@@ -1229,68 +1232,73 @@ class InitController extends Controller
         "Sarsod" => "Haryana"
     ];
 
-    public function actionInitialize(){
+    public function actionInitialize()
+    {
         //insert state data
         $stateList = array_unique(array_values($this->cityStateList));
-        if(!empty($stateList)){
+        if (!empty($stateList)) {
             $this->insertState($stateList);
         }
         //insert city date
-        if(!empty($this->stateMapping)){
-            $this->addCity($this->cityStateList,$this->stateMapping);
+        if (!empty($this->stateMapping)) {
+            $this->addCity($this->cityStateList, $this->stateMapping);
         }
 
         $this->addAdminUser();
 
         //insert designation data
+        $this->departmentData();
     }
 
-    public function addCity($stateList,$stateMapping){
-        foreach($stateList as $city=>$state){
-            $model = City::findOne(['name'=>$city]);
-            if(!$model instanceof City){
-                $model = new City(['scenario'=>City::SCENARIO_CREATE]);
+    public function addCity($stateList, $stateMapping)
+    {
+        foreach ($stateList as $city => $state) {
+            $model = City::findOne(['name' => $city]);
+            if (!$model instanceof City) {
+                $model = new City(['scenario' => City::SCENARIO_CREATE]);
                 $model->name = $city;
-            }else{
+            } else {
                 $model->scenario = City::SCENARIO_UPDATE;
             }
 
-            $model->state_id = !empty($stateMapping[$state])?$stateMapping[$state]:0;
+            $model->state_id = !empty($stateMapping[$state]) ? $stateMapping[$state] : 0;
             $model->status =  C::STATUS_ACTIVE;
-            if($model->validate() && $model->save()){
-                echo $model->id."----".$model->name.PHP_EOL;
-            }else{
+            if ($model->validate() && $model->save()) {
+                echo $model->id . "----" . $model->name . PHP_EOL;
+            } else {
                 print_R($model->attributes);
                 print_r($model->errors);
             }
         }
     }
 
-    public function insertState($stateList){
-        foreach($stateList as $state){
-            $model = State::findOne(['name'=>$state]);
-            if(!$model instanceof State){
-                $model = new State(['scenario'=>State::SCENARIO_CREATE]);
-            }else{
+    public function insertState($stateList)
+    {
+        foreach ($stateList as $state) {
+            $model = State::findOne(['name' => $state]);
+            if (!$model instanceof State) {
+                $model = new State(['scenario' => State::SCENARIO_CREATE]);
+            } else {
                 $model->scenario = State::SCENARIO_UPDATE;
             }
             $model->name = $state;
             $model->status = C::STATUS_ACTIVE;
-            if($model->validate() && $model->save()){
+            if ($model->validate() && $model->save()) {
                 $this->stateMapping[$model->name] = $model->id;
-                echo $model->id."----".$model->name.PHP_EOL;
+                echo $model->id . "----" . $model->name . PHP_EOL;
             }
         }
     }
 
-    public function addAdminUser(){
+    public function addAdminUser()
+    {
         $username = "sadmin";
-        $password =  strtolower(str_replace([" ","."],"",SITE_NAME))."@".date("Ymd"); 
+        $password =  strtolower(str_replace([" ", "."], "", SITE_NAME)) . "@" . date("Ymd");
         $model = User::findOne(['username' => $username]);
         if (!$model instanceof User) {
             $model = new User(['scenario' => User::SCENARIO_CREATE]);
             $model->name = "sadmin";
-            $model->username = "9999999999";
+            $model->username = "sadmin";
         } else {
             $model->scenario = User::SCENARIO_UPDATE;
         }
@@ -1303,5 +1311,36 @@ class InitController extends Controller
             return true;
         }
         return false;
+    }
+
+    public function departmentnData()
+    {
+        $data = [
+            'Accounts',
+            'Admin',
+            'Crusher Opretar',
+            'Developer',
+            'Helper',
+            'Logistics',
+            'Operator',
+            'Pcoland Opretar',
+            'ROSHAN LAVHALE',
+            'Sales',
+            'Supervisor',
+            'Support',
+            'Truck Driver'
+        ];
+
+        foreach ($data as  $name) {
+            $model = Department::findOne(['name' => $name]);
+            if (!$model instanceof Department) {
+                $model = new Department(['scenario' => Department::SCENARIO_CREATE]);
+                $model->name = $name;
+                $model->description = $name;
+                if ($model->validate() && $model->save()) {
+                    return "Department created ===>" . $model->name . "  id==>" . $model->id . PHP_EOL;
+                }
+            }
+        }
     }
 }

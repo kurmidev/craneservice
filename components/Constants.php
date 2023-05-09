@@ -76,8 +76,8 @@ class Constants
     ];
 
     const PACKAGE_SHIFT_TYPE = [
-        self::PACKAGE_SHIFT_TYPE_SHIFT => 1,
-        self::PACKAGE_SHIFT_TYPE_HOURS => 2
+        self::PACKAGE_SHIFT_TYPE_SHIFT => "Shift",
+        self::PACKAGE_SHIFT_TYPE_HOURS => "Hour"
     ];
 
     public static function getTimeList(){

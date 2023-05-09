@@ -92,7 +92,7 @@ use yii\web\View;
                             <th>Amount</th>
                             <th>Break Time</th>
                             <th>Up Time</th>
-                            <th>Remark</th>
+                            <th>Down Time</th>
                             <th>Action</th>
                         </tr>
                     </thead>
@@ -126,7 +126,7 @@ use yii\web\View;
                             <td>
                                 <?= $form->field($model, 'items[0][plan_start_time]', ['options' => ['class' => 'form-group']])->begin() ?>
                                 <div class="col-lg-12 col-sm-12 col-xs-12">
-                                    <?= Html::activeTextInput($model, 'items[0][plan_start_time]', ['class' => 'form-control timepick', "id" => "challanform_items_0_plan_start_time"]) ?>
+                                    <?= Html::activeTextInput($model, 'items[0][plan_start_time]', ['class' => 'form-control timepick caldiff', "id" => "challanform_items_0_plan_start_time","rel" => "challanform_items_0"]) ?>
                                     <?= Html::error($model, 'items[0][plan_start_time]', ['class' => 'error help-block']) ?>
                                 </div>
                                 <?= $form->field($model, 'items[0][plan_start_time]')->end() ?>
@@ -157,7 +157,7 @@ use yii\web\View;
                             <td>
                                 <?= $form->field($model, 'items[0][plan_end_time]', ['options' => ['class' => 'form-group']])->begin() ?>
                                 <div class="col-lg-12 col-sm-12 col-xs-12">
-                                    <?= Html::activeTextInput($model, 'items[0][plan_end_time]', ['class' => 'form-control timepick', 'id' => "challanform_items_0_plan_end_time"]) ?>
+                                    <?= Html::activeTextInput($model, 'items[0][plan_end_time]', ['class' => 'form-control timepick caldiff', 'id' => "challanform_items_0_plan_end_time","rel" => "challanform_items_0"]) ?>
                                     <?= Html::error($model, 'items[0][plan_end_time]', ['class' => 'error help-block']) ?>
                                 </div>
                                 <?= $form->field($model, 'items[0][plan_end_time]')->end() ?>
@@ -193,6 +193,7 @@ use yii\web\View;
                                     <?= Html::error($model, 'items[0][break_time]', ['class' => 'error help-block']) ?>
                                 </div>
                                 <?= $form->field($model, 'items[0][break_time]')->end() ?>
+                                <span id="challanform_items_0_break_time_span"></span>
                             </td>
 
                             <td>
@@ -202,15 +203,33 @@ use yii\web\View;
                                     <?= Html::error($model, 'items[0][up_time]', ['class' => 'error help-block']) ?>
                                 </div>
                                 <?= $form->field($model, 'items[0][up_time]')->end() ?>
-                            </td>
 
-                            <td>
-                                <?= $form->field($model, 'items[0][remark]', ['options' => ['class' => 'form-group']])->begin() ?>
+                                <?= $form->field($model, 'items[0][plan_extra_hours]', ['options' => ['class' => 'form-group']])->begin() ?>
                                 <div class="col-lg-12 col-sm-12 col-xs-12">
-                                    <?= Html::activeTextarea($model, 'items[0][remark]', ['class' => 'form-control', 'id' => 'challanform_items_0_remark']) ?>
-                                    <?= Html::error($model, 'items[0][remark]', ['class' => 'error help-block']) ?>
+                                    <?= Html::activeTextInput($model, 'items[0][plan_extra_hours]', ['class' => 'form-control', "id" => "challanform_items_0_plan_extra_hours"]) ?>
+                                    <?= Html::error($model, 'items[0][plan_extra_hours]', ['class' => 'error help-block']) ?>
                                 </div>
-                                <?= $form->field($model, 'items[0][remark]')->end() ?>
+                                <?= $form->field($model, 'items[0][plan_extra_hours]')->end() ?>
+
+
+                            </td>
+                            <td>
+                                <?= $form->field($model, 'items[0][down_time]', ['options' => ['class' => 'form-group']])->begin() ?>
+                                <div class="col-lg-12 col-sm-12 col-xs-12">
+                                    <?= Html::activeDropDownList($model, 'items[0][down_time]', C::getTimeList(), ['class' => 'form-control', 'prompt' => "Select option", "id" => "challanform_items_0_down_time"]) ?>
+                                    <?= Html::error($model, 'items[0][down_time]', ['class' => 'error help-block']) ?>
+                                </div>
+                                <?= $form->field($model, 'items[0][down_time]')->end() ?>
+
+                                <?= $form->field($model, 'items[0][plan_shift_type]', ['options' => ['class' => 'form-group']])->begin() ?>
+                                <div class="col-lg-12 col-sm-12 col-xs-12">
+                                    <?= Html::activeDropDownList($model, 'items[0][plan_shift_type]',C::PACKAGE_SHIFT_TYPE ,['class' => 'form-control', "id" => "challanform_items_0_plan_shift_type"]) ?>
+                                    <?= Html::error($model, 'items[0][plan_shift_type]', ['class' => 'error help-block']) ?>
+                                </div>
+                                <?= $form->field($model, 'items[0][plan_shift_type]')->end() ?>
+
+                              
+
                             </td>
 
                             <td>
@@ -240,15 +259,20 @@ use yii\web\View;
 
 $plans = PlanMaster::find()->active()->asArray()->all();
 
-$plan_amount_mapping = $plan_type_mapping = [];
+$plan_amount_mapping = $plan_type_mapping = $plan_shift_mapping = [];
 foreach ($plans as $plan) {
     $plan_type_mapping[$plan["id"]] = $plan['type'];
     $plan_amount_mapping[$plan["id"]] = $plan['price'];
+    if($plan['type']==C::PACKAGE_WISE_SHIFT){
+        $plan_shift_mapping[$plan["id"]] = $plan['shift_hrs'];
+    }
+    
 }
 
 $js = '
     var plan_type_mapping = ' . json_encode($plan_type_mapping) . ';
     var plan_amount_mapping = ' . json_encode($plan_amount_mapping) . ';
+    var plan_shift_mapping = ' . json_encode($plan_shift_mapping) . ';
     
 ';
 
@@ -258,10 +282,29 @@ $js = '
 $("#challanform_items_0_day_wise").hide();
 $("#challanform_items_0_plan_trip").hide();
 $("#challanform_items_0_from_destination").hide();
-
+$("#challanform_items_0_plan_shift_type").hide();
 
 $("#challanform_items_0_plan_measure").hide();
 $("#challanform_items_0_to_destination").hide();
+$("#challanform_items_0_plan_extra_hours").hide();
+
+$(".caldiff").change(function(){
+    var rel = $(this).attr("rel");
+    var starttime = $("#"+rel+"_plan_start_time").val();
+    var endtime = $("#"+rel+"_plan_end_time").val();
+    var planid = $("#"+rel+"_plan_id").val();
+    if(starttime!=="00:00" && endtime!=="00:00"){
+        startArr = starttime.split(":");
+        endArr = endtime.split(":");
+        diff = endArr[0]-startArr[0];
+        $("#"+rel+"_break_time_span").html(diff+"hrs");
+        extrahours = plan_shift_mapping[planid];
+        extra = diff - extrahours;
+        if(!isNaN(extra)){
+            $("#"+rel+"_plan_extra_hours").val(extra);
+        }
+    }
+});
 
 $(".challan_options").change(function () {
     var rel = $(this).attr("rel");
@@ -269,21 +312,37 @@ $(".challan_options").change(function () {
     var type =  plan_type_mapping[value];
     var amount = plan_amount_mapping[value];
     
+
+    $("#"+rel+"_day_wise").hide();
+    $("#"+rel+"_plan_trip").hide();
+    $("#"+rel+"_from_destination").hide();
+    $("#"+rel+"_plan_shift_type").hide();
+    
+    $("#challanform_items_0_plan_measure").hide();
+    $("#challanform_items_0_to_destination").hide();
+    $("#challanform_items_0_plan_extra_hours").hide();
+    
+
+
     switch (type) {
         case "1":
-            
+            alert("1");
+            $("#"+rel+"_plan_shift_type").hide();
+            $("#"+rel+"_plan_extra_hours").hide();
             break;
         case "2":
             alert(2);
             $("#"+rel+"_break_time").show();
             $("#"+rel+"_up_time").show();
-            $("#"+rel+"_plan_start_time").show();
+            $("#"+rel+"_plan_start_time").hide();
             $("#"+rel+"_plan_end_time").hide();
             $("#"+rel+"_day_wise").hide();
             $("#"+rel+"_plan_trip").hide();
             $("#"+rel+"_from_destination").hide();
             $("#"+rel+"_plan_measure").hide();
             $("#"+rel+"_to_destination").hide();
+            $("#"+rel+"_plan_extra_hours").hide();
+            $("#"+rel+"_day_wise").show();
             break;
         case "3":
             alert(3);
@@ -295,8 +354,14 @@ $(".challan_options").change(function () {
             $("#"+rel+"_day_wise").hide();
             $("#"+rel+"_plan_end_time").hide();
             $("#"+rel+"_from_destination").hide();
+            $("#"+rel+"_plan_extra_hours").hide();
             break;
         case "4":
+            alert("4");
+            $("#"+rel+"_from_destination").show();
+            $("#"+rel+"_to_destination").show();
+            $("#"+rel+"_plan_start_time").hide();
+            $("#"+rel+"_plan_end_time").hide();
             break;
         case "5":
             alert(5);
@@ -309,18 +374,22 @@ $(".challan_options").change(function () {
             $("#"+rel+"_from_destination").hide();
             $("#"+rel+"_plan_measure").hide();
             $("#"+rel+"_to_destination").hide();
+            $("#"+rel+"_plan_extra_hours").hide();
             break;
         case "6":
             alert(6);
             $("#"+rel+"_plan_start_time").show();
             $("#"+rel+"_plan_end_time").show();
+            $("#"+rel+"_plan_shift_type").show();
             $("#"+rel+"_break_time").hide();
             $("#"+rel+"_up_time").hide();
+            $("#"+rel+"_down_time").hide();
             $("#"+rel+"_day_wise").hide();
             $("#"+rel+"_plan_trip").hide();
             $("#"+rel+"_from_destination").hide();
             $("#"+rel+"_plan_measure").hide();
             $("#"+rel+"_to_destination").hide();
+            $("#"+rel+"_plan_extra_hours").show();
             break;
     }
     $("#"+rel+"_amount").val(amount);

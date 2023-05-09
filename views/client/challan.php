@@ -41,7 +41,7 @@ use app\models\PlanMaster;
                 "break_time",
                 "up_time",
                 "amount",
-                "total_amount",
+                "total",
                 [
                     'attribute' => 'invoice_id', 'label' => 'Is Invoice Generated',
                     'content' => function ($model) {

@@ -45,7 +45,7 @@ class Department extends \app\models\BaseModel
     public function rules()
     {
         return [
-            [['name', 'description'], 'required'],
+            [['name','status'], 'required'],
             [['status', 'created_by', 'updated_by'], 'integer'],
             [['created_at', 'updated_at'], 'safe'],
             [['name', 'description'], 'string', 'max' => 250],
