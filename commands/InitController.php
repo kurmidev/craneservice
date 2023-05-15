@@ -7,7 +7,6 @@ use app\models\State;
 use yii\console\Controller;
 use app\components\Constants as C;
 use app\models\City;
-use app\models\Department;
 use app\models\User;
 
 class InitController extends Controller
