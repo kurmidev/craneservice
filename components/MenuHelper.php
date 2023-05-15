@@ -32,7 +32,9 @@ class MenuHelper
                     ['module' => '', 'controller' => 'customer', 'action' => 'add-challan', 'label' => 'Add Challan', 'is_menu' => false, 'icon' => "icon icon ion-ios-photos-outline"],
                     ['module' => '', 'controller' => 'customer', 'action' => 'add-site', 'label' => 'Add Site', 'is_menu' => false, 'icon' => "icon icon ion-ios-photos-outline"],
                     ['module' => '', 'controller' => 'customer', 'action' => 'edit-site', 'label' => 'Edit Site', 'is_menu' => false, 'icon' => "icon icon ion-ios-photos-outline"],
-                    ['module' => '', 'controller' => 'customer', 'action' => 'print-challan', 'label' => 'Print Challan', 'is_menu' => false, 'icon' => "icon icon ion-ios-photos-outline"]
+                    ['module' => '', 'controller' => 'customer', 'action' => 'print-challan', 'label' => 'Print Challan', 'is_menu' => false, 'icon' => "icon icon ion-ios-photos-outline"],
+                    ['module' => '', 'controller' => 'customer', 'action' => 'add-invoice', 'label' => 'Add Invoice', 'is_menu' => false, 'icon' => "icon icon ion-ios-photos-outline"],
+                    ['module' => '', 'controller' => 'customer', 'action' => 'print-invoice', 'label' => 'Print Invoice', 'is_menu' => false, 'icon' => "icon icon ion-ios-photos-outline"],
                 ],
             ]
         ],
@@ -45,7 +47,13 @@ class MenuHelper
                     ['module' => '', 'controller' => 'vendor', 'action' => 'edit-vendor', 'label' => 'Edit Vendor', 'is_menu' => false, 'icon' => "icon icon ion-ios-photos-outline"],
                     ['module' => '', 'controller' => 'vendor', 'action' => 'view-vendor', 'label' => 'Customer Vendor', 'is_menu' => false, 'icon' => "icon icon ion-ios-photos-outline"],
                     ['module' => '', 'controller' => 'vendor', 'action' => 'add-challan', 'label' => 'Add Challan', 'is_menu' => false, 'icon' => "icon icon ion-ios-photos-outline"],
-                    ['module' => '', 'controller' => 'vendor', 'action' => 'print-challan', 'label' => 'Print Challan', 'is_menu' => false, 'icon' => "icon icon ion-ios-photos-outline"]
+                    ['module' => '', 'controller' => 'vendor', 'action' => 'print-challan', 'label' => 'Print Challan', 'is_menu' => false, 'icon' => "icon icon ion-ios-photos-outline"],
+                    ['module' => '', 'controller' => 'vendor', 'action' => 'add-challan', 'label' => 'Add Challan', 'is_menu' => false, 'icon' => "icon icon ion-ios-photos-outline"],
+                    ['module' => '', 'controller' => 'vendor', 'action' => 'add-site', 'label' => 'Add Site', 'is_menu' => false, 'icon' => "icon icon ion-ios-photos-outline"],
+                    ['module' => '', 'controller' => 'vendor', 'action' => 'edit-site', 'label' => 'Edit Site', 'is_menu' => false, 'icon' => "icon icon ion-ios-photos-outline"],
+                    ['module' => '', 'controller' => 'vendor', 'action' => 'print-challan', 'label' => 'Print Challan', 'is_menu' => false, 'icon' => "icon icon ion-ios-photos-outline"],
+                    ['module' => '', 'controller' => 'vendor', 'action' => 'add-invoice', 'label' => 'Add Invoice', 'is_menu' => false, 'icon' => "icon icon ion-ios-photos-outline"],
+                    ['module' => '', 'controller' => 'vendor', 'action' => 'print-invoice', 'label' => 'Print Invoice', 'is_menu' => false, 'icon' => "icon icon ion-ios-photos-outline"],
                 ]
             ]
         ],

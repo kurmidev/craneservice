@@ -60,9 +60,6 @@ class ChallanForm extends BaseForm
             } else {
                 return $this->create();
             }
-        }else{
-            print_r($this->errors);
-            exit;
         }
         return false;
     }
@@ -100,7 +97,7 @@ class ChallanForm extends BaseForm
                     $model->plan_shift_type = !empty($item['plan_shift_type']) ? $item['plan_shift_type'] : null;
                     $model->challan_image = !empty($item['challan_image']) ? $item['challan_image'] : null;
                     $model->invoice_id = null;
-                    $model->is_processed = "1";
+                    $model->is_processed = C::STATUS_INACTIVE;
                     $model->status = C::STATUS_ACTIVE;
                     $model->base_amount = $plan->price;
                     $model->amount = $plan->price;
@@ -142,5 +139,9 @@ class ChallanForm extends BaseForm
             }
         }
         return $is_valid;
+    }
+
+    public function update($id){
+
     }
 }

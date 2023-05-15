@@ -88,7 +88,17 @@ use app\components\Constants as C;
                                 'dataProvider' => $siteDataProvider,
                                 "model" => $model,
                             ]) ?>
-                        <?php } ?>
+                        <?php }else if (in_array($pg,["pending-invoice","invoice"])) {  ?>
+                            <?= $this->render("@app/views/client/invoice", [
+                                'searchModel' => $invoiceSearchModel,
+                                'dataProvider' => $invoiceDataProvider,
+                                "model" => $model,
+                                "addUrl" => $invoiceAddUrl,
+                                "editUrl" => $invoiceEditUrl,
+                                "viewUrl" => $invoiceViewUrl,
+                                "printUrl" => $invoicePrintUrl
+                            ]) ?>
+                            <?php }?>
 
                     </div>
                 </div>

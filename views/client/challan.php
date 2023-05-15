@@ -36,11 +36,24 @@ use app\models\PlanMaster;
                     },
                     'filter' => ArrayHelper::map(PlanMaster::find()->active()->all(), 'id', 'name'),
                 ],
+                [
+                    'attribute' => 'id', 'label' => 'D/C No',
+                    'content' => function ($model) {
+                        return $model->id;
+                    },
+                ],
+                [
+                    "attribute"=>"","label"=>"Total Hours/Qty",
+                    'content' => function($model){
+                        return $model->plan->type==C::PACKAGE_WISE_TRIP?$model->plan_trip:date('H:i', mktime(0, (strtotime($model->plan_end_time) - strtotime($model->plan_start_time)) / 60));
+                    }
+                ],
                 "plan_start_time",
                 "plan_end_time",
                 "break_time",
                 "up_time",
-                "amount",
+                "down_time",
+                "base_amount",
                 "total",
                 [
                     'attribute' => 'invoice_id', 'label' => 'Is Invoice Generated',
@@ -48,13 +61,11 @@ use app\models\PlanMaster;
                         return !empty($model->invoice_id) ? "Yes" : "No";
                     },
                 ],
-                'actionOn',
-                'actionBy',
                 [
                     "label" => "Action",
-                    "content" => function ($data) use ($editUrl,$printUrl) {
+                    "content" => function ($data) use ($editUrl, $printUrl) {
                         return Html::a(Html::tag('span', '', ['class' => 'fa fa-edit']), \Yii::$app->urlManager->createUrl([$editUrl, 'id' => $data['id']]), ['title' => 'Update ' . $data['challan_no'], 'class' => 'btn btn-primary-alt'])
-                        .Html::a(Html::tag('span', '', ['class' => 'fa fa-print']), \Yii::$app->urlManager->createUrl([$printUrl, 'id' => $data['id']]), ['title' => 'Update ' . $data['challan_no'], 'class' => 'btn btn-primary-alt']);
+                            . Html::a(Html::tag('span', '', ['class' => 'fa fa-print']), \Yii::$app->urlManager->createUrl([$printUrl, 'id' => $data['id']]), ['title' => 'Update ' . $data['challan_no'], 'class' => 'btn btn-primary-alt']);
                     }
                 ]
             ],

@@ -164,4 +164,8 @@ class Challan extends \app\models\BaseModel
     {
         return new ChallanQuery(get_called_class());
     }
+
+    public function getInvoice(){
+        return $this->hasOne(InvoiceMaster::class,['id'=>'invoice_id']);
+    }
 }

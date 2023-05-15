@@ -19,12 +19,12 @@ class Constants
         "12" => "12%",
         "18" => "18%"
     ];
-    CONST PACKAGE_WISE_CHALLAN = 1;
-    CONST PACKAGE_WISE_DAY = 2;
-    CONST PACKAGE_WISE_TRIP = 3;
-    CONST PACKAGE_WISE_DESTINATION = 4;
-    CONST PACKAGE_WISE_MONTH = 5;
-    CONST PACKAGE_WISE_SHIFT = 6;
+    const PACKAGE_WISE_CHALLAN = 1;
+    const PACKAGE_WISE_DAY = 2;
+    const PACKAGE_WISE_TRIP = 3;
+    const PACKAGE_WISE_DESTINATION = 4;
+    const PACKAGE_WISE_MONTH = 5;
+    const PACKAGE_WISE_SHIFT = 6;
     const PACKAGE_WISE = [
         self::PACKAGE_WISE_CHALLAN => "Challan Wise",
         self::PACKAGE_WISE_DAY => "Day Wise",
@@ -60,6 +60,8 @@ class Constants
     const PACKAGE_SHIFT_TYPE_SHIFT = 1;
     const PACKAGE_SHIFT_TYPE_HOURS = 2;
 
+    const INVOICE_TYPE_PERFORMA = 1;
+    const INVOICE_TYPE_GST = 2;
     const CLIENT_IS_LABEL = [
         self::CLIENT_IS_COMPANY => "Company",
         self::CLIENT_IS_INDIVIDUAL => "Individual"
@@ -80,9 +82,20 @@ class Constants
         self::PACKAGE_SHIFT_TYPE_HOURS => "Hour"
     ];
 
-    public static function getTimeList(){
+    const INVOICE_TYPE_LIST = [
+        self::INVOICE_TYPE_GST => "GST",
+        self::INVOICE_TYPE_PERFORMA => "Performa"
+    ];
+
+    const IS_YES_NO = [
+        0 => "No",
+        1 => "Yes"
+    ];
+
+    public static function getTimeList()
+    {
         $resp = [];
-        for($i=1;$i<61;$i++){
+        for ($i = 1; $i < 61; $i++) {
             $resp[$i] = "{$i} minutes";
         }
         return $resp;

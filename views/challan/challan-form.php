@@ -228,8 +228,6 @@ use yii\web\View;
                                 </div>
                                 <?= $form->field($model, 'items[0][plan_shift_type]')->end() ?>
 
-                              
-
                             </td>
 
                             <td>

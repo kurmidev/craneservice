@@ -18,7 +18,7 @@ class ChallanSearch extends Challan
     {
         return [
             [['id', 'client_id', 'plan_id', 'vehicle_id', 'day_wise', 'break_time', 'up_time', 'down_time', 'plan_extra_hours', 'plan_shift_type', 'invoice_id', 'is_processed', 'status', 'created_by', 'updated_by'], 'integer'],
-            [['challan_date', 'site_address', 'operator_id', 'helper_id', 'challan_no', 'plan_start_time', 'plan_end_time', 'plan_measure', 'plan_trip', 'from_destination', 'to_destination', 'challan_image', 'created_at', 'updated_on'], 'safe'],
+            [['challan_date', 'site_address', 'operator_id', 'helper_id', 'challan_no', 'plan_start_time', 'plan_end_time', 'plan_measure', 'plan_trip', 'from_destination', 'to_destination', 'challan_image', 'created_at', 'updated_at'], 'safe'],
             [['amount'], 'number'],
         ];
     }
@@ -77,7 +77,7 @@ class ChallanSearch extends Challan
             'is_processed' => $this->is_processed,
             'status' => $this->status,
             'created_at' => $this->created_at,
-            'updated_on' => $this->updated_on,
+            'updated_at' => $this->updated_at,
             'created_by' => $this->created_by,
             'updated_by' => $this->updated_by,
         ]);
