@@ -16,8 +16,14 @@ use app\models\ChallanSearch;
 use app\models\ClientSiteSearch;
 use app\models\InvoiceMaster;
 use app\models\InvoiceMasterSearch;
-use Symfony\Component\BrowserKit\Client;
 use Yii;
+use app\components\ConstFunc as F;
+use app\models\PaymentNotes;
+use app\models\PaymentNotesSearch;
+use app\models\Payments;
+use app\models\PaymentsDetails;
+use app\models\PaymentsDetailsSearch;
+use app\models\PaymentSearch;
 
 /**
  * ClientController implements the CRUD actions for ClientMaster model.
@@ -64,7 +70,11 @@ class ClientController extends BaseController
             $searchModel = new ChallanSearch();
             $dataProvider = $searchModel->search($this->request->queryParams);
             $dataProvider->query->andWhere(["client_id" => $model->id]);
-
+            if ($pg == "pending-challan") {
+                $dataProvider->query->andWhere(['is_processed' => C::STATUS_INACTIVE, 'invoice_id' => 0]);
+            } else {
+                $dataProvider->query->andWhere(['is_processed' => C::STATUS_ACTIVE])->andWhere(['>', 'invoice_id', 0]);
+            }
 
             $siteSearchModel = new ClientSiteSearch();
             $siteDataProvider = $siteSearchModel->search($this->request->queryParams);
@@ -73,17 +83,30 @@ class ClientController extends BaseController
 
             $invoiceSearchModel = new InvoiceMasterSearch();
             $invoiceDataProvider = $invoiceSearchModel->search($this->request->queryParams);
-            if($pg=="pending-invoice"){
+            if ($pg == "pending-invoice") {
                 $invoiceDataProvider->query->andWhere(["client_id" => $model->id, "status" => C::STATUS_INACTIVE]);
-            }else {
+            } else {
                 $invoiceDataProvider->query->andWhere(["client_id" => $model->id, "status" => C::STATUS_ACTIVE]);
             }
-            
+
+            $invoiceAmount = Challan::find()->where(['client_id' => $model->id, 'is_processed' => C::STATUS_ACTIVE])->andWhere([">", "invoice_id", 0])->active()->sum("total-amount_paid");
+
+
+            $paymentSearchModel = new PaymentSearch();
+            $paymentDataProvider = $paymentSearchModel->search($this->request->queryParams);
+            $paymentDataProvider->query->andWhere(["client_id" => $model->id]);
+
+            $notesSearchModel = new PaymentNotesSearch();
+            $notesDataProvider = $notesSearchModel->search($this->request->queryParams);
+            $notesDataProvider->query->andWhere(["client_id" => $model->id]);
+
+
 
 
             return $this->render('@app/views/client/view', [
                 'model' => $model,
                 "title" => $this->title,
+                "balance" => $invoiceAmount,
                 "baseUrl" => $baseUrl,
                 'searchModel' => $searchModel,
                 'dataProvider' => $dataProvider,
@@ -100,10 +123,20 @@ class ClientController extends BaseController
                 "siteSearchModel" => $siteSearchModel,
                 "invoiceDataProvider" => $invoiceDataProvider,
                 "invoiceSearchModel" => $invoiceSearchModel,
+                "paymentDataProvider" => $paymentDataProvider,
+                "paymentSearchModel" => $paymentSearchModel,
+                "notesDataProvider" => $notesDataProvider,
+                "notesSearchModel" => $notesSearchModel,
                 "invoiceAddUrl" => $this->clientType == C::CLIENT_TYPE_CUSTOMER ?   "customer/add-invoice" : "vendor/add-invoice",
                 "invoiceEditUrl" => $this->clientType == C::CLIENT_TYPE_CUSTOMER ?  "customer/edit-invoice" : "vendor/edit-invoice",
                 "invoiceViewUrl" => $this->clientType == C::CLIENT_TYPE_CUSTOMER ?  "customer/view-invoice" : "vendor/view-invoice",
-                "invoicePrintUrl" => $this->clientType == C::CLIENT_TYPE_CUSTOMER ? "customer/print-invoice" : "vendor/print-invoice"
+                "invoicePrintUrl" => $this->clientType == C::CLIENT_TYPE_CUSTOMER ? "customer/print-invoice" : "vendor/print-invoice",
+                "invoicePayUrl" => $this->clientType == C::CLIENT_TYPE_CUSTOMER ? "customer/pay-invoice" : "vendor/pay-invoice",
+                "viewPaymentDetails" => $this->clientType == C::CLIENT_TYPE_CUSTOMER ? "customer/pay-details" : "vendor/pay-details",
+                "printPayment" => $this->clientType == C::CLIENT_TYPE_CUSTOMER ? "customer/print-receipt" : "vendor/print-receipt",
+                "noteAddUrl" => $this->clientType == C::CLIENT_TYPE_CUSTOMER ?   "customer/add-note" : "vendor/add-note",
+                "noteEditUrl" => $this->clientType == C::CLIENT_TYPE_CUSTOMER ?  "customer/edit-note" : "vendor/edit-note",
+                "notePrint" => $this->clientType == C::CLIENT_TYPE_CUSTOMER ? "customer/print-note" : "vendor/print-note",
             ]);
         }
 
@@ -308,8 +341,8 @@ class ClientController extends BaseController
                 $title = $this->clientType == C::CLIENT_TYPE_CUSTOMER ? "Customer" : "Vendor";
                 $redirectUrl = $this->clientType == C::CLIENT_TYPE_CUSTOMER ? "customer/view-customer" : "vendor/view-vendor";
                 \Yii::$app->getSession()->setFlash('s', "Invoice has been added successfully.");
-                return $this->redirect([$redirectUrl, "id" => $id]);
-            }else{
+                return $this->redirect([$redirectUrl, "id" => $id, "pg" => "pending-invoice"]);
+            } else {
                 echo "<pre>";
                 print_r($model->errors);
                 exit;
@@ -320,6 +353,140 @@ class ClientController extends BaseController
             'model' => $model,
             "title" => $this->title,
             "challan_list" => $challanList
+        ]);
+    }
+
+    /**
+     * Creates a new ClientMaster model.
+     * If creation is successful, the browser will be redirected to the 'view' page.
+     * @return string|\yii\web\Response
+     */
+    public function actionPrintInvoice($id)
+    {
+        $this->layout = false;
+        $model = InvoiceMaster::find()->where(['invoice_master.id' => $id])->joinWith(['client'])->with(['challans'])->one();
+        $filename = "invoice_{$model->invoice_no}.pdf";
+        $content = $this->render('@app/views/client/print-invoice', [
+            'model' => $model
+        ]);
+
+        return F::printPdf($content, $filename);
+    }
+
+    public function actionPayInvoice($id)
+    {
+        $client = ClientMaster::findOne(['id' => $id]);
+        if (!$client instanceof ClientMaster) {
+            $redirectUrl = $this->clientType == C::CLIENT_TYPE_CUSTOMER ? "customer" : "vendor";
+            \Yii::$app->getSession()->setFlash('e', "Record not found!");
+            return $this->redirect([$redirectUrl]);
+        }
+        $model = new Payments(['scenario' => Payments::SCENARIO_CREATE]);
+        $model->client_id = $client->id;
+        $model->client_type = $client->type;
+        $model->status = C::STATUS_ACTIVE;
+        if ($this->request->isPost) {
+            if ($model->load($this->request->post()) && $model->validate() && $model->save()) {
+                $title = $this->clientType == C::CLIENT_TYPE_CUSTOMER ? "Customer" : "Vendor";
+                $redirectUrl = $this->clientType == C::CLIENT_TYPE_CUSTOMER ? "customer/view-customer" : "vendor/view-vendor";
+                \Yii::$app->getSession()->setFlash('s', "Invoice has been added successfully.");
+                return $this->redirect([$redirectUrl, "id" => $id, "pg" => "payment"]);
+            }
+        }
+        $invoiceAmount = InvoiceMaster::find()->where(['client_id' => $client->id, 'client_type' => $client->client_type])->active()->sum("total");
+        $paymentDone = Payments::find()->where(['client_id' => $client->id, 'client_type' => $client->client_type])->active()->sum("amount_paid");
+        $model->amount_paid = !empty($model->amount_paid) ? $model->amount_paid : ($invoiceAmount - $paymentDone);
+        return $this->render('@app/views/payments/form-payment', [
+            'model' => $model,
+        ]);
+    }
+
+    public function actionPayDetails($id, $pay_id)
+    {
+        $model = Payments::findOne(['id' => $pay_id, 'client_id' => $id]);
+        if ($model instanceof Payments) {
+            $searchModel = new PaymentsDetailsSearch();
+            $dataProvider = $searchModel->search($this->request->queryParams);
+
+            if (!empty($id)) {
+                $dataProvider->query->andWhere(['client_id' => $id]);
+            }
+            if (!empty($pay_id)) {
+                $dataProvider->query->andWhere(['payment_id' => $pay_id]);
+            }
+            return $this->render('@app/views/payments/payment_details', [
+                'searchModel' => $searchModel,
+                'dataProvider' => $dataProvider,
+                "title" => $model->receipt_no,
+                
+            ]);
+        }
+
+        $redirectUrl = $this->clientType == C::CLIENT_TYPE_CUSTOMER ? "customer/index" : "vendor/index";
+        \Yii::$app->getSession()->setFlash('e', "Record not found!");
+        return $this->redirect([$redirectUrl]);
+    }
+
+    public function actionPrintReceipt($id)
+    {
+        $this->layout = false;
+        $model = Payments::findOne(['id' => $id]);
+        $filename = "invoice_{$model->receipt_no}.pdf";
+         $content = $this->render('@app/views/payments/print-receipt', [
+            'model' => $model
+        ]);
+
+        return F::printPdf($content, $filename);
+    }
+
+    public function actionAddNote($id)
+    {
+        $client = ClientMaster::findOne(['id' => $id]);
+        if (!$client instanceof ClientMaster) {
+            $redirectUrl = $this->clientType == C::CLIENT_TYPE_CUSTOMER ? "customer" : "vendor";
+            \Yii::$app->getSession()->setFlash('e', "Record not found!");
+            return $this->redirect([$redirectUrl]);
+        }
+        $model = new PaymentNotes(['scenario' => PaymentNotes::SCENARIO_CREATE]);
+        $model->client_id = $client->id;
+        $model->client_type = $client->type;
+        $model->status = C::STATUS_ACTIVE;
+        if ($this->request->isPost) {
+            if ($model->load($this->request->post()) && $model->validate() && $model->save()) {
+                $title = $this->clientType == C::CLIENT_TYPE_CUSTOMER ? "Customer" : "Vendor";
+                $redirectUrl = $this->clientType == C::CLIENT_TYPE_CUSTOMER ? "customer/view-customer" : "vendor/view-vendor";
+                \Yii::$app->getSession()->setFlash('s', "Payment Notes has been added successfully.");
+                return $this->redirect([$redirectUrl, "id" => $id, "pg" => "credit_notes"]);
+            }else{
+                print_r($model->errors);
+                exit;
+            }
+        }
+        return $this->render('@app/views/payments/form-creditnotes', [
+            'model' => $model,
+        ]);
+    }
+
+    public function actionEditNote($id,$note_id)
+    {
+        $client = ClientMaster::findOne(['id' => $id]);
+        if (!$client instanceof ClientMaster) {
+            $redirectUrl = $this->clientType == C::CLIENT_TYPE_CUSTOMER ? "customer" : "vendor";
+            \Yii::$app->getSession()->setFlash('e', "Record not found!");
+            return $this->redirect([$redirectUrl]);
+        }
+        $model = PaymentNotes::findOne(['id'=>$note_id]);
+        $model->scenario = PaymentNotes::SCENARIO_UPDATE;
+        if ($this->request->isPost) {
+            if ($model->load($this->request->post()) && $model->validate() && $model->save()) {
+                $title = $this->clientType == C::CLIENT_TYPE_CUSTOMER ? "Customer" : "Vendor";
+                $redirectUrl = $this->clientType == C::CLIENT_TYPE_CUSTOMER ? "customer/view-customer" : "vendor/view-vendor";
+                \Yii::$app->getSession()->setFlash('s', "Payment Notes has been updated successfully.");
+                return $this->redirect([$redirectUrl, "id" => $id, "pg" => "credit_notes"]);
+            }
+        }
+        return $this->render('@app/views/payments/form-creditnotes', [
+            'model' => $model,
         ]);
     }
 }

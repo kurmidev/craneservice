@@ -39,8 +39,9 @@ class ChallanForm extends BaseForm
         $valid = (new DynamicModel(['plan_id', 'vehicle_id', 'challan_no', 'plan_start_time', 'day_wise', 'plan_trip', 'from_destination', 'plan_end_time', 'plan_measure', 'to_destination', 'amount', 'break_time', 'up_time', 'remark']))
             ->addRule(['plan_id', 'vehicle_id'], 'required')
             ->addRule(['challan_no', 'from_destination', 'to_destination', 'remark'], "string")
-            ->addRule(['plan_id', 'vehicle_id', 'plan_measure', 'break_time', 'up_time'], 'integer')
-            ->addRule(['plan_start_time', 'day_wise', 'plan_trip', 'from_destination', 'plan_end_time', 'plan_measure', 'to_destination', 'amount', 'break_time', 'up_time', 'remark'], 'safe');
+            ->addRule(['plan_id', 'vehicle_id', 'plan_measure', 'break_time', 'up_time','plan_trip'], 'integer')
+            ->addRule(['amount','extra','tax','total','base_amount','payment_status','amount_paid'], 'number')
+            ->addRule(['plan_start_time', 'day_wise', 'from_destination', 'plan_end_time', 'to_destination','remark'], 'safe');
 
         return [
             [["challan_date", 'client_id'], 'required'],
@@ -124,15 +125,11 @@ class ChallanForm extends BaseForm
                         //do nothings
                     }
                     $totalAmount = $model->amount + $model->extra;
-                    //$model->tax = F::calculateTax($totalAmount, $plan->tax_slot);
-                    $model->total = $totalAmount;
+                    $model->tax = F::calculateTax($totalAmount, $plan->tax_slot);
+                    $model->total = $totalAmount+$model->tax;
                     if ($model->validate() && $model->save()) {
                         $is_valid = $is_valid &&  true;
                     } else {
-                        echo "<pre>";
-                        print_r($model->attributes);
-                        print_r($model->errors);
-                        exit;
                         $is_valid = $is_valid && false;
                     }
                 }
@@ -140,6 +137,52 @@ class ChallanForm extends BaseForm
         }
         return $is_valid;
     }
+
+  /**
+     * {@inheritdoc}
+     */
+    public function attributeLabels()
+    {
+        return [
+            'id' => 'ID',
+            'client_id' => 'Client',
+            'challan_date' => 'Challan Date',
+            'site_address' => 'Site Address',
+            'operator_id' => 'Operator',
+            'helper_id' => 'Helper',
+            'plan_id' => 'Plan',
+            'vehicle_id' => 'Vehicle',
+            'challan_no' => 'Challan No',
+            'plan_start_time' => 'Plan Start Time',
+            'plan_end_time' => 'Plan End Time',
+            'day_wise' => 'Day Wise',
+            'plan_measure' => 'Plan Measure',
+            'plan_trip' => 'Plan Trip',
+            'from_destination' => 'From Destination',
+            'to_destination' => 'To Destination',
+            'base_amount'=> 'Base Amount',
+            'amount' => 'Amount',
+            'extra' => 'Extra Charages',
+            'tax' => 'Tax',
+            'total' => 'Total',
+            'payment_status'=>'Payment Status',
+            'amount_paid'=>"Amount Paid",
+            'break_time' => 'Break Time',
+            'up_time' => 'Up Time',
+            'down_time' => 'Down Time',
+            'plan_extra_hours' => 'Plan Extra Hours',
+            'plan_shift_type' => 'Plan Shift Type',
+            'challan_image' => 'Challan Image',
+            'invoice_id' => 'Invoice',
+            'is_processed' => 'Is Processed',
+            'status' => 'Status',
+            'created_at' => 'Created At',
+            'updated_on' => 'Updated On',
+            'created_by' => 'Created By',
+            'updated_by' => 'Updated By',
+        ];
+    }
+
 
     public function update($id){
 

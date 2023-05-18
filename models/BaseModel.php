@@ -47,9 +47,9 @@ class BaseModel extends ActiveRecord
 
     public function getActionOn()
     {
-        return is_null($this->updated_on) ?
+        return empty($this->updated_at) ?
             Yii::$app->formatter->asDatetime($this->created_at, 'php:d M Y H:i') :
-            Yii::$app->formatter->asDatetime($this->updated_on, 'php:d M Y H:i');
+            Yii::$app->formatter->asDatetime($this->updated_at, 'php:d M Y H:i');
     }
 
     /*
@@ -65,5 +65,10 @@ class BaseModel extends ActiveRecord
             return $crdObj->name;
         }
         return null;
+    }
+
+    public function generateSequence($prefix,$type,$typeFor=null){
+        $seq = CodeSequence::getNextSequnce($type,$typeFor);
+        return $prefix."/".$seq;
     }
 }

@@ -2,13 +2,12 @@
 
 namespace app\models;
 
-use app\components\Constants as C;
 /**
- * This is the ActiveQuery class for [[InvoiceMaster]].
+ * This is the ActiveQuery class for [[CodeSequence]].
  *
- * @see InvoiceMaster
+ * @see CodeSequence
  */
-class InvoiceMasterQuery extends \app\models\BaseQuery
+class CodeSequenceQuery extends \app\models\BaseQuery
 {
     /*public function active()
     {
@@ -17,7 +16,7 @@ class InvoiceMasterQuery extends \app\models\BaseQuery
 
     /**
      * {@inheritdoc}
-     * @return InvoiceMaster[]|array
+     * @return CodeSequence[]|array
      */
     public function all($db = null)
     {
@@ -26,14 +25,10 @@ class InvoiceMasterQuery extends \app\models\BaseQuery
 
     /**
      * {@inheritdoc}
-     * @return InvoiceMaster|array|null
+     * @return CodeSequence|array|null
      */
     public function one($db = null)
     {
         return parent::one($db);
-    }
-
-    public function active(){
-        return $this->andWhere(['status'=>[C::STATUS_ACTIVE,C::STATUS_INACTIVE]]);
     }
 }

@@ -3,13 +3,14 @@
 use app\components\MenuHelper;
 
 $data = MenuHelper::renderPageTitle($this->context->action->controller->id, $this->context->action->id);
+$title= !empty($data['title'])?$data['title']:(!empty($this->title)?$this->title:"");
 
 ?>
 <div class="content-header">
   <div class="container-fluid">
     <div class="row mb-2">
       <div class="col-sm-6">
-        <h1 class="m-0"><?= $data['title'] ?></h1>
+        <h1 class="m-0"><?= $title ?></h1>
       </div><!-- /.col -->
       <div class="col-sm-6">
       </div><!-- /.col -->

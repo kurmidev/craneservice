@@ -11,7 +11,7 @@ class CustomerController extends ClientController{
     public function __construct($id,$module)
     {
         $this->clientType = C::CLIENT_TYPE_CUSTOMER;
-        $this->title = "Vendor";
+        $this->title = "Client";
         parent::__construct($id,$module);
     }
     public function actionAddCustomer(){

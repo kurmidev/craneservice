@@ -92,12 +92,32 @@ class Constants
         1 => "Yes"
     ];
 
+
+    const PAYMENT_MODE_CASH = 1;
+    const PAYMENT_MODE_CHEQUE = 2;
+    const PAYMENT_MODE_ONLINE = 3;
+    const PAYMENT_MODE_CREDIT = 4;
+    const PAYMENT_MODE_OTHER = 5;
+
+    const PAYMENT_STATUS_NOT_PAID = 0;
+    const PAYMENT_STATUS_HALF_PAID = 1;
+    const PAYMENT_STAUS_FULLY_PAID = 2;
+
+    const PAYMENT_MODE_LIST= [
+        self::PAYMENT_MODE_CASH => "CASH",
+        self::PAYMENT_MODE_CHEQUE => "Cheque",
+        self::PAYMENT_MODE_OTHER => "Other"
+    ];
+
     public static function getTimeList()
     {
         $resp = [];
         for ($i = 1; $i < 61; $i++) {
             $resp[$i] = "{$i} minutes";
         }
+        $resp[120]= "2 hrs";
+        $resp[150]= "2:30 hrs";
+        $resp[180]= "3 hrs";
         return $resp;
     }
 }

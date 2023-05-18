@@ -53,7 +53,7 @@ use app\models\PlanMaster;
                 "break_time",
                 "up_time",
                 "down_time",
-                "base_amount",
+                "amount",
                 "total",
                 [
                     'attribute' => 'invoice_id', 'label' => 'Is Invoice Generated',
@@ -65,7 +65,7 @@ use app\models\PlanMaster;
                     "label" => "Action",
                     "content" => function ($data) use ($editUrl, $printUrl) {
                         return Html::a(Html::tag('span', '', ['class' => 'fa fa-edit']), \Yii::$app->urlManager->createUrl([$editUrl, 'id' => $data['id']]), ['title' => 'Update ' . $data['challan_no'], 'class' => 'btn btn-primary-alt'])
-                            . Html::a(Html::tag('span', '', ['class' => 'fa fa-print']), \Yii::$app->urlManager->createUrl([$printUrl, 'id' => $data['id']]), ['title' => 'Update ' . $data['challan_no'], 'class' => 'btn btn-primary-alt']);
+                            . Html::a(Html::tag('span', '', ['class' => 'fa fa-print']), \Yii::$app->urlManager->createUrl([$printUrl, 'id' => $data['id']]), ['title' => 'Print ' . $data['challan_no'], 'class' => 'btn btn-primary-alt']);
                     }
                 ]
             ],

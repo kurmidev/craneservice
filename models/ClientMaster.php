@@ -136,4 +136,28 @@ class ClientMaster extends \app\models\BaseModel
     {
         return new ClientMasterQuery(get_called_class());
     }
+
+    public function getPayments()
+    {
+        return $this->hasMany(Payments::class, ['client_id' => 'id', 'client_type' => 'client_type']);
+    }
+
+
+    public function getChallan()
+    {
+        return $this->hasMany(Challan::class, ['client_id' => 'id']);
+    }
+
+    public function getChallanAmount(){
+        return $this->hasMany(Challan::class,['client_id' => 'id'])->sum("total");
+    }
+
+
+    public function getPaymentAmount(){
+        return $this->hasMany(Payments::class,['client_id' => 'id','client_type'=>'client_type'])->sum("amount_paid");
+    }
+
+    public function getBalance(){
+        return $this->challanAmount - $this->paymentAmount;
+    }
 }

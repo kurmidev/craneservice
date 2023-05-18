@@ -40,7 +40,12 @@ use app\models\State;
                     'filter' => ArrayHelper::map(CompanyMaster::find()->active()->all(), 'id', 'name'),
                 ],
                 'company_name',
-                'first_name',
+                [
+                    "attribute"=>"first_name","label"=>'First Name',
+                    "content"=> function($model) use ($viewUrl){
+                        return Html::a($model->first_name." ".$model->last_name,Yii::$app->urlManager->createUrl([$viewUrl, 'id' => $model->id]),["target"=>"_blank"]);
+                    }
+                ],
                 //'last_name',
                 'email:email',
                 'mobile_no',

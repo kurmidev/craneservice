@@ -107,20 +107,35 @@ class InvoiceForm extends BaseForm
 
     public function mapChallans($challan_ids, $id)
     {
+        $challanIds = [];
+        foreach ($challan_ids as $ids => $istrue) {
+            if ($istrue) {
+                $challanIds[] = $ids;
+            }
+        }
+
         Challan::updateAll(['is_processed' => 0, "invoice_id" => null], ['invoice_id' => $id]);
         $base_amount = $tax_amount = 0;
-        $challans = Challan::find()->where(['id' => $challan_ids])->all();
+        $challans = Challan::find()->where(['id' => $challanIds, 'is_processed' => 0, "invoice_id" => null])->all();
         foreach ($challans as $challan) {
-            $base_amount += $challan->total;
-            $tax_amount +=  F::calculateTax($challan->total, $challan->plan->tax_slot);
             $challan->scenario = Challan::SCENARIO_UPDATE;
             $challan->invoice_id = $id;
             $challan->is_processed = 1;
-            $challan->save(false);
+            if ($challan->validate() && $challan->save()) {
+                $base_amount += $challan->total;
+                $tax_amount +=  ($this->is_tax_applicable)? F::calculateTax($challan->total, $challan->plan->tax_slot):0;
+            }
         }
-
-        if ($base_amount > 0) {
-            InvoiceMaster::updateAll(['base_amount' => $base_amount, 'discount_amount' => $this->discount_amount, 'tax' => $tax_amount, 'tds' => $this->tds, 'total' => ($base_amount - $this->discount_amount + $tax_amount)], ['id' => $id]);
-        }
+        $discountAmount = is_null($this->discount_amount) ? 0 : $this->discount_amount;
+       $recods  =  InvoiceMaster::updateAll(
+            [
+                'base_amount' => $base_amount,
+                'discount_amount' => $discountAmount,
+                'tax' => $tax_amount,
+                'tds' => is_null($this->tds) ? 0 : $this->tds,
+                'total' => ($base_amount - $discountAmount  + $tax_amount)
+            ],
+            ['id' => $id]
+        );
     }
 }

@@ -4,6 +4,7 @@ use yii\helpers\Html;
 use app\components\Constants as C;
 
 ?>
+
 <div class="container-fluid">
     <div class="row">
         <div class="col-md-3">
@@ -46,22 +47,31 @@ use app\components\Constants as C;
         <div class="col-md-9">
             <div class="card">
                 <div class="card-header p-2">
+                    <strong> Total Outstanding : <b><?= CURRENCY_SYMBOL ?> <?= $balance ?></b></strong>
+                </div>
+                <div class="card-header p-2">
 
                     <ul class="nav nav-pills">
                         <li class="nav-item">
-                            <?= Html::a("Pending Challan", Yii::$app->urlManager->createUrl([$baseUrl, "pg" => 'pending-challan', "id" => $model->id]), ["class" => "nav-link  " . ($pg == "pending-challan" ? "active" : "")]) ?>
+                            <?= Html::a("Pending Challan", Yii::$app->urlManager->createUrl([$baseUrl, "pg" => 'pending-challan', "id" => $model->id]), ["class" => "nav-link  " . ($pg == "pending-challan" || $pg == "" ? "active" : "")]) ?>
                         </li>
                         <li class="nav-item">
                             <?= Html::a("Challan List", Yii::$app->urlManager->createUrl([$baseUrl, "pg" => 'challan-list', "id" => $model->id]), ["class" => "nav-link " . ($pg == "challan-list" ? "active" : "")]) ?>
                         </li>
                         <li class="nav-item">
-                            <?= Html::a("Pending Invoice", Yii::$app->urlManager->createUrl([$baseUrl, "pg" => 'pending-invoice', "id" => $model->id]), ["class" => "nav-link " . ($pg == "pending-invoice" ? "active" : "")]) ?>
+                            <?= Html::a("Invoice", Yii::$app->urlManager->createUrl([$baseUrl, "pg" => 'pending-invoice', "id" => $model->id]), ["class" => "nav-link " . ($pg == "pending-invoice" ? "active" : "")]) ?>
                         </li>
                         <li class="nav-item">
-                            <?= Html::a("Invoice History", Yii::$app->urlManager->createUrl([$baseUrl, "pg" => 'invoice', "id" => $model->id]), ["class" => "nav-link " . ($pg == "invoice" ? "active" : "")]) ?>
+                            <?= Html::a("Payment", Yii::$app->urlManager->createUrl([$baseUrl, "pg" => 'payment', "id" => $model->id]), ["class" => "nav-link " . ($pg == "payment" ? "active" : "")]) ?>
                         </li>
                         <li class="nav-item">
-                            <?= Html::a("Payment History", Yii::$app->urlManager->createUrl([$baseUrl, "pg" => 'payment', "id" => $model->id]), ["class" => "nav-link " . ($pg == "payment" ? "active" : "")]) ?>
+                            <?= Html::a("Credit Notes", Yii::$app->urlManager->createUrl([$baseUrl, "pg" => 'credit_notes', "id" => $model->id]), ["class" => "nav-link " . ($pg == "credit_notes" ? "active" : "")]) ?>
+                        </li>
+                        <li class="nav-item">
+                            <?= Html::a("Quotation", Yii::$app->urlManager->createUrl([$baseUrl, "pg" => 'quotation', "id" => $model->id]), ["class" => "nav-link " . ($pg == "quotation" ? "active" : "")]) ?>
+                        </li>
+                        <li class="nav-item">
+                            <?= Html::a("Logs", Yii::$app->urlManager->createUrl([$baseUrl, "pg" => 'logs', "id" => $model->id]), ["class" => "nav-link " . ($pg == "payment" ? "active" : "")]) ?>
                         </li>
                         <?php if ($model->client_type == C::CLIENT_TYPE_CUSTOMER) { ?>
                             <li class="nav-item">
@@ -88,7 +98,7 @@ use app\components\Constants as C;
                                 'dataProvider' => $siteDataProvider,
                                 "model" => $model,
                             ]) ?>
-                        <?php }else if (in_array($pg,["pending-invoice","invoice"])) {  ?>
+                        <?php } else if (in_array($pg, ["pending-invoice", "invoice"])) {  ?>
                             <?= $this->render("@app/views/client/invoice", [
                                 'searchModel' => $invoiceSearchModel,
                                 'dataProvider' => $invoiceDataProvider,
@@ -96,9 +106,36 @@ use app\components\Constants as C;
                                 "addUrl" => $invoiceAddUrl,
                                 "editUrl" => $invoiceEditUrl,
                                 "viewUrl" => $invoiceViewUrl,
-                                "printUrl" => $invoicePrintUrl
+                                "printUrl" => $invoicePrintUrl,
+                                "payUrl" => $invoicePayUrl
                             ]) ?>
-                            <?php }?>
+                        <?php } else if (in_array($pg, ["payment"])) { ?>
+                            <?= $this->render("@app/views/payments/payment", [
+                                'searchModel' => $paymentSearchModel,
+                                'dataProvider' => $paymentDataProvider,
+                                "model" => $model,
+                                "detailUrl" => $viewPaymentDetails,
+                                "printlUrl" => $printPayment
+                            ]) ?>
+                        <?php } else if (in_array($pg, ["credit_notes"])) { ?>
+                            <?= $this->render("@app/views/payments/credit-notes", [
+                                'searchModel' => $notesSearchModel,
+                                'dataProvider' => $notesDataProvider,
+                                "model" => $model,
+                                "addUrl" => $noteAddUrl,
+                                "editUrl" => $noteEditUrl,
+                                "printUrl" => $notePrint
+                            ]) ?>
+                        <?php } else if (in_array($pg, ["quotation"])) { ?>
+                            <?= $this->render("@app/views/payments/quotation", [
+                                'searchModel' => $paymentSearchModel,
+                                'dataProvider' => $paymentDataProvider,
+                                "model" => $model,
+                                "detailUrl" => $viewPaymentDetails,
+                                "printUrl" => $notePrint
+                            ]) ?>
+
+                        <?php } ?>
 
                     </div>
                 </div>

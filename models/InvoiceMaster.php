@@ -4,7 +4,8 @@ namespace app\models;
 
 use Symfony\Component\BrowserKit\Client;
 use Yii;
-
+use app\components\Constants as C;
+use app\components\ConstFunc as F;
 /**
  * This is the model class for table "invoice_master".
  *
@@ -107,10 +108,20 @@ class InvoiceMaster extends \app\models\BaseModel
 
     public function getChallans()
     {
-        return $this->hasMany(Challan::class, ['invoice_id' => 'id']);
+        return $this->hasMany(Challan::class, ['invoice_id' => 'id'])->with(['plan']);
     }
 
     public function getClient(){
         return $this->hasOne(ClientMaster::class,['id'=>'client_id','client_type'=>'client_type']);
+    }
+
+    public function beforeSave($insert){
+        parent::beforeSave($insert);
+        if(!empty($insert) && empty($this->invoice_no)){
+            $type = $this->invoice_type==C::INVOICE_TYPE_GST?"INVOICE_GST":"INVOICE_PERFORMA";
+            $prefix = $this->invoice_type==C::INVOICE_TYPE_GST?"IN/".F::getFY($this->invoice_date) :"PR";
+            $this->invoice_no = $this->generateSequence($prefix,$type);
+        }
+        return true;
     }
 }

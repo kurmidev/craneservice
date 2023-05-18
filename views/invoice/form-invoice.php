@@ -102,7 +102,7 @@ use app\components\Constants as C;
                                 <td><?= $challan['plan_start_time']!="00:00:00"? $challan["plan_start_time"]:(!empty($challan['day_wise'])?$challan['day_wise']:(!empty($challan['plan_trip'])?$challan['plan_trip']:$challan['from_destination']) )?></td>
                                 <td><?= $challan['plan_end_time']!="00:00:00"? $challan["plan_end_time"]:(!empty($challan['plan_measure'])?$challan['plan_measure']:$challan['to_destination'])?></td>
                                 <td><?= !empty($challan['plan_start_time'])   ? date("H:i", (strtotime($challan['plan_start_time']) - strtotime($challan['plan_end_time']))) : $challan['plan_measure'] ?></td>
-                                <td><?= $challan["base_amount"] ?></td>
+                                <td><?= $challan["amount"] ?></td>
                                 <td><?= $challan["total"] ?></td>
                                 <td>
                                     <div class="p-10">

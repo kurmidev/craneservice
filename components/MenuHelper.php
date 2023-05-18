@@ -35,6 +35,10 @@ class MenuHelper
                     ['module' => '', 'controller' => 'customer', 'action' => 'print-challan', 'label' => 'Print Challan', 'is_menu' => false, 'icon' => "icon icon ion-ios-photos-outline"],
                     ['module' => '', 'controller' => 'customer', 'action' => 'add-invoice', 'label' => 'Add Invoice', 'is_menu' => false, 'icon' => "icon icon ion-ios-photos-outline"],
                     ['module' => '', 'controller' => 'customer', 'action' => 'print-invoice', 'label' => 'Print Invoice', 'is_menu' => false, 'icon' => "icon icon ion-ios-photos-outline"],
+                    ['module' => '', 'controller' => 'customer', 'action' => 'pay-invoice', 'label' => 'Pay Invoice', 'is_menu' => false, 'icon' => "icon icon ion-ios-photos-outline"],
+                    ['module' => '', 'controller' => 'customer', 'action' => 'add-note', 'label' => 'Add Notes', 'is_menu' => false, 'icon' => "icon icon ion-ios-photos-outline"],
+                    ['module' => '', 'controller' => 'customer', 'action' => 'edit-note', 'label' => 'Edit Notes', 'is_menu' => false, 'icon' => "icon icon ion-ios-photos-outline"],
+                    ['module' => '', 'controller' => 'customer', 'action' => 'print-note', 'label' => 'Print Notes', 'is_menu' => false, 'icon' => "icon icon ion-ios-photos-outline"],
                 ],
             ]
         ],
@@ -54,6 +58,10 @@ class MenuHelper
                     ['module' => '', 'controller' => 'vendor', 'action' => 'print-challan', 'label' => 'Print Challan', 'is_menu' => false, 'icon' => "icon icon ion-ios-photos-outline"],
                     ['module' => '', 'controller' => 'vendor', 'action' => 'add-invoice', 'label' => 'Add Invoice', 'is_menu' => false, 'icon' => "icon icon ion-ios-photos-outline"],
                     ['module' => '', 'controller' => 'vendor', 'action' => 'print-invoice', 'label' => 'Print Invoice', 'is_menu' => false, 'icon' => "icon icon ion-ios-photos-outline"],
+                    ['module' => '', 'controller' => 'customer', 'action' => 'pay-invoice', 'label' => 'Pay Invoice', 'is_menu' => false, 'icon' => "icon icon ion-ios-photos-outline"],
+                    ['module' => '', 'controller' => 'customer', 'action' => 'add-note', 'label' => 'Add Notes', 'is_menu' => false, 'icon' => "icon icon ion-ios-photos-outline"],
+                    ['module' => '', 'controller' => 'customer', 'action' => 'edit-note', 'label' => 'Edit Notes', 'is_menu' => false, 'icon' => "icon icon ion-ios-photos-outline"],
+                    ['module' => '', 'controller' => 'customer', 'action' => 'print-note', 'label' => 'Print Notes', 'is_menu' => false, 'icon' => "icon icon ion-ios-photos-outline"],
                 ]
             ]
         ],
