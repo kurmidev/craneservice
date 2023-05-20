@@ -18,12 +18,15 @@ use app\models\InvoiceMaster;
 use app\models\InvoiceMasterSearch;
 use Yii;
 use app\components\ConstFunc as F;
+use app\forms\QuotationForm;
 use app\models\PaymentNotes;
 use app\models\PaymentNotesSearch;
 use app\models\Payments;
 use app\models\PaymentsDetails;
 use app\models\PaymentsDetailsSearch;
 use app\models\PaymentSearch;
+use app\models\QuotationMaster;
+use app\models\QuotationMasterSearch;
 
 /**
  * ClientController implements the CRUD actions for ClientMaster model.
@@ -91,7 +94,6 @@ class ClientController extends BaseController
 
             $invoiceAmount = Challan::find()->where(['client_id' => $model->id, 'is_processed' => C::STATUS_ACTIVE])->andWhere([">", "invoice_id", 0])->active()->sum("total-amount_paid");
 
-
             $paymentSearchModel = new PaymentSearch();
             $paymentDataProvider = $paymentSearchModel->search($this->request->queryParams);
             $paymentDataProvider->query->andWhere(["client_id" => $model->id]);
@@ -100,8 +102,9 @@ class ClientController extends BaseController
             $notesDataProvider = $notesSearchModel->search($this->request->queryParams);
             $notesDataProvider->query->andWhere(["client_id" => $model->id]);
 
-
-
+            $quotesSearchModel = new QuotationMasterSearch();
+            $quotesDataProvider = $quotesSearchModel->search($this->request->queryParams);
+            $quotesDataProvider->query->andWhere(["client_id" => $model->id]);
 
             return $this->render('@app/views/client/view', [
                 'model' => $model,
@@ -127,6 +130,8 @@ class ClientController extends BaseController
                 "paymentSearchModel" => $paymentSearchModel,
                 "notesDataProvider" => $notesDataProvider,
                 "notesSearchModel" => $notesSearchModel,
+                "quotesDataProvider" => $quotesDataProvider,
+                "quotesSearchModel" => $quotesSearchModel,
                 "invoiceAddUrl" => $this->clientType == C::CLIENT_TYPE_CUSTOMER ?   "customer/add-invoice" : "vendor/add-invoice",
                 "invoiceEditUrl" => $this->clientType == C::CLIENT_TYPE_CUSTOMER ?  "customer/edit-invoice" : "vendor/edit-invoice",
                 "invoiceViewUrl" => $this->clientType == C::CLIENT_TYPE_CUSTOMER ?  "customer/view-invoice" : "vendor/view-invoice",
@@ -137,6 +142,9 @@ class ClientController extends BaseController
                 "noteAddUrl" => $this->clientType == C::CLIENT_TYPE_CUSTOMER ?   "customer/add-note" : "vendor/add-note",
                 "noteEditUrl" => $this->clientType == C::CLIENT_TYPE_CUSTOMER ?  "customer/edit-note" : "vendor/edit-note",
                 "notePrint" => $this->clientType == C::CLIENT_TYPE_CUSTOMER ? "customer/print-note" : "vendor/print-note",
+                "quoteaddUrl" => $this->clientType == C::CLIENT_TYPE_CUSTOMER ?   "customer/add-quotation" : "vendor/add-quotation",
+                "quoteEditUrl" => $this->clientType == C::CLIENT_TYPE_CUSTOMER ?  "customer/edit-quotation" : "vendor/edit-quotation",
+                "quotePrint" => $this->clientType == C::CLIENT_TYPE_CUSTOMER ? "customer/print-quotation" : "vendor/print-quotation",
             ]);
         }
 
@@ -488,5 +496,64 @@ class ClientController extends BaseController
         return $this->render('@app/views/payments/form-creditnotes', [
             'model' => $model,
         ]);
+    }
+
+    public function actionAddQuotation($id){
+        $client = ClientMaster::findOne(['id' => $id]);
+        if (!$client instanceof ClientMaster) {
+            $redirectUrl = $this->clientType == C::CLIENT_TYPE_CUSTOMER ? "customer" : "vendor";
+            Yii::$app->getSession()->setFlash('e', "Record not found!");
+            return $this->redirect([$redirectUrl]);
+        }
+        $model = new QuotationForm(['scenario' => QuotationMaster::SCENARIO_CREATE]);
+        $model->client_id = $client->id;
+        $model->client_type = $client->type;
+        $model->terms_and_conditions = !empty($model->terms_and_conditions)?$model->terms_and_conditions:C::DEFAUL_TERMS_CONDITION;
+        if ($this->request->isPost) {
+            if ($model->load($this->request->post()) && $model->validate() && $model->save()) {
+                $title = $this->clientType == C::CLIENT_TYPE_CUSTOMER ? "Customer" : "Vendor";
+                $redirectUrl = $this->clientType == C::CLIENT_TYPE_CUSTOMER ? "customer/view-customer" : "vendor/view-vendor";
+                Yii::$app->getSession()->setFlash('s', "Quotation has been created successfully.");
+                return $this->redirect([$redirectUrl, "id" => $id, "pg" => "quotation"]);
+            }else{
+                print_r($model->errors);
+                exit;
+            }
+        }
+        return $this->render('@app/views/payments/form-quotation', [
+            'model' => $model,
+        ]);
+    }
+
+    public function actionEditQuotation($id,$quote_id){
+        $client = ClientMaster::findOne(['id' => $id]);
+        if (!$client instanceof ClientMaster) {
+            $redirectUrl = $this->clientType == C::CLIENT_TYPE_CUSTOMER ? "customer" : "vendor";
+            Yii::$app->getSession()->setFlash('e', "Record not found!");
+            return $this->redirect([$redirectUrl]);
+        }
+        $model = QuotationMaster::findOne(['id'=>$quote_id]);
+        $model->scenario = PaymentNotes::SCENARIO_UPDATE;
+        if ($this->request->isPost) {
+            if ($model->load($this->request->post()) && $model->validate() && $model->save()) {
+                $title = $this->clientType == C::CLIENT_TYPE_CUSTOMER ? "Customer" : "Vendor";
+                $redirectUrl = $this->clientType == C::CLIENT_TYPE_CUSTOMER ? "customer/view-customer" : "vendor/view-vendor";
+                Yii::$app->getSession()->setFlash('s', "Payment Notes has been updated successfully.");
+                return $this->redirect([$redirectUrl, "id" => $id, "pg" => "quotation"]);
+            }
+        }
+        return $this->render('@app/views/payments/form-quotation', [
+            'model' => $model,
+        ]);
+    }
+
+    public function actionPrintQuotation($id){
+        $this->layout = false;
+        $model = QuotationMaster::findOne(['id' => $id]);
+        $filename = "quotations_{$model->quotation_no}.pdf";
+         $content = $this->render('@app/views/payments/print-quotation', [
+            'model' => $model
+        ]);
+        return F::printPdf($content, $filename);
     }
 }

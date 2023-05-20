@@ -14,10 +14,10 @@ trait BaseTraits
 
         if (!empty($input)) {
             if ($isMulti) {
-                if (!\yii\helpers\ArrayHelper::isAssociative($input)) {
-                    $this->addError($attribute, "$attribute need to be an array of objects");
-                    return;
-                }
+                // if (!\yii\helpers\ArrayHelper::isAssociative($input)) {
+                //     $this->addError($attribute, "$attribute need to be an array of objects");
+                //     return;
+                // }
             }
             if (!\yii\helpers\ArrayHelper::isTraversable($input)) {
                 $this->addError($attribute, "$attribute need to be an array");

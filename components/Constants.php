@@ -72,6 +72,11 @@ class Constants
         self::STATUS_ACTIVE => 'Active',
     ];
 
+    const LABEL_YESNO = [
+        self::STATUS_INACTIVE => 'No',
+        self::STATUS_ACTIVE => 'Yes',
+    ];
+
     const DAYWISE_LABEL = [
         self::DAYWISE_FULL_DAY => "Full Day",
         self::DAYWISE_HALF_DAY => "Half Day"
@@ -102,12 +107,19 @@ class Constants
     const PAYMENT_STATUS_NOT_PAID = 0;
     const PAYMENT_STATUS_HALF_PAID = 1;
     const PAYMENT_STAUS_FULLY_PAID = 2;
-
+    const QUOTATION_TYPE_MAIN = 1;
+    const QUOTATION_TYPE_ADDONS = 2;
     const PAYMENT_MODE_LIST= [
         self::PAYMENT_MODE_CASH => "CASH",
         self::PAYMENT_MODE_CHEQUE => "Cheque",
         self::PAYMENT_MODE_OTHER => "Other"
     ];
+
+    const DEFAUL_TERMS_CONDITION = "1. Gst tax18% as per government rule will be added.
+    2. Payment terms charges &monthly billing payment will be done within 10 days of bill
+    submission of monthly bill.
+    3. Shift- the given quotation is for 10 hrs shift (including lunch )in a single strength & 26 shifts for a month.
+    4. Reaching time will be extra 30 min";
 
     public static function getTimeList()
     {

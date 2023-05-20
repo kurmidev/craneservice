@@ -128,11 +128,12 @@ use app\components\Constants as C;
                             ]) ?>
                         <?php } else if (in_array($pg, ["quotation"])) { ?>
                             <?= $this->render("@app/views/payments/quotation", [
-                                'searchModel' => $paymentSearchModel,
-                                'dataProvider' => $paymentDataProvider,
+                                'searchModel' => $quotesSearchModel,
+                                'dataProvider' => $quotesDataProvider,
                                 "model" => $model,
-                                "detailUrl" => $viewPaymentDetails,
-                                "printUrl" => $notePrint
+                                "addUrl" => $quoteaddUrl,
+                                "editUrl" => $quoteEditUrl,
+                                "printUrl" => $quotePrint
                             ]) ?>
 
                         <?php } ?>

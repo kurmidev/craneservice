@@ -20,7 +20,7 @@ class m230518_193954_create_quotation_master_table extends Migration
             "client_type"=> $this->integer()->notNull(),
             "date"=> $this->date()->notNull(),
             "subject"=> $this->string()->notNull(),
-            "terms_and_conditions"=> $this->string()->notNull(),
+            "terms_and_conditions"=> $this->text()->notNull(),
             "tax_applicable"=> $this->integer()->notNull()->defaultValue(1),
             "remark"=> $this->string()->null(),
             "base_amount"=> $this->money()->notNull()->defaultValue(0),
