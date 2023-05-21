@@ -28,21 +28,21 @@ class QuotationForm extends BaseForm
     public function scenarios()
     {
         return [
-            QuotationMaster::SCENARIO_CREATE => ["id","client_id", "client_type", "date", "subject", "terms_and_conditions", "tax_applicable", "remark", "quotation_items"],
-            QuotationMaster::SCENARIO_UPDATE => ["id","client_id", "client_type", "date", "subject", "terms_and_conditions", "tax_applicable", "remark", "quotation_items"],
+            QuotationMaster::SCENARIO_CREATE => ["id", "client_id", "client_type", "date", "subject", "terms_and_conditions", "tax_applicable", "remark", "quotation_items"],
+            QuotationMaster::SCENARIO_UPDATE => ["id", "client_id", "client_type", "date", "subject", "terms_and_conditions", "tax_applicable", "remark", "quotation_items"],
         ];
     }
 
     public function rules()
     {
-        $itemModel = (new DynamicModel([ "vehicle_id", "plan_id", "quantity", "amount"]))
-            ->addRule([ "vehicle_id", "plan_id", "quantity", "amount"], "required")
+        $itemModel = (new DynamicModel(["vehicle_id", "plan_id", "quantity", "amount"]))
+            ->addRule(["vehicle_id", "plan_id", "quantity", "amount"], "required")
             ->addRule(["vehicle_id", "plan_id", "quantity"], "integer")
             ->addRule(["amount"], "number");
 
         return [
             [["client_id", "client_type", "date", "subject", "terms_and_conditions", "tax_applicable", "remark", "quotation_items"], "required"],
-            [["client_id", "client_type", "tax_applicable","id"], "integer"],
+            [["client_id", "client_type", "tax_applicable", "id"], "integer"],
             [["subject", "terms_and_conditions", "remark"], "string"],
             [['quotation_items'], 'ValidateMulti', 'params' => ['isMulti' => TRUE, 'ValidationModel' => $itemModel, 'allowEmpty' => true]],
         ];
@@ -74,9 +74,9 @@ class QuotationForm extends BaseForm
         $model->base_amount = $model->tax = $model->total = 0;
         $model->status = C::STATUS_ACTIVE;
         if ($model->validate() && $model->save()) {
-            $this->saveQuotationItems($this->quotation_items,$model->id);
+            $this->saveQuotationItems($this->quotation_items, $model->id);
             return true;
-        }else{
+        } else {
             $this->addErrors($model->errors);
         }
         return false;
@@ -97,9 +97,9 @@ class QuotationForm extends BaseForm
             $model->base_amount = $model->tax = $model->total = 0;
             $model->status = C::STATUS_ACTIVE;
             if ($model->validate() && $model->save()) {
-                $this->saveQuotationItems($this->quotation_items,$model->id);
+                $this->saveQuotationItems($this->quotation_items, $model->id);
                 return true;
-            }else{
+            } else {
                 $this->addErrors($model->errors);
                 print_r($model->errors);
                 exit;
@@ -108,15 +108,16 @@ class QuotationForm extends BaseForm
         return false;
     }
 
-    public function saveQuotationItems($items,$id){
+    public function saveQuotationItems($items, $id)
+    {
         $base_amount = $tax = $total = 0;
-        QuotationItems::deleteAll(['quotation_id'=>$id]);
-        if(!empty($items)){
-            $plan_ids = ArrayHelper::getColumn($items,"plan_id");
-            $planData = PlanMaster::find()->where(['id'=>$plan_ids])->indexBy("id")->asArray()->all();
-            if(!empty($planData)){
-                foreach($items as $item){
-                    $model = new QuotationItems(['scenario'=>QuotationItems::SCENARIO_CREATE]);
+        QuotationItems::deleteAll(['quotation_id' => $id]);
+        if (!empty($items)) {
+            $plan_ids = ArrayHelper::getColumn($items, "plan_id");
+            $planData = PlanMaster::find()->where(['id' => $plan_ids])->indexBy("id")->asArray()->all();
+            if (!empty($planData)) {
+                foreach ($items as $item) {
+                    $model = new QuotationItems(['scenario' => QuotationItems::SCENARIO_CREATE]);
                     $model->quotation_id = $id;
                     $model->client_id = $this->client_id;
                     $model->client_type = $this->client_type;
@@ -124,17 +125,17 @@ class QuotationForm extends BaseForm
                     $model->vehicle_id = $item['vehicle_id'];
                     $model->plan_id = $item['plan_id'];
                     $model->quantity = $item['quantity'];
-                    $model->amount = $planData[$item['plan_id']]['amount'];
+                    $model->amount = $item['amount'];
                     $model->status = C::STATUS_ACTIVE;
-                    if($model->validate() && $model->save()){
-                        $base_amount+=$model->amount;
-                        $tax = $this->tax_applicable?F::calculateTax($model->amount,$this->tax_applicable):0;
+                    if ($model->validate() && $model->save()) {
+                        $base_amount += $model->amount * $model->quantity;
+                        $tax += $this->tax_applicable ? F::calculateTax(($model->amount * $model->quantity), $this->tax_applicable) : 0;
                     }
                 }
-        QuotationMaster::updateAll(["base_amount"=>$base_amount,"tax"=>$tax,"total"=>$total],["id"=>$id]);
-            } 
+                QuotationMaster::updateAll(["base_amount" => $base_amount, "tax" => $tax, "total" => ($base_amount + $tax)], ["id" => $id]);
+            }
         }
-        
+
         return false;
     }
 }

@@ -100,6 +100,27 @@ class QuotationItems extends \app\models\BaseModel
         return $this->hasOne(QuotationMaster::class, ['id' => 'quotation_id']);
     }
 
+/**
+     * Gets query for [[PlanMaster]].
+     *
+     * @return \yii\db\ActiveQuery|PlanMasterQuery
+     */
+    public function getPlan()
+    {
+        return $this->hasOne(PlanMaster::class, ['id' => 'plan_id']);
+    }
+
+    /**
+     * Gets query for [[Quotation]].
+     *
+     * @return \yii\db\ActiveQuery|QuotationMasterQuery
+     */
+    public function getVehicle()
+    {
+        return $this->hasOne(VehicleMaster::class, ['id' => 'vehicle_od']);
+    }
+
+
     /**
      * {@inheritdoc}
      * @return QuotationItemsQuery the active query used by this AR class.

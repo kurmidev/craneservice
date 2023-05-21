@@ -329,11 +329,23 @@ class ClientController extends BaseController
      */
     public function actionPrintChallan($id)
     {
-        $model = Challan::findOne(['id' => $id]);
+        $this->layout = false;
+        $model = Challan::find()->where(['id' => $id])->with(['plan'])->one();
+        if($model instanceof Challan){
+            $filename = "challan_{$model->challan_no}.pdf";
+            $this->title = "Challan {$model->challan_no}.pdf";
+            $content = $this->render('@app/views/client/print-challan', [
+               'model' => $model
+           ]);
+           
+           return F::printPdf($content, $filename);
+        }
 
-        return $this->render('@app/views/client/print-challan', [
-            'model' => $model,
-        ]);
+        $redirectUrl = $this->clientType == C::CLIENT_TYPE_CUSTOMER ? "customer" : "vendor";
+        Yii::$app->getSession()->setFlash('e', "Record not found!");
+        return $this->redirect([$redirectUrl]);
+        
+        
     }
 
     public function actionAddInvoice($id)
@@ -350,11 +362,7 @@ class ClientController extends BaseController
                 $redirectUrl = $this->clientType == C::CLIENT_TYPE_CUSTOMER ? "customer/view-customer" : "vendor/view-vendor";
                 \Yii::$app->getSession()->setFlash('s', "Invoice has been added successfully.");
                 return $this->redirect([$redirectUrl, "id" => $id, "pg" => "pending-invoice"]);
-            } else {
-                echo "<pre>";
-                print_r($model->errors);
-                exit;
-            }
+            } 
         }
         $challanList  = Challan::find()->with(['plan'])->where(['client_id' => $id, 'invoice_id' => null, 'is_processed' => 0])->all();
         return $this->render('@app/views/invoice/form-invoice', [
@@ -440,7 +448,7 @@ class ClientController extends BaseController
         $this->layout = false;
         $model = Payments::findOne(['id' => $id]);
         $filename = "invoice_{$model->receipt_no}.pdf";
-         $content = $this->render('@app/views/payments/print-receipt', [
+        $content = $this->render('@app/views/payments/print-receipt', [
             'model' => $model
         ]);
 
@@ -549,11 +557,19 @@ class ClientController extends BaseController
 
     public function actionPrintQuotation($id){
         $this->layout = false;
-        $model = QuotationMaster::findOne(['id' => $id]);
-        $filename = "quotations_{$model->quotation_no}.pdf";
-         $content = $this->render('@app/views/payments/print-quotation', [
-            'model' => $model
-        ]);
-        return F::printPdf($content, $filename);
+        $model = QuotationMaster::find()->where(['id' => $id])->with(['client','quotationItems'])->one();
+        if($model instanceof QuotationMaster){
+            $filename = "quotations_{$model->quotation_no}.pdf";
+            $content = $this->render('@app/views/payments/print-quotation', [
+               'model' => $model
+           ]);
+           $this->title = "Quotation {$model->quotation_no}.pdf";
+           return F::printPdf($content, $filename);
+        }
+
+        $redirectUrl = $this->clientType == C::CLIENT_TYPE_CUSTOMER ? "customer" : "vendor";
+        Yii::$app->getSession()->setFlash('e', "Record not found!");
+        return $this->redirect([$redirectUrl]);
+        
     }
 }

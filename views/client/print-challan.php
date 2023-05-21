@@ -4,176 +4,202 @@ use app\components\Constants as C;
 
 ?>
 
-<div class="invoice p-3 mb-3">
+<div style="display:block;border:1px solid #000;text-align:left;margin:10px;font-size:20px;">
+    <table style="border:1px solid #000; border-collapse: collapse;width:100%;">
+        <tbody>
+            <tr>
+                <td rowspan="5" style="padding:20px;">
+                    <h2><?= SITE_NAME ?></h2>
+                    <p>
+                        <b>Address :</b> <?= SITE_ADDRESS ?>
+                        <br>
+                        <b>Call:</b><?= SITE_PHONE ?>
+                        <br>
+                        <b>GSTN/UIN :</b> <?= SITE_GSTIN ?>
+                        <br>
+                        <b>PAN No. :</b> <?= SITE_PAN ?>
+                    </p>
+                </td>
+                <td  style="border:1px solid #000; border-collapse: collapse;padding:8px">
+                    Challan No : <?= $model->challan_no ?>
+                </td>
+            </tr>
+            <tr>
+                <td style="border:1px solid #000; border-collapse: collapse;padding:8px">
+                    Challan Date : <?= $model->challan_date ?>
+                </td>
+            </tr>
+            <tr>
+                <td style="border:1px solid #000; border-collapse: collapse;padding:8px">
+                    Particular : <?= $model->plan->name ?>
+                </td>
+            </tr>
+            <tr>
+                <td style="border:1px solid #000; border-collapse: collapse;padding:8px">
+                    Vehicle No : <?= $model->vehicle->name ?>
+                </td>
+            </tr>
+            <tr>
+                <td style="border:1px solid #000; border-collapse: collapse;padding:8px">
+                    Phone No : <?= $model->client->mobile_no ?>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="2" style="border:1px solid #000; border-collapse: collapse;width:99.99%;padding:8px;">
+                    <b>Party Name :</b> <?= $model->client->company_name ?>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="2" style="border:1px solid #000; border-collapse: collapse;width:99.99%;padding:8px;">
+                    <b>Site Address : </b> <?= $model->client->site_address ?>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="2" style="padding:0px;">
+                    <div style="display:block;padding:0px;">
+                    <table style="border:1px solid #000; border-collapse: collapse;width:100%">
+                        <thead>
+                            <tr>
+                                <?php
+                                switch ($model->plan->type) {
+                                    case C::PACKAGE_WISE_CHALLAN: ?>
+                                        <th style="border:1px solid #000; border-collapse: collapse;padding:5px;">Start Time</th>
+                                        <th style="border:1px solid #000; border-collapse: collapse;padding:5px;">End Time</th>
+                                        <th style="border:1px solid #000; border-collapse: collapse;padding:5px;">Break</th>
+                                        <th style="border:1px solid #000; border-collapse: collapse;padding:5px;">Up-Time</th>
+                                        <th style="border:1px solid #000; border-collapse: collapse;padding:5px;">Down Time </th>
+                                        <th style="border:1px solid #000; border-collapse: collapse;padding:5px;">Hours</th>
+                                    <?php break;
+                                    case C::PACKAGE_WISE_DAY: ?>
+                                        <th style="border:1px solid #000; border-collapse: collapse;padding:5px;">Package Name</th>
+                                        <th style="border:1px solid #000; border-collapse: collapse;padding:5px;">Vehicle No</th>
+                                        <th style="border:1px solid #000; border-collapse: collapse;padding:5px;">Day</th>
+                                        <th style="border:1px solid #000; border-collapse: collapse;padding:5px;">Amount</th>
+                                        <th style="border:1px solid #000; border-collapse: collapse;padding:5px;">Remark</th>
+                                    <?php break;
+                                    case C::PACKAGE_WISE_TRIP: ?>
+                                        <th style="border:1px solid #000; border-collapse: collapse;padding:5px;">Package Name</th>
+                                        <th style="border:1px solid #000; border-collapse: collapse;padding:5px;">Vehicle No</th>
+                                        <th style="border:1px solid #000; border-collapse: collapse;padding:5px;">Trip/Qty</th>
+                                        <th style="border:1px solid #000; border-collapse: collapse;padding:5px;">Brass/Litre</th>
+                                        <th style="border:1px solid #000; border-collapse: collapse;padding:5px;">Amount</th>
+                                        <th style="border:1px solid #000; border-collapse: collapse;padding:5px;">Remark</th>
+                                    <?php break;
+                                    case C::PACKAGE_WISE_DESTINATION: ?>
+                                        <th style="border:1px solid #000; border-collapse: collapse;padding:5px;">Package Name</th>
+                                        <th style="border:1px solid #000; border-collapse: collapse;padding:5px;">From</th>
+                                        <th style="border:1px solid #000; border-collapse: collapse;padding:5px;">To</th>
+                                        <th style="border:1px solid #000; border-collapse: collapse;padding:5px;">Amount</th>
+                                        <th style="border:1px solid #000; border-collapse: collapse;padding:5px;">Remark</th>
+                                    <?php
+                                        break;
+                                    case C::PACKAGE_WISE_MONTH: ?>
+                                        <th style="border:1px solid #000; border-collapse: collapse;padding:5px;">Date</th>
+                                        <th style="border:1px solid #000; border-collapse: collapse;padding:5px;">Start Time</th>
+                                        <th style="border:1px solid #000; border-collapse: collapse;padding:5px;">End Time</th>
+                                        <th style="border:1px solid #000; border-collapse: collapse;padding:5px;">Total Time </th>
+                                        <th style="border:1px solid #000; border-collapse: collapse;padding:5px;">Overtime</th>
+                                    <?php
+
+                                        break;
+                                    case C::PACKAGE_WISE_SHIFT: ?>
+                                        <th style="border:1px solid #000; border-collapse: collapse;padding:5px;">Start Time</th>
+                                        <th style="border:1px solid #000; border-collapse: collapse;padding:5px;">End Time</th>
+                                        <th style="border:1px solid #000; border-collapse: collapse;padding:5px;">Hours</th>
+                                        <th style="border:1px solid #000; border-collapse: collapse;padding:5px;">Extra</th>
+                                        <th style="border:1px solid #000; border-collapse: collapse;padding:5px;">Extra Amt </th>
+                                        <th style="border:1px solid #000; border-collapse: collapse;padding:5px;">Total Amt</th>
+                                <?php
+                                        break;
+
+                                    default:
+
+                                        break;
+                                } ?>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <?php
+                                switch ($model->plan->type) {
+                                    case C::PACKAGE_WISE_CHALLAN: ?>
+                                        <td style="border:1px solid #000; border-collapse: collapse;padding:5px;"><?= $model->plan_start_time ?></td>
+                                        <td style="border:1px solid #000; border-collapse: collapse;padding:5px;"><?= $model->plan_end_time ?></td>
+                                        <td style="border:1px solid #000; border-collapse: collapse;padding:5px;"><?= $model->break_time ?></td>
+                                        <td style="border:1px solid #000; border-collapse: collapse;padding:5px;"><?= $model->up_time ?></td>
+                                        <td style="border:1px solid #000; border-collapse: collapse;padding:5px;"><?= $model->down_time ?></td>
+                                        <td style="border:1px solid #000; border-collapse: collapse;padding:5px;"><?= date('H:i', mktime(0, (strtotime($model->plan_end_time) - strtotime($model->plan_start_time)) / 60)); ?></td>
+                                    <?php break;
+                                    case C::PACKAGE_WISE_DAY: ?>
+                                        <td style="border:1px solid #000; border-collapse: collapse;padding:5px;"><?= $model->plan->name ?></td>
+                                        <td style="border:1px solid #000; border-collapse: collapse;padding:5px;"><?= $model->vehicle->name ?></td>
+                                        <td style="border:1px solid #000; border-collapse: collapse;padding:5px;"><?= !empty(C::DAYWISE_LABEL[$model->day_wise]) ? C::DAYWISE_LABEL[$model->day_wise] : "" ?></td>
+                                        <td style="border:1px solid #000; border-collapse: collapse;padding:5px;"><?= round($model->total, 2) ?></td>
+                                        <td style="border:1px solid #000; border-collapse: collapse;padding:5px;"></td>
+                                    <?php break;
+                                    case C::PACKAGE_WISE_TRIP: ?>
+                                        <td style="border:1px solid #000; border-collapse: collapse;padding:5px;"><?= $model->plan->name ?></td>
+                                        <td style="border:1px solid #000; border-collapse: collapse;padding:5px;"><?= $model->vehicle->name ?></td>
+                                        <td style="border:1px solid #000; border-collapse: collapse;padding:5px;"><?= $model->plan_trip ?></td>
+                                        <td style="border:1px solid #000; border-collapse: collapse;padding:5px;"><?= $model->plan_measure ?></td>
+                                        <td style="border:1px solid #000; border-collapse: collapse;padding:5px;"><?= round($model->total, 2) ?></td>
+                                        <td style="border:1px solid #000; border-collapse: collapse;padding:5px;"></td>
+                                    <?php break;
+                                    case C::PACKAGE_WISE_DESTINATION: ?>
+                                        <td style="border:1px solid #000; border-collapse: collapse;padding:5px;"><?= $model->plan->name ?></td>
+                                        <td style="border:1px solid #000; border-collapse: collapse;padding:5px;"><?= $model->from_destination ?></td>
+                                        <td style="border:1px solid #000; border-collapse: collapse;padding:5px;"><?= $model->to_destination ?></td>
+                                        <td style="border:1px solid #000; border-collapse: collapse;padding:5px;"><?= round($model->total, 2) ?></td>
+                                        <td style="border:1px solid #000; border-collapse: collapse;padding:5px;"></td>
+                                    <?php
+                                        break;
+                                    case C::PACKAGE_WISE_MONTH: ?>
+                                        <td style="border:1px solid #000; border-collapse: collapse;padding:5px;"><?= $model->challan_date ?></td>
+                                        <td style="border:1px solid #000; border-collapse: collapse;padding:5px;"><?= $model->plan_start_time ?></td>
+                                        <td style="border:1px solid #000; border-collapse: collapse;padding:5px;"><?= $model->plan_end_time ?></td>
+                                        <td style="border:1px solid #000; border-collapse: collapse;padding:5px;"><?= date('H:i', mktime(0, (strtotime($model->plan_end_time) - strtotime($model->plan_start_time)) / 60)); ?></td>
+                                        <td style="border:1px solid #000; border-collapse: collapse;padding:5px;">0Hrs</td>
+                                    <?php
+
+                                        break;
+                                    case C::PACKAGE_WISE_SHIFT:
+                                        $totalHrs = (strtotime($model->plan_end_time) - strtotime($model->plan_start_time));
+                                        $extraHrs = $totalHrs > $model->plan->shift_hrs ?  $totalHrs - $model->plan->shift_hrs : 0;
+                                    ?>
+                                        <td style="border:1px solid #000; border-collapse: collapse;padding:5px;"><?= $model->plan_start_time ?></td>
+                                        <td style="border:1px solid #000; border-collapse: collapse;padding:5px;"><?= $model->plan_end_time ?></td>
+                                        <td style="border:1px solid #000; border-collapse: collapse;padding:5px;"><?= date('H:i', mktime(0, (strtotime($model->plan_end_time) - strtotime($model->plan_start_time)) / 60)); ?>Hrs</td>
+                                        <td style="border:1px solid #000; border-collapse: collapse;padding:5px;"><?= date('H:i', mktime(0, $extraHrs / 60)); ?>Hrs</td>
+                                        <td style="border:1px solid #000; border-collapse: collapse;padding:5px;"><?= $model->extra ?></td>
+                                        <td style="border:1px solid #000; border-collapse: collapse;padding:5px;"><?= $model->total ?></td>
+                                <?php
+                                        break;
+                                    default:
+
+                                        break;
+                                } ?>
+                            </tr>
+                        </tbody>
+                    </table>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="2" style="padding:40px;">
 
 
-    <div class="row">
-        <div class="col-12">
-            <h4>
-                <i class="fas fa-globe"></i> <?= SITE_NAME ?>
-                <small class="float-right">Date: <?= date("d/m/Y") ?></small>
-            </h4>
-        </div>
-
-    </div>
-
-    <div class="row invoice-info">
-        <div class="col-sm-4 invoice-col">
-            From
-            <address>
-                <strong><?= SITE_NAME ?></strong><br>
-                <?= SITE_ADDRESS ?>
-                Phone: <?= SITE_PHONE ?><br>
-                Email: <?= SITE_EMAIL ?>
-            </address>
-        </div>
-
-        <div class="col-sm-4 invoice-col">
-            To
-            <address>
-                <strong><?= $model->client->company_name ?></strong><br>
-                <?= $model->client->site_address ?>
-                Phone: <?= $model->client->phone_no ?><br>
-                Email: <?= $model->client->email ?>
-            </address>
-        </div>
-
-        <div class="col-sm-4 invoice-col">
-            <b>Invoice #<?= $model->challan_no ?></b><br>
-            <b>Challan Date:</b> <?= $model->challan_date ?><br>
-            <b>Particular :</b> <?= $model->plan->name ?><br>
-            <b>vehicle No:</b> <?= $model->vehicle->name ?>
-        </div>
-
-    </div>
-
-
-    <div class="row">
-        <div class="col-12 table-responsive">
-            <table class="table table-striped">
-                <thead>
-                    <tr>
-                        <?php
-                        switch ($model->plan->type) {
-                            case C::PACKAGE_WISE_CHALLAN: ?>
-                                <th>Start Time</th>
-                                <th>End Time</th>
-                                <th>Break</th>
-                                <th>Up-Time</th>
-                                <th>Down Time </th>
-                                <th>Hours</th>
-                            <?php break;
-                            case C::PACKAGE_WISE_DAY: ?>
-                                <th>Package Name</th>
-                                <th>Vehicle No</th>
-                                <th>Day</th>
-                                <th>Amount</th>
-                                <th>Remark</th>
-                            <?php break;
-                            case C::PACKAGE_WISE_TRIP: ?>
-                                <th>Package Name</th>
-                                <th>Vehicle No</th>
-                                <th>Trip/Qty</th>
-                                <th>Brass/Litre</th>
-                                <th>Amount</th>
-                                <th>Remark</th>
-                            <?php break;
-                            case C::PACKAGE_WISE_DESTINATION: ?>
-                                <th>Package Name</th>
-                                <th>From</th>
-                                <th>To</th>
-                                <th>Amount</th>
-                                <th>Remark</th>
-                            <?php
-                                break;
-                            case C::PACKAGE_WISE_MONTH: ?>
-                                <th>Date</th>
-                                <th>Start Time</th>
-                                <th>End Time</th>
-                                <th>Total Time </th>
-                                <th>Overtime</th>
-                            <?php
-
-                                break;
-                            case C::PACKAGE_WISE_SHIFT: ?>
-                                <th>Start Time</th>
-                                <th>End Time</th>
-                                <th>Hours</th>
-                                <th>Extra</th>
-                                <th>Extra Amt </th>
-                                <th>Total Amt</th>
-                        <?php
-                                break;
-
-                            default:
-
-                                break;
-                        } ?>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <?php
-                        switch ($model->plan->type) {
-                            case C::PACKAGE_WISE_CHALLAN: ?>
-                                <td><?= $model->plan_start_time ?></td>
-                                <td><?= $model->plan_end_time ?></td>
-                                <td><?= $model->break_time ?></td>
-                                <td><?= $model->up_time ?></td>
-                                <td><?= $model->down_time ?></td>
-                                <td><?= date('H:i', mktime(0, (strtotime($model->plan_end_time) - strtotime($model->plan_start_time)) / 60)); ?></td>
-                            <?php break;
-                            case C::PACKAGE_WISE_DAY: ?>
-                                <td><?= $model->plan->name ?></td>
-                                <td><?= $model->vehicle->name ?></td>
-                                <td><?= !empty(C::DAYWISE_LABEL[$model->day_wise]) ? C::DAYWISE_LABEL[$model->day_wise] : "" ?></td>
-                                <td><?= round($model->total, 2) ?></td>
-                                <td></td>
-                            <?php break;
-                            case C::PACKAGE_WISE_TRIP: ?>
-                                <td><?= $model->plan->name ?></td>
-                                <td><?= $model->vehicle->name ?></td>
-                                <td><?= $model->plan_trip ?></td>
-                                <td><?= $model->plan_measure ?></td>
-                                <td><?= round($model->total, 2) ?></td>
-                                <td></td>
-                            <?php break;
-                            case C::PACKAGE_WISE_DESTINATION: ?>
-                                <td><?= $model->plan->name ?></td>
-                                <td><?= $model->from_destination ?></td>
-                                <td><?= $model->to_destination ?></td>
-                                <td><?= round($model->total, 2) ?></td>
-                                <td></td>
-                            <?php
-                                break;
-                            case C::PACKAGE_WISE_MONTH: ?>
-                                <td><?=$model->challan_date?></td>
-                                <td><?=$model->plan_start_time?></td>
-                                <td><?=$model->plan_end_time?></td>
-                                <td><?= date('H:i', mktime(0, (strtotime($model->plan_end_time) - strtotime($model->plan_start_time)) / 60)); ?></td>
-                                <td>0Hrs</td>
-                            <?php
-
-                                break;
-                            case C::PACKAGE_WISE_SHIFT:
-                                $totalHrs = (strtotime($model->plan_end_time) - strtotime($model->plan_start_time));
-                                $extraHrs = $totalHrs > $model->plan->shift_hrs ?  $totalHrs - $model->plan->shift_hrs : 0;
-                            ?>
-                                <td><?= $model->plan_start_time ?></td>
-                                <td><?= $model->plan_end_time ?></td>
-                                <td><?= date('H:i', mktime(0, (strtotime($model->plan_end_time) - strtotime($model->plan_start_time)) / 60)); ?>Hrs</td>
-                                <td><?= date('H:i', mktime(0, $extraHrs / 60)); ?>Hrs</td>
-                                <td><?= $model->extra ?></td>
-                                <td><?= $model->total ?></td>
-                        <?php
-                                break;
-                            default:
-
-                                break;
-                        } ?>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-    </div>
+                </td>
+            </tr>
+            <tr>
+                <td></td>
+                <td style="text-align:right;margin-right:10px;">
+                    Signature
+                </td>
+            </tr>
+            <tr>
+                <td  style="padding:10px;"></td>
+                <td  style="padding:10px;"></td>
+            </tr>
+        </tbody>
+    </table>
 </div>

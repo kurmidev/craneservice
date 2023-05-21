@@ -34,7 +34,7 @@ class ConstFunc
             // any css to be embedded if required
             'cssInline' => '.kv-heading-1{font-size:18px}', 
              // set mPDF properties on the fly
-            'options' => ['title' => 'Krajee Report Title'],
+            'options' => ['title' => $filename],
              // call mPDF methods on the fly
             'methods' => [ 
                 'SetHeader'=>[$filename], 

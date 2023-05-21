@@ -5,12 +5,9 @@
 }
 
 p {
-    color: black;
-    font-family: Arial, sans-serif;
     font-style: normal;
-    font-weight: bold;
     text-decoration: none;
-    font-size: 12pt;
+    font-size: 12px;
     margin: 0pt;
 }
 
@@ -92,9 +89,11 @@ li {
     counter-increment: c1 0;
 }
 
-table,
-tbody {
-    vertical-align: top;
-    overflow: visible;
-    line-height: 15px;
-}
+
+#page1-div p {margin: 0; padding: 0;}	
+.ft10{font-size:29px;font-family:Helvetica;color:#c5433b;}
+.ft11{font-size:11px;font-family:Helvetica;color:#000000;}
+.ft12{font-size:11px;font-family:Helvetica;color:#000000;}
+.ft13{font-size:12px;font-family:Helvetica;color:#000000;}
+.ft14{font-size:12px;font-family:Helvetica;color:#000000;}
+.ft15{font-size:16px;font-family:Helvetica;color:#000000;}
