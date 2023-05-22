@@ -115,6 +115,18 @@ class Constants
         self::PAYMENT_MODE_OTHER => "Other"
     ];
 
+    const EXPENSE_TYPE_WITH_INVENTORY = 1;
+    const EXPENSE_TYPE_WITHOUT_INVENTORY = 2;
+
+    const EXPENSE_TYPE_LIST = [
+        self::EXPENSE_TYPE_WITH_INVENTORY=>"With Inventory",
+        self::EXPENSE_TYPE_WITHOUT_INVENTORY=>"Without Inventory"
+    ];
+
+    const EXPENSE_TYPE_NORMAL = 1;
+    const EXPENSE_TYPE_STAFF = 2;
+
+
     const DEFAUL_TERMS_CONDITION = "1. Gst tax18% as per government rule will be added.
     2. Payment terms charges &monthly billing payment will be done within 10 days of bill
     submission of monthly bill.

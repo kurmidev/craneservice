@@ -1,7 +1,7 @@
 <?php
 
 use app\components\ConstFunc as F;
-
+$f = new NumberFormatter("en", NumberFormatter::SPELLOUT);
 $base_amount = $final_total = 0;
 
 ?>

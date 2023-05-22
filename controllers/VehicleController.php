@@ -79,8 +79,6 @@ class VehicleController extends BaseController
         if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
             \Yii::$app->getSession()->setFlash('s', "Vehicle $model->name updated successfully.");
             return $this->redirect(['vehicle']);
-        }else{
-            print_r($model->errors);
         }
 
         return $this->render('form-vehicle', [

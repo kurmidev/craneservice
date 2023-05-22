@@ -1,6 +1,7 @@
 <?php
 
 namespace app\models;
+use app\components\Constants as C;
 
 /**
  * This is the ActiveQuery class for [[ClientMaster]].
@@ -30,5 +31,14 @@ class ClientMasterQuery extends BaseQuery
     public function one($db = null)
     {
         return parent::one($db);
+    }
+
+    public function isVendor(){
+        return $this->andWhere(['client_type'=>C::CLIENT_TYPE_VENDOR]);
+    }
+
+
+    public function isCustomer(){
+        return $this->andWhere(['client_type'=>C::CLIENT_TYPE_CUSTOMER]);
     }
 }

@@ -7,6 +7,7 @@ use app\models\State;
 use yii\console\Controller;
 use app\components\Constants as C;
 use app\models\City;
+use app\models\ExpenseCategory;
 use app\models\User;
 
 class InitController extends Controller
@@ -1247,6 +1248,8 @@ class InitController extends Controller
 
         //insert designation data
         $this->departmentData();
+
+        $this->actionAddCategory();
     }
 
     public function addCity($stateList, $stateMapping)
@@ -1340,6 +1343,23 @@ class InitController extends Controller
                     return "Department created ===>" . $model->name . "  id==>" . $model->id . PHP_EOL;
                 }
             }
+        }
+    }
+
+    public function actionAddCategory(){
+        $categories = ["Advance","Diesel","Elecrity","HookBairing -51111","Maintanance","Material","PACKING BOX","Petrol","Raw Material","Spare Part","Stationary"];
+        foreach($categories as $category){
+            $model = ExpenseCategory::findOne(['name'=>$category]);
+            if(!$model instanceof ExpenseCategory){
+                $model = new ExpenseCategory(['scenario'=>ExpenseCategory::SCENARIO_CREATE]);
+                $model->name = $category;
+                $model->remark = $category;
+                $model->status = C::STATUS_ACTIVE;
+                if($model->validate() && $model->save()){
+                    echo "Category {$model->name} has been added ...".PHP_EOL;
+                }
+            }
+
         }
     }
 }

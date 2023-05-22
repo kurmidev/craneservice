@@ -125,6 +125,29 @@ class MenuHelper
                 ],
             ]
         ],
+        "expenses" => [
+            "config" => ["class" => "nav-icon fas fa-user-circle"],
+            "items" => [
+                'category' => [
+                    ['module' => '', 'controller' => 'expense', 'action' => 'category', 'label' => 'Category', 'is_menu' => true, 'icon' => "icon icon ion-ios-photos-outline"],
+                    ['module' => '', 'controller' => 'expense', 'action' => 'add-category', 'label' => 'Add Category', 'is_menu' => false, 'icon' => "icon icon ion-ios-photos-outline"],
+                    ['module' => '', 'controller' => 'expense', 'action' => 'edit-category', 'label' => 'Edit Category', 'is_menu' => false, 'icon' => "icon icon ion-ios-photos-outline"],
+                ],
+                'expenses' => [
+                    ['module' => '', 'controller' => 'expense', 'action' => 'index', 'label' => 'Expenses', 'is_menu' => true, 'icon' => "icon icon ion-ios-photos-outline"],
+                    ['module' => '', 'controller' => 'expense', 'action' => 'add-expenses', 'label' => 'Add Expenses', 'is_menu' => false, 'icon' => "icon icon ion-ios-photos-outline"],
+                    ['module' => '', 'controller' => 'expense', 'action' => 'edit-expenses', 'label' => 'Edit Expenses', 'is_menu' => false, 'icon' => "icon icon ion-ios-photos-outline"],
+                ],
+                "staff_expenses"=> [
+                    ['module' => '', 'controller' => 'expense', 'action' => 'staff-expenses', 'label' => 'Staff Expenses', 'is_menu' => true, 'icon' => "icon icon ion-ios-photos-outline"],
+                    ['module' => '', 'controller' => 'expense', 'action' => 'add-staffexpenses', 'label' => 'Add Staff Expenses', 'is_menu' => false, 'icon' => "icon icon ion-ios-photos-outline"],
+                    ['module' => '', 'controller' => 'expense', 'action' => 'edit-staffexpenses', 'label' => 'Edit Staff Expenses', 'is_menu' => false, 'icon' => "icon icon ion-ios-photos-outline"],
+                ],
+                "vehicle_expenses"=> [
+                    ['module' => '', 'controller' => 'expense', 'action' => 'vehicle-expenses', 'label' => 'Vehicle Expenses', 'is_menu' => true, 'icon' => "icon icon ion-ios-photos-outline"]
+                ],
+            ]
+        ],
         "reports" => []
     ];
 
