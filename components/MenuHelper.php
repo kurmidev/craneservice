@@ -105,8 +105,8 @@ class MenuHelper
                 ],
                 'city' => [
                     ['module' => '', 'controller' => 'location', 'action' => 'city', 'label' => 'City', 'is_menu' => true, 'icon' => "icon icon ion-ios-photos-outline"],
-                 //   ['module' => '', 'controller' => 'location', 'action' => 'add-city', 'label' => 'Add City', 'is_menu' => false, 'icon' => "icon icon ion-ios-photos-outline"],
-                 //   ['module' => '', 'controller' => 'location', 'action' => 'edit-city', 'label' => 'Edit City', 'is_menu' => false, 'icon' => "icon icon ion-ios-photos-outline"],
+                    //   ['module' => '', 'controller' => 'location', 'action' => 'add-city', 'label' => 'Add City', 'is_menu' => false, 'icon' => "icon icon ion-ios-photos-outline"],
+                    //   ['module' => '', 'controller' => 'location', 'action' => 'edit-city', 'label' => 'Edit City', 'is_menu' => false, 'icon' => "icon icon ion-ios-photos-outline"],
                 ],
             ]
         ],
@@ -138,21 +138,60 @@ class MenuHelper
                     ['module' => '', 'controller' => 'expense', 'action' => 'add-expenses', 'label' => 'Add Expenses', 'is_menu' => false, 'icon' => "icon icon ion-ios-photos-outline"],
                     ['module' => '', 'controller' => 'expense', 'action' => 'edit-expenses', 'label' => 'Edit Expenses', 'is_menu' => false, 'icon' => "icon icon ion-ios-photos-outline"],
                 ],
-                "staff_expenses"=> [
+                "staff_expenses" => [
                     ['module' => '', 'controller' => 'expense', 'action' => 'staff-expenses', 'label' => 'Staff Expenses', 'is_menu' => true, 'icon' => "icon icon ion-ios-photos-outline"],
                     ['module' => '', 'controller' => 'expense', 'action' => 'add-staffexpenses', 'label' => 'Add Staff Expenses', 'is_menu' => false, 'icon' => "icon icon ion-ios-photos-outline"],
                     ['module' => '', 'controller' => 'expense', 'action' => 'edit-staffexpenses', 'label' => 'Edit Staff Expenses', 'is_menu' => false, 'icon' => "icon icon ion-ios-photos-outline"],
                 ],
-                "vehicle_expenses"=> [
+                "vehicle_expenses" => [
                     ['module' => '', 'controller' => 'expense', 'action' => 'vehicle-expenses', 'label' => 'Vehicle Expenses', 'is_menu' => true, 'icon' => "icon icon ion-ios-photos-outline"]
                 ],
             ]
         ],
-        "reports" => []
+        'customer_report' => [
+            "config" => ["class" => "nav-icon fas fa-user-tie"],
+            "items" => [
+                "customer_challan" => [
+                    ['module' => '', 'controller' => 'report', 'action' => 'customer-challan', 'label' => 'Challan', 'is_menu' => true, 'icon' => "icon icon ion-ios-photos-outline"],
+                ],
+                "customer_invoice" => [
+                    ['module' => '', 'controller' => 'report', 'action' => 'customer-invoice', 'label' => 'Invoice', 'is_menu' => true, 'icon' => "icon icon ion-ios-photos-outline"],
+                ],
+                "customer_payment" => [
+                    ['module' => '', 'controller' => 'report', 'action' => 'customer-payment', 'label' => 'Payment', 'is_menu' => true, 'icon' => "icon icon ion-ios-photos-outline"],
+                ]
+            ]
+        ],
+        "vendor_report" => [
+            "config" => ["class" => "nav-icon fas fa-shopping-basket"],
+            "items" => [
+                "customer_challan" => [
+                    ['module' => '', 'controller' => 'report', 'action' => 'vendor-challan', 'label' => 'Challan', 'is_menu' => true, 'icon' => "icon icon ion-ios-photos-outline"],
+                ],
+                "customer_invoice" => [
+                    ['module' => '', 'controller' => 'report', 'action' => 'vendor-invoice', 'label' => 'Invoice', 'is_menu' => true, 'icon' => "icon icon ion-ios-photos-outline"],
+                ],
+                "customer_payment" => [
+                    ['module' => '', 'controller' => 'report', 'action' => 'vendor-payment', 'label' => 'Payment', 'is_menu' => true, 'icon' => "icon icon ion-ios-photos-outline"],
+                ]
+            ]
+        ],
+        "reports" => [
+            "config" => ["class" => "nav-icon fas fa-trademark"],
+            "items" => [
+                "vehicle_summary" => [
+                    ['module' => '', 'controller' => 'report', 'action' => 'vehicle-summary', 'label' => 'Vehicle Summary', 'is_menu' => true, 'icon' => "icon icon ion-ios-photos-outline"]
+                ],
+                "package_summary" => [
+                    ['module' => '', 'controller' => 'report', 'action' => 'package-summary', 'label' => 'Package Summary', 'is_menu' => true, 'icon' => "icon icon ion-ios-photos-outline"]
+                ],
+            ]
+        ]
     ];
 
 
-    public static function getDisplayMenu($menu = [], $is_submenu = false) {
+    public static function getDisplayMenu($menu = [], $is_submenu = false)
+    {
         $menu = empty($menu) ? self::$menu : $menu;
         $result = [];
         foreach ($menu as $key => $mvalues) {
@@ -169,7 +208,7 @@ class MenuHelper
                             'options' => ['class' => 'nav-item'],
                             'items' => array_values(self::getDisplayMenu($menuItems)),
                             'submenuTemplate' => "\n<ul class='nav nav-treeview'>\n{items}\n</ul>\n",
-                            "template"=> '<a href="{url}" class="nav-link"><i class="nav-icon fas '.$mvalues['config']['class'].'"></i><p>{label}<i class="right fas fa-angle-left"></i> </p></a>'
+                            "template" => '<a href="{url}" class="nav-link"><i class="nav-icon fas ' . $mvalues['config']['class'] . '"></i><p>{label}<i class="right fas fa-angle-left"></i> </p></a>'
                         ];
                     } else {
                         $mv = current($m);
@@ -178,7 +217,7 @@ class MenuHelper
                             'url' => \Yii::$app->urlManager->createUrl(implode("/", [$mv['module'], $mv['controller'], $mv['action']])),
                             'label' => $label,
                             'options' => ['class' => 'nav-item'],
-                            "template"=> '<a href="{url}" class="nav-link"><i class="'.$mvalues['config']['class'].'"></i><p>{label}</p></a>'
+                            "template" => '<a href="{url}" class="nav-link"><i class="' . $mvalues['config']['class'] . '"></i><p>{label}</p></a>'
                         ];
                     }
                 }
@@ -188,7 +227,7 @@ class MenuHelper
                         $result[$key] = [
                             'url' => \Yii::$app->urlManager->createUrl(implode("/", [$mv['module'], $mv['controller'], $mv['action']])),
                             'label' => $mv['label'],
-                            "template"=> '<a href="{url}" class="nav-link"><i class="fa fa-angle-double-right nav-icon"></i><p>{label}</p></a>',
+                            "template" => '<a href="{url}" class="nav-link"><i class="fa fa-angle-double-right nav-icon"></i><p>{label}</p></a>',
                             'options' => ['class' => "nav-item "],
                         ];
                     }
@@ -198,7 +237,8 @@ class MenuHelper
         return $result;
     }
 
-    public static function styleMenuLabel($label, $menuConfig = []) {
+    public static function styleMenuLabel($label, $menuConfig = [])
+    {
         $text = ucwords(implode(' ', preg_split('/(?=[A-Z])/', $label)));
         // $label = "";
         // if (!empty($menuConfig)) {
@@ -208,7 +248,8 @@ class MenuHelper
         return $text;
     }
 
-    public static function getDisplayTitle($menu = []) {
+    public static function getDisplayTitle($menu = [])
+    {
         $menu = empty($menu) ? self::$menu : $menu;
         $menuItem = !empty($menu['items']) ? $menu['items'] : $menu;
         $title = [];
@@ -227,17 +268,16 @@ class MenuHelper
         return $title;
     }
 
-    public static function renderMenu() {
+    public static function renderMenu()
+    {
         return MenuHelper::getDisplayMenu();
     }
 
-    public static function renderPageTitle($c = "", $a = "") {
+    public static function renderPageTitle($c = "", $a = "")
+    {
         $titleList = \Yii::$app->cache->getOrSet('titles', function () {
             return MenuHelper::getDisplayTitle();
         });
         return !empty($titleList[$c][$a]) ? $titleList[$c][$a] : SITE_NAME;
     }
-
 }
-
-
