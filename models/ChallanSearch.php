@@ -11,6 +11,8 @@ use app\models\Challan;
  */
 class ChallanSearch extends Challan
 {
+
+    public $withEnable;
     /**
      * {@inheritdoc}
      */
@@ -55,6 +57,10 @@ class ChallanSearch extends Challan
             // uncomment the following line if you do not want to return any records when validation fails
             // $query->where('0=1');
             return $dataProvider;
+        }
+
+        if($this->withEnable){
+            $query->with(['client','plan']);
         }
 
         // grid filtering conditions
