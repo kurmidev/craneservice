@@ -94,4 +94,29 @@ class ChallanSearch extends Challan
 
         return $dataProvider;
     }
+
+    public function advanceSearch($type = "") {
+        switch ($type) {
+            case "optcnt":
+                return [
+                    ["label" => "Franchise", "attribute" => "operator_id", "type" => "dropdown", "list" => ArrayHelper::map(Operator::find()->defaultCondition()->andWhere(['type' => Constants::OPERATOR_TYPE_LCO])->asArray()->all(), "id", "name")],
+                    ["label" => "Distributor", "attribute" => "distributor_id", "type" => "dropdown", "list" => ArrayHelper::map(Operator::find()->defaultCondition()->andWhere(['type' => Constants::OPERATOR_TYPE_DISTRIBUTOR])->asArray()->all(), "id", "name")],
+                ];
+            default:
+                return [
+                    ["label" => "Name", "attribute" => "customer_name", "type" => "text"],
+                    ["label" => "username", "attribute" => "username", "type" => "text"],
+                    ["label" => "Mobile No", "attribute" => "mobile_no", "type" => "text"],
+                    ["label" => "Franchise", "attribute" => "operator_id", "type" => "dropdown", "list" => ArrayHelper::map(Operator::find()->defaultCondition()->andWhere(['type' => Constants::OPERATOR_TYPE_LCO])->asArray()->all(), "id", "name")],
+                    ["label" => "Distributor", "attribute" => "distributor_id", "type" => "dropdown", "list" => ArrayHelper::map(Operator::find()->defaultCondition()->andWhere(['type' => Constants::OPERATOR_TYPE_DISTRIBUTOR])->asArray()->all(), "id", "name")],
+                    ["label" => "Status", "attribute" => "status", "type" => "dropdown", "list" => Constants::LABEL_SUBSCRIBER_STATUS],
+                    ["label" => "Account Type", "attribute" => "account_types", "type" => "dropdown", "list" => Constants::LABEL_ACCOUNT_TYPE],
+                    ["label" => "Plan", "attribute" => "plan_id", "type" => "dropdown", "list" => ArrayHelper::map(PlanMaster::find()->defaultCondition()->active()->asArray()->all(), 'id', 'name')],
+                    ["label" => "Added On", "attribute" => "added_on", "type" => "date_range"],
+                    ["label" => "Start Date", "attribute" => "start_date", "type" => "date_range"],
+                    ["label" => "End Date", "attribute" => "end_date", "type" => "date_range"],
+                ];
+        }
+    }
+
 }
