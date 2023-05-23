@@ -1,6 +1,6 @@
 <?php
 
-use common\component\ImsGridView;
+use app\components\ImsGridView;
 use yii\widgets\Pjax;
 
 /* @var $this yii\web\View */
@@ -10,7 +10,6 @@ $this->title = $title;
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 
-<?= $this->render('@app/views/layouts/_header') ?>
 <?= $this->render('@app/views/layouts/_advanceSearch', ['search' => $search, 'model' => $searchModel]) ?>
 
 <?=

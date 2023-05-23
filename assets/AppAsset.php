@@ -30,7 +30,7 @@ class AppAsset extends AssetBundle
         //"js/jquery.min.js",
         "js/moment.js",
         //"js/bootstrap.js",
-        "js/datetime.js",
+        "js/datepicker.js",
         "js/main.js",
         "js/pgenable.js"
     ];

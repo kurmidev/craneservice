@@ -5,7 +5,8 @@ namespace app\models;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
 use app\models\Challan;
-
+use yii\helpers\ArrayHelper;
+use app\components\Constants as C;
 /**
  * ChallanSearch represents the model behind the search form of `app\models\Challan`.
  */
@@ -13,6 +14,10 @@ class ChallanSearch extends Challan
 {
 
     public $withEnable;
+    public $challan_created_start;
+    public $challan_created_end;
+
+    public $challan_status;
     /**
      * {@inheritdoc}
      */
@@ -20,7 +25,7 @@ class ChallanSearch extends Challan
     {
         return [
             [['id', 'client_id', 'plan_id', 'vehicle_id', 'day_wise', 'break_time', 'up_time', 'down_time', 'plan_extra_hours', 'plan_shift_type', 'invoice_id', 'is_processed', 'status', 'created_by', 'updated_by'], 'integer'],
-            [['challan_date', 'site_address', 'operator_id', 'helper_id', 'challan_no', 'plan_start_time', 'plan_end_time', 'plan_measure', 'plan_trip', 'from_destination', 'to_destination', 'challan_image', 'created_at', 'updated_at'], 'safe'],
+            [['challan_date', 'site_address', 'operator_id', 'helper_id', 'challan_no', 'plan_start_time', 'plan_end_time', 'plan_measure', 'plan_trip', 'from_destination', 'to_destination', 'challan_image', 'created_at', 'updated_at','challan_created_start','challan_created_end','challan_status'], 'safe'],
             [['amount'], 'number'],
         ];
     }
@@ -44,7 +49,8 @@ class ChallanSearch extends Challan
     public function search($params)
     {
         $query = Challan::find();
-
+    
+        $query->setAlias();
         // add conditions that should always apply here
 
         $dataProvider = new ActiveDataProvider([
@@ -59,70 +65,104 @@ class ChallanSearch extends Challan
             return $dataProvider;
         }
 
-        if($this->withEnable){
-            $query->with(['client','plan']);
+
+        if(!empty($this->challan_status)){
+            if($this->challan_status==C::CHALLAN_PAID){
+                $query->andWhere($query->alias.'amount_paid='.$query->alias.'total');
+            }else if($this->challan_status==C::CHALLAN_UNPAID){
+                $query->andWhere('amount_paid<total');
+            }
+        }
+
+        if(!empty($this->challan_created_start) && !empty($this->challan_created_end)){
+            $query->andWhere(["between",$query->alias."created_at",date("Y-m-d 00:00:00",strtotime($this->challan_created_start)),date("Y-m-d 23:59:59",strtotime($this->challan_created_end))]);
         }
 
         // grid filtering conditions
         $query->andFilterWhere([
-            'id' => $this->id,
-            'client_id' => $this->client_id,
-            'challan_date' => $this->challan_date,
-            'plan_id' => $this->plan_id,
-            'vehicle_id' => $this->vehicle_id,
-            'plan_start_time' => $this->plan_start_time,
-            'plan_end_time' => $this->plan_end_time,
-            'day_wise' => $this->day_wise,
-            'amount' => $this->amount,
-            'break_time' => $this->break_time,
-            'up_time' => $this->up_time,
-            'down_time' => $this->down_time,
-            'plan_extra_hours' => $this->plan_extra_hours,
-            'plan_shift_type' => $this->plan_shift_type,
-            'invoice_id' => $this->invoice_id,
-            'is_processed' => $this->is_processed,
-            'status' => $this->status,
-            'created_at' => $this->created_at,
-            'updated_at' => $this->updated_at,
-            'created_by' => $this->created_by,
-            'updated_by' => $this->updated_by,
+            $query->alias.'id' => $this->id,
+            $query->alias.'client_id' => $this->client_id,
+            $query->alias.'challan_date' => $this->challan_date,
+            $query->alias.'plan_id' => $this->plan_id,
+            $query->alias.'vehicle_id' => $this->vehicle_id,
+            $query->alias.'plan_start_time' => $this->plan_start_time,
+            $query->alias.'plan_end_time' => $this->plan_end_time,
+            $query->alias.'day_wise' => $this->day_wise,
+            $query->alias.'amount' => $this->amount,
+            $query->alias.'break_time' => $this->break_time,
+            $query->alias.'up_time' => $this->up_time,
+            $query->alias.'down_time' => $this->down_time,
+            $query->alias.'plan_extra_hours' => $this->plan_extra_hours,
+            $query->alias.'plan_shift_type' => $this->plan_shift_type,
+            $query->alias.'invoice_id' => $this->invoice_id,
+            $query->alias.'is_processed' => $this->is_processed,
+            $query->alias.'operator_id' => $this->operator_id,
+            $query->alias.'helper_id' => $this->helper_id,
+            $query->alias.'status' => $this->status,
+            $query->alias.'created_at' => $this->created_at,
+            $query->alias.'updated_at' => $this->updated_at,
+            $query->alias.'created_by' => $this->created_by,
+            $query->alias.'updated_by' => $this->updated_by,
         ]);
 
-        $query->andFilterWhere(['like', 'site_address', $this->site_address])
-            ->andFilterWhere(['like', 'operator_id', $this->operator_id])
-            ->andFilterWhere(['like', 'helper_id', $this->helper_id])
-            ->andFilterWhere(['like', 'challan_no', $this->challan_no])
-            ->andFilterWhere(['like', 'plan_measure', $this->plan_measure])
-            ->andFilterWhere(['like', 'plan_trip', $this->plan_trip])
-            ->andFilterWhere(['like', 'from_destination', $this->from_destination])
-            ->andFilterWhere(['like', 'to_destination', $this->to_destination])
-            ->andFilterWhere(['like', 'challan_image', $this->challan_image]);
+        $query->andFilterWhere(['like', $query->alias.'site_address', $this->site_address])
+            //->andFilterWhere(['like', 'operator_id', $this->operator_id])
+            //->andFilterWhere(['like', 'helper_id', $this->helper_id])
+            ->andFilterWhere(['like', $query->alias.'challan_no', $this->challan_no])
+            ->andFilterWhere(['like', $query->alias.'plan_measure', $this->plan_measure])
+            ->andFilterWhere(['like', $query->alias.'plan_trip', $this->plan_trip])
+            ->andFilterWhere(['like', $query->alias.'from_destination', $this->from_destination])
+            ->andFilterWhere(['like', $query->alias.'to_destination', $this->to_destination])
+            ->andFilterWhere(['like', $query->alias.'challan_image', $this->challan_image]);
 
         return $dataProvider;
     }
 
-    public function advanceSearch($type = "") {
-        switch ($type) {
-            case "optcnt":
-                return [
-                    ["label" => "Franchise", "attribute" => "operator_id", "type" => "dropdown", "list" => ArrayHelper::map(Operator::find()->defaultCondition()->andWhere(['type' => Constants::OPERATOR_TYPE_LCO])->asArray()->all(), "id", "name")],
-                    ["label" => "Distributor", "attribute" => "distributor_id", "type" => "dropdown", "list" => ArrayHelper::map(Operator::find()->defaultCondition()->andWhere(['type' => Constants::OPERATOR_TYPE_DISTRIBUTOR])->asArray()->all(), "id", "name")],
-                ];
-            default:
-                return [
-                    ["label" => "Name", "attribute" => "customer_name", "type" => "text"],
-                    ["label" => "username", "attribute" => "username", "type" => "text"],
-                    ["label" => "Mobile No", "attribute" => "mobile_no", "type" => "text"],
-                    ["label" => "Franchise", "attribute" => "operator_id", "type" => "dropdown", "list" => ArrayHelper::map(Operator::find()->defaultCondition()->andWhere(['type' => Constants::OPERATOR_TYPE_LCO])->asArray()->all(), "id", "name")],
-                    ["label" => "Distributor", "attribute" => "distributor_id", "type" => "dropdown", "list" => ArrayHelper::map(Operator::find()->defaultCondition()->andWhere(['type' => Constants::OPERATOR_TYPE_DISTRIBUTOR])->asArray()->all(), "id", "name")],
-                    ["label" => "Status", "attribute" => "status", "type" => "dropdown", "list" => Constants::LABEL_SUBSCRIBER_STATUS],
-                    ["label" => "Account Type", "attribute" => "account_types", "type" => "dropdown", "list" => Constants::LABEL_ACCOUNT_TYPE],
-                    ["label" => "Plan", "attribute" => "plan_id", "type" => "dropdown", "list" => ArrayHelper::map(PlanMaster::find()->defaultCondition()->active()->asArray()->all(), 'id', 'name')],
-                    ["label" => "Added On", "attribute" => "added_on", "type" => "date_range"],
-                    ["label" => "Start Date", "attribute" => "start_date", "type" => "date_range"],
-                    ["label" => "End Date", "attribute" => "end_date", "type" => "date_range"],
-                ];
-        }
+    public function advanceSearch($type = "")
+    {
+        return [
+            ["label" => "Challan No", "attribute" => "challan_no", "type" => "text"],
+            ["label" => "Operator", "attribute" => "operator_id", "type" => "dropdown", "list" => ArrayHelper::map(EmployeeMaster::find()->onlyActive()->asArray()->all(), "id", "name")],
+            ["label" => "Helper", "attribute" => "helper_id", "type" => "dropdown", "list" => ArrayHelper::map(EmployeeMaster::find()->onlyActive()->asArray()->all(), "id", "name")],
+            ["label" => "Challan Date", "attribute" => "challan_created", "type" => "date_range"],
+            ["label" => "Status", "attribute" => "challan_status", "type" => "dropdown", "list" => C::CHALLAN_STATUS ],
+        ];
     }
 
+    public function displayColumn(){
+        return [
+            ['class' => 'yii\grid\SerialColumn'],
+            'challan_date',
+            'challan_no',
+            'client.company_name',
+            'client.mobile_no',
+            'client.phone_no',
+            'plan.name',
+            [
+                'attribute' => 'id', 'label' => 'D/C No',
+                'content' => function ($model) {
+                    return $model->id;
+                },
+            ],
+            [
+                "attribute"=>"","label"=>"Total Hours/Qty",
+                'content' => function($model){
+                    return $model->plan->type==C::PACKAGE_WISE_TRIP?$model->plan_trip:date('H:i', mktime(0, (strtotime($model->plan_end_time) - strtotime($model->plan_start_time)) / 60));
+                }
+            ],
+            "plan_start_time",
+            "plan_end_time",
+            "break_time",
+            "up_time",
+            "down_time",
+            "amount",
+            "total",
+            [
+                'attribute' => 'invoice_id', 'label' => 'Is Invoice Generated',
+                'content' => function ($model) {
+                    return !empty($model->invoice_id) ? "Yes" : "No";
+                },
+            ],
+        ];
+    }
 }

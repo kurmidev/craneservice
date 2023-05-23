@@ -8,6 +8,8 @@ class Constants
     const STATUS_ACTIVE = 1;
     const STATUS_INACTIVE = 0;
 
+    const STATUS_DELETED = -1;
+
     const Admin = 1;
 
     const DOCUMENT_FOR_COMPANY = 1;
@@ -125,7 +127,23 @@ class Constants
 
     const EXPENSE_TYPE_NORMAL = 1;
     const EXPENSE_TYPE_STAFF = 2;
+    const CHALLAN_PAID =1;
+    const CHALLAN_UNPAID = 2;
 
+    const CHALLAN_STATUS = [
+        self::CHALLAN_UNPAID => "Pending",
+        self::CHALLAN_PAID => "Paid"
+    ];
+
+    const INVOICE_PENDING = 1;
+    const INVOICE_PAID = 2;
+    const INVOICE_CANCEL = -1;
+    
+    const INVOICE_STATUS = [
+        self::INVOICE_PENDING => "Pending",
+        self::INVOICE_PAID => "Paid",
+        self::INVOICE_CANCEL => "Cancel",
+    ];
 
     const DEFAUL_TERMS_CONDITION = "1. Gst tax18% as per government rule will be added.
     2. Payment terms charges &monthly billing payment will be done within 10 days of bill
