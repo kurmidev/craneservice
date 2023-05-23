@@ -108,4 +108,19 @@ class SiteController extends BaseController
     {
         return $this->render('about');
     }
+
+    public function actionChangesPassword() {
+        $model = new ChangePasswordForm(['scenario' => User::SCENARIO_CREATE]);
+        $name = User::loggedInUserName();
+        $model->user_id = User::loggedInUserId();
+        $model->name = $name;
+        if ($model->load(Yii::$app->request->post()) && $model->validate()) {
+            $m = $model->save();
+            \Yii::$app->getSession()->setFlash('s', "Password of $name updated successfully.");
+            return $this->redirect(['index']);
+        }
+        return $this->render('form-change-password', [
+                    'model' => $model,
+        ]);
+    }
 }
