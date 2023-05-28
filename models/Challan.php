@@ -3,7 +3,7 @@
 namespace app\models;
 
 use Yii;
-
+use app\components\Constants as C;
 /**
  * This is the model class for table "challan".
  *
@@ -175,5 +175,25 @@ class Challan extends \app\models\BaseModel
 
     public function getPayments(){
         return $this->hasMny(Payments::class,['id'=>'invoice_id']);
+    }
+
+    public function getSummaryOne(){
+        switch($this->plan->type){
+        case C::PACKAGE_WISE_CHALLAN:
+            return date('H:i', mktime(0, (strtotime($this->plan_end_time) - strtotime($this->plan_start_time)) / 60));
+        case C::PACKAGE_WISE_DAY:
+            break;
+        case C::PACKAGE_WISE_TRIP:
+            return $this->plan_trip;
+        case C::PACKAGE_WISE_DESTINATION:
+            break;
+        case C::PACKAGE_WISE_MONTH:
+            break;
+        case C::PACKAGE_WISE_SHIFT:
+            break;
+            default:
+            break;
+        }
+        return '';
     }
 }

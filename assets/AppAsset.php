@@ -32,6 +32,7 @@ class AppAsset extends AssetBundle
         //"js/bootstrap.js",
         "js/datepicker.js",
         "js/main.js",
+        'js/chart.js',
         "js/pgenable.js"
     ];
     public $depends = [

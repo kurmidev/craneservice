@@ -2,6 +2,7 @@
 
 namespace app\controllers;
 
+use app\components\Dashboard;
 use Yii;
 use yii\filters\AccessControl;
 use yii\web\Controller;
@@ -43,7 +44,8 @@ class SiteController extends BaseController
      */
     public function actionIndex()
     {
-        return $this->render('index');
+        $model = new Dashboard();
+        return $this->render('index',['model'=>$model]);
     }
 
     /**

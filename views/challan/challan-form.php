@@ -140,14 +140,14 @@ use yii\web\View;
 
                                 <?= $form->field($model, 'items[0][plan_trip]', ['options' => ['class' => 'form-group']])->begin() ?>
                                 <div class="col-lg-12 col-sm-12 col-xs-12">
-                                    <?= Html::activeTextInput($model, 'items[0][plan_trip]', ['class' => 'form-control hide', "id" => "challanform_items_0_plan_trip"]) ?>
+                                    <?= Html::activeTextInput($model, 'items[0][plan_trip]', ['class' => 'form-control hide', "id" => "challanform_items_0_plan_trip","placeholder"=>"Trip/Quantity"]) ?>
                                     <?= Html::error($model, 'items[0][plan_trip]', ['class' => 'error help-block']) ?>
                                 </div>
                                 <?= $form->field($model, 'items[0][plan_trip]')->end() ?>
 
                                 <?= $form->field($model, 'items[0][from_destination]', ['options' => ['class' => 'form-group']])->begin() ?>
                                 <div class="col-lg-12 col-sm-12 col-xs-12">
-                                    <?= Html::activeTextInput($model, 'items[0][from_destination]', ['class' => 'form-control hide', "id" => "challanform_items_0_from_destination"]) ?>
+                                    <?= Html::activeTextInput($model, 'items[0][from_destination]', ['class' => 'form-control hide', "id" => "challanform_items_0_from_destination","placeholder"=>"From Destination"]) ?>
                                     <?= Html::error($model, 'items[0][from_destination]', ['class' => 'error help-block']) ?>
                                 </div>
                                 <?= $form->field($model, 'items[0][from_destination]')->end() ?>
@@ -164,14 +164,14 @@ use yii\web\View;
 
                                 <?= $form->field($model, 'items[0][plan_measure]', ['options' => ['class' => 'form-group']])->begin() ?>
                                 <div class="col-lg-12 col-sm-12 col-xs-12">
-                                    <?= Html::activeTextInput($model, 'items[0][plan_measure]', ['class' => 'form-control hide', "id" => "challanform_items_0_plan_measure"]) ?>
+                                    <?= Html::activeTextInput($model, 'items[0][plan_measure]', ['class' => 'form-control hide', "id" => "challanform_items_0_plan_measure","placeholder"=>'Brass/Litre']) ?>
                                     <?= Html::error($model, 'items[0][plan_measure]', ['class' => 'error help-block']) ?>
                                 </div>
                                 <?= $form->field($model, 'items[0][plan_measure]')->end() ?>
 
                                 <?= $form->field($model, 'items[0][to_destination]', ['options' => ['class' => 'form-group']])->begin() ?>
                                 <div class="col-lg-12 col-sm-12 col-xs-12">
-                                    <?= Html::activeTextInput($model, 'items[0][to_destination]', ['class' => 'form-control hide', 'id' => "challanform_items_0_to_destination"]) ?>
+                                    <?= Html::activeTextInput($model, 'items[0][to_destination]', ['class' => 'form-control hide', 'id' => "challanform_items_0_to_destination","placeholder"=>"To Destination"]) ?>
                                     <?= Html::error($model, 'items[0][to_destination]', ['class' => 'error help-block']) ?>
                                 </div>
                                 <?= $form->field($model, 'items[0][to_destination]')->end() ?>
@@ -206,7 +206,7 @@ use yii\web\View;
 
                                 <?= $form->field($model, 'items[0][plan_extra_hours]', ['options' => ['class' => 'form-group']])->begin() ?>
                                 <div class="col-lg-12 col-sm-12 col-xs-12">
-                                    <?= Html::activeTextInput($model, 'items[0][plan_extra_hours]', ['class' => 'form-control', "id" => "challanform_items_0_plan_extra_hours"]) ?>
+                                    <?= Html::activeTextInput($model, 'items[0][plan_extra_hours]', ['class' => 'form-control', "id" => "challanform_items_0_plan_extra_hours","placeholder"=>"Extra Hours"]) ?>
                                     <?= Html::error($model, 'items[0][plan_extra_hours]', ['class' => 'error help-block']) ?>
                                 </div>
                                 <?= $form->field($model, 'items[0][plan_extra_hours]')->end() ?>
@@ -324,12 +324,10 @@ $(".challan_options").change(function () {
 
     switch (type) {
         case "1":
-            alert("1");
             $("#"+rel+"_plan_shift_type").hide();
             $("#"+rel+"_plan_extra_hours").hide();
             break;
         case "2":
-            alert(2);
             $("#"+rel+"_break_time").show();
             $("#"+rel+"_up_time").show();
             $("#"+rel+"_plan_start_time").hide();
@@ -343,7 +341,6 @@ $(".challan_options").change(function () {
             $("#"+rel+"_day_wise").show();
             break;
         case "3":
-            alert(3);
             $("#"+rel+"_break_time").show();
             $("#"+rel+"_up_time").show();
             $("#"+rel+"_plan_trip").show();
@@ -355,14 +352,12 @@ $(".challan_options").change(function () {
             $("#"+rel+"_plan_extra_hours").hide();
             break;
         case "4":
-            alert("4");
             $("#"+rel+"_from_destination").show();
             $("#"+rel+"_to_destination").show();
             $("#"+rel+"_plan_start_time").hide();
             $("#"+rel+"_plan_end_time").hide();
             break;
         case "5":
-            alert(5);
             $("#"+rel+"_break_time").show();
             $("#"+rel+"_up_time").show();
             $("#"+rel+"_plan_start_time").show();
@@ -375,7 +370,6 @@ $(".challan_options").change(function () {
             $("#"+rel+"_plan_extra_hours").hide();
             break;
         case "6":
-            alert(6);
             $("#"+rel+"_plan_start_time").show();
             $("#"+rel+"_plan_end_time").show();
             $("#"+rel+"_plan_shift_type").show();

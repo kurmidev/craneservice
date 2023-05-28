@@ -58,10 +58,10 @@ class MenuHelper
                     ['module' => '', 'controller' => 'vendor', 'action' => 'print-challan', 'label' => 'Print Challan', 'is_menu' => false, 'icon' => "icon icon ion-ios-photos-outline"],
                     ['module' => '', 'controller' => 'vendor', 'action' => 'add-invoice', 'label' => 'Add Invoice', 'is_menu' => false, 'icon' => "icon icon ion-ios-photos-outline"],
                     ['module' => '', 'controller' => 'vendor', 'action' => 'print-invoice', 'label' => 'Print Invoice', 'is_menu' => false, 'icon' => "icon icon ion-ios-photos-outline"],
-                    ['module' => '', 'controller' => 'customer', 'action' => 'pay-invoice', 'label' => 'Pay Invoice', 'is_menu' => false, 'icon' => "icon icon ion-ios-photos-outline"],
-                    ['module' => '', 'controller' => 'customer', 'action' => 'add-note', 'label' => 'Add Notes', 'is_menu' => false, 'icon' => "icon icon ion-ios-photos-outline"],
-                    ['module' => '', 'controller' => 'customer', 'action' => 'edit-note', 'label' => 'Edit Notes', 'is_menu' => false, 'icon' => "icon icon ion-ios-photos-outline"],
-                    ['module' => '', 'controller' => 'customer', 'action' => 'print-note', 'label' => 'Print Notes', 'is_menu' => false, 'icon' => "icon icon ion-ios-photos-outline"],
+                    ['module' => '', 'controller' => 'vendor', 'action' => 'pay-invoice', 'label' => 'Pay Invoice', 'is_menu' => false, 'icon' => "icon icon ion-ios-photos-outline"],
+                    ['module' => '', 'controller' => 'vendor', 'action' => 'add-note', 'label' => 'Add Notes', 'is_menu' => false, 'icon' => "icon icon ion-ios-photos-outline"],
+                    ['module' => '', 'controller' => 'vendor', 'action' => 'edit-note', 'label' => 'Edit Notes', 'is_menu' => false, 'icon' => "icon icon ion-ios-photos-outline"],
+                    ['module' => '', 'controller' => 'vendor', 'action' => 'print-note', 'label' => 'Print Notes', 'is_menu' => false, 'icon' => "icon icon ion-ios-photos-outline"],
                 ]
             ]
         ],
@@ -165,13 +165,13 @@ class MenuHelper
         "vendor_report" => [
             "config" => ["class" => "nav-icon fas fa-shopping-basket"],
             "items" => [
-                "customer_challan" => [
+                "vendor_challan" => [
                     ['module' => '', 'controller' => 'report', 'action' => 'vendor-challan', 'label' => 'Challan', 'is_menu' => true, 'icon' => "icon icon ion-ios-photos-outline"],
                 ],
-                "customer_invoice" => [
+                "vendor_invoice" => [
                     ['module' => '', 'controller' => 'report', 'action' => 'vendor-invoice', 'label' => 'Invoice', 'is_menu' => true, 'icon' => "icon icon ion-ios-photos-outline"],
                 ],
-                "customer_payment" => [
+                "vendor_payment" => [
                     ['module' => '', 'controller' => 'report', 'action' => 'vendor-payment', 'label' => 'Payment', 'is_menu' => true, 'icon' => "icon icon ion-ios-photos-outline"],
                 ]
             ]
