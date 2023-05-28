@@ -25,6 +25,10 @@ use app\components\Constants as C;
  */
 class VehicleMaster extends \app\models\BaseModel
 {
+    public $sales_amount;
+    public $expenses;
+
+    public $profit_loss;
 
     public static $maintenance = [
         "mv_tax" => "MV Tax",

@@ -20,9 +20,8 @@ class Dashboard extends Model
 
     public function getTotalCustomer()
     {
-        return Yii::$app->cache->getOrSet('dashboard', function () {
-            return ClientMaster::find()->onlyActive()->andFilterWhere(["client_type" => $this->client_type])->count();
-        });
+
+        return ClientMaster::find()->onlyActive()->andFilterWhere(["client_type" => $this->client_type])->count();
     }
 
     public function getTotalInvoice()
@@ -42,12 +41,16 @@ class Dashboard extends Model
 
     public function getTotalChallan()
     {
-        return Challan::find()->onlyActive()->count();
+        $query =  Challan::find()->alias('a');
+        $query->setAlias('a');
+        return $query->joinWith(['client c'])->andFilterWhere(["c.client_type" => $this->client_type])->onlyActive()->count();
     }
 
     public function getPendingChallan()
     {
-        return Challan::find()->onlyActive()->andWhere('total-amount_paid>0')->count();
+        $query =  Challan::find()->alias('a');
+        $query->setAlias('a');
+        return $query->joinWith(['client c'])->andFilterWhere(["c.client_type" => $this->client_type])->andWhere('a.total-a.amount_paid>0')->count();
     }
 
     public function getMonthlyOutstanding()
@@ -93,14 +96,16 @@ class Dashboard extends Model
 
     public function getCustomerChallanSummary()
     {
-        $d = Challan::find() //->andFilterWhere(["client_type"=>$this->client_type])
+        $query =  Challan::find()->alias('a');
+        $query->setAlias('a');
+        $d = $query->joinWith(['client c'])->andFilterWhere(["c.client_type" => $this->client_type]) //->andFilterWhere(["client_type"=>$this->client_type])
             ->select([
-                "total_challan" => "count(id)",
-                "total_amount" => "sum(total)",
-                "pending_challan" => "sum(case when total-amount_paid>0 then 1 else 0 end)",
-                "pending_challan_amount" => "sum(case when total-amount_paid>0 then total-amount_paid else 0 end)",
-                "paid_challan" =>  "sum(case when total-amount_paid<=0 then 1 else 0 end)",
-                "paid_challan_amount" => "sum(case when total-amount_paid<=0 then amount_paid else 0 end)",
+                "total_challan" => "count(a.id)",
+                "total_amount" => "sum(a.total)",
+                "pending_challan" => "sum(case when a.total-a.amount_paid>0 then 1 else 0 end)",
+                "pending_challan_amount" => "sum(case when a.total-a.amount_paid>0 then a.total-a.amount_paid else 0 end)",
+                "paid_challan" =>  "sum(case when a.total-a.amount_paid<=0 then 1 else 0 end)",
+                "paid_challan_amount" => "sum(case when a.total-a.amount_paid<=0 then a.amount_paid else 0 end)",
             ])->asArray()->all();
 
         $d = !empty($d[0]) ? $d[0] : [];
@@ -116,10 +121,10 @@ class Dashboard extends Model
 
     public function getMonthlyChallanOutstanding()
     {
-        $model = Challan::find()->active()
-            ->select(["challan_date" => new Expression("left(challan_date,7)"), "challan_count" => "count(id)", "challan_amount" => "sum(total)"])
-            ->andFilterWhere(["client_type" => $this->client_type])
-            ->groupBy(['challan_date'])
+        $model = Challan::find()->alias('a')->joinWith(['client c'])
+            ->select(["challan_date" => new Expression("left(a.challan_date,7)"), "challan_count" => "count(a.id)", "challan_amount" => "sum(a.total)"])
+            ->andFilterWhere(["c.client_type" => $this->client_type])
+            ->groupBy(['a.challan_date'])
             ->asArray()->all();
         $response = [];
         foreach ($model as $d) {
@@ -148,7 +153,7 @@ class Dashboard extends Model
                 "vehicle_no" => $d['vehicle_no'],
                 "sales_amount" => round($d['sales_amount'], 2),
                 "expenses" => round($d['expenses'], 2),
-                "profit_loas" => round($d['sales_amount'] - $d['expenses'], 2)
+                "profit_loss" => round($d['sales_amount'] - $d['expenses'], 2)
             ];
         }
         return  $resp;

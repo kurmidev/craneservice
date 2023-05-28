@@ -2,6 +2,7 @@
 
 namespace app\models;
 
+use app\models\ClientMaster;
 use Yii;
 
 /**
@@ -23,6 +24,11 @@ use Yii;
  */
 class PlanMaster extends \app\models\BaseModel
 {
+
+    public $total_challan;
+    public $challan_amount;
+    public $total_invoice;
+    public $invoice_amount;
     /**
      * {@inheritdoc}
      */
@@ -81,5 +87,9 @@ class PlanMaster extends \app\models\BaseModel
     public function getAttr()
     {
         return $this->hasOne(PlanAttributes::class, ['id' => 'attribute_id']);
+    }
+
+    public function getChallan(){
+        return $this->hasMany(Challan::class,['plan_id'=>'id']);
     }
 }

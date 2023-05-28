@@ -5,7 +5,7 @@ namespace app\models;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
 use app\models\VehicleMaster;
-
+use app\components\Constants as C;
 /**
  * VehicleMasterSearch represents the model behind the search form of `app\models\VehicleMaster`.
  */
@@ -74,5 +74,44 @@ class VehicleMasterSearch extends VehicleMaster
             ->andFilterWhere(['like', 'vehicle_type', $this->vehicle_type]);
 
         return $dataProvider;
+    }
+
+    public function advanceSearch($type = "summary")
+    {
+        switch($type){
+            case "summary":
+                return [
+                    ["label" => "Vehicle No", "attribute" => "vehicle_no", "type" => "text"],
+                ];
+            default:
+            return [
+                ["label" => "Vehicle No", "attribute" => "vehicle_no", "type" => "text"],
+                ["label" => "Vehicle Type", "attribute" => "vehicle_type", "type" => "text"],
+                ["label" => "Book No", "attribute" => "book_no", "type" => "text"],
+            ];
+        }
+        
+    }
+
+    public  function displayColumn($type=""){
+        switch($type){
+            case "summary":
+                return [
+                    ['class' => 'yii\grid\SerialColumn'],
+                    'vehicle_no',
+                    'sales_amount',
+                    'expenses',
+                    'profit_loss'
+                ];
+            default:
+            return [
+                ['class' => 'yii\grid\SerialColumn'],
+                "vehicle_no",
+                "vehicle_type",
+                "book_no",
+                "start_date",
+                "end_date"
+            ];
+        }
     }
 }

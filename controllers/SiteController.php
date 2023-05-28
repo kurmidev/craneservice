@@ -10,6 +10,7 @@ use yii\web\Response;
 use yii\filters\VerbFilter;
 use app\models\LoginForm;
 use app\models\ContactForm;
+use app\components\Constants as C;
 
 class SiteController extends BaseController
 {
@@ -45,6 +46,30 @@ class SiteController extends BaseController
     public function actionIndex()
     {
         $model = new Dashboard();
+        return $this->render('index',['model'=>$model]);
+    }
+
+    /**
+     * Displays homepage.
+     *
+     * @return string
+     */
+    public function actionCustomer()
+    {
+        $model = new Dashboard();
+        $model->client_type = C::CLIENT_TYPE_CUSTOMER;
+        return $this->render('index',['model'=>$model]);
+    }
+
+    /**
+     * Displays homepage.
+     *
+     * @return string
+     */
+    public function actionVendor()
+    {
+        $model = new Dashboard();
+        $model->client_type = C::CLIENT_TYPE_VENDOR;
         return $this->render('index',['model'=>$model]);
     }
 

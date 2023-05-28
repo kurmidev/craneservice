@@ -14,10 +14,10 @@ class MenuHelper
             "config" => ["class" => "nav-icon fas fa-home"],
             "items" => [
                 'customer_dashboard' => [
-                    ['module' => '', 'controller' => 'site', 'action' => 'index', 'label' => 'Customer Dashboard', 'is_menu' => true, 'icon' => "icon icon ion-ios-photos-outline"],
+                    ['module' => '', 'controller' => 'site', 'action' => 'customer', 'label' => 'Customer Dashboard', 'is_menu' => true, 'icon' => "icon icon ion-ios-photos-outline"],
                 ],
                 'vendor_dashboard' => [
-                    ['module' => '', 'controller' => 'site', 'action' => 'index', 'label' => 'Vendor Dashboard', 'is_menu' => true, 'icon' => "icon icon ion-ios-photos-outline"],
+                    ['module' => '', 'controller' => 'site', 'action' => 'vendor', 'label' => 'Vendor Dashboard', 'is_menu' => true, 'icon' => "icon icon ion-ios-photos-outline"],
                 ]
             ]
         ],
