@@ -19,6 +19,8 @@ use app\models\InvoiceMasterSearch;
 use Yii;
 use app\components\ConstFunc as F;
 use app\forms\QuotationForm;
+use app\models\ClientPlanMapping;
+use app\models\ClientPlanMappingSearch;
 use app\models\PaymentNotes;
 use app\models\PaymentNotesSearch;
 use app\models\Payments;
@@ -74,7 +76,7 @@ class ClientController extends BaseController
             $dataProvider = $searchModel->search($this->request->queryParams);
             $dataProvider->query->andWhere(["client_id" => $model->id]);
             if ($pg == "pending-challan") {
-                $dataProvider->query->andWhere(['is_processed' => C::STATUS_INACTIVE, 'invoice_id' => 0]);
+                $dataProvider->query->andWhere(['is_processed' => C::STATUS_INACTIVE, 'invoice_id' => null]);
             } else {
                 $dataProvider->query->andWhere(['is_processed' => C::STATUS_ACTIVE])->andWhere(['>', 'invoice_id', 0]);
             }
@@ -87,9 +89,9 @@ class ClientController extends BaseController
             $invoiceSearchModel = new InvoiceMasterSearch();
             $invoiceDataProvider = $invoiceSearchModel->search($this->request->queryParams);
             if ($pg == "pending-invoice") {
-                $invoiceDataProvider->query->andWhere(["client_id" => $model->id, "status" => C::STATUS_INACTIVE]);
+                $invoiceDataProvider->query->andWhere(["client_id" => $model->id, "invoice_id"=>null]);
             } else {
-                $invoiceDataProvider->query->andWhere(["client_id" => $model->id, "status" => C::STATUS_ACTIVE]);
+                $invoiceDataProvider->query->andWhere(["client_id" => $model->id])->andWhere(['not',["invoice_id"=>null]]);
             }
 
             $invoiceAmount = Challan::find()->where(['client_id' => $model->id, 'is_processed' => C::STATUS_ACTIVE])->andWhere([">", "invoice_id", 0])->active()->sum("total-amount_paid");
@@ -106,6 +108,10 @@ class ClientController extends BaseController
             $quotesDataProvider = $quotesSearchModel->search($this->request->queryParams);
             $quotesDataProvider->query->andWhere(["client_id" => $model->id]);
 
+            $customPriceSearchModel = new ClientPlanMappingSearch();
+            $customPriceDataProvider = $customPriceSearchModel->search($this->request->queryParams);
+            $customPriceDataProvider->query->andWhere(["client_id" => $model->id]);
+
             return $this->render('@app/views/client/view', [
                 'model' => $model,
                 "title" => $this->title,
@@ -116,11 +122,14 @@ class ClientController extends BaseController
                 "addUrl" => $this->clientType == C::CLIENT_TYPE_CUSTOMER ? "customer/add-customer" : "vendor/add-vendor",
                 "seditUrl" => $this->clientType == C::CLIENT_TYPE_CUSTOMER ? "customer/edit-customer" : "vendor/edit-vendor",
                 "viewUrl" => $this->clientType == C::CLIENT_TYPE_CUSTOMER ? "customer/view-customer" : "vendor/view-vendor",
+                
+                "base_controller" =>  $this->clientType == C::CLIENT_TYPE_CUSTOMER ? "customer" : "vendor",
                 "challanAddUrl" => $this->clientType == C::CLIENT_TYPE_CUSTOMER ? "customer/add-challan" : "vendor/add-challan",
                 "challanEditUrl" => $this->clientType == C::CLIENT_TYPE_CUSTOMER ? "customer/edit-challan" : "vendor/edit-challan",
                 "challanViewUrl" => $this->clientType == C::CLIENT_TYPE_CUSTOMER ? "customer/view-challan" : "vendor/view-challan",
                 "challanPrintUrl" => $this->clientType == C::CLIENT_TYPE_CUSTOMER ? "customer/print-challan" : "vendor/print-challan",
                 "company_id" => $this->clientType == C::CLIENT_TYPE_CUSTOMER ? "customer/view-challan" : "vendor/view-challan",
+
                 "pg" => $pg,
                 "siteDataProvider" => $siteDataProvider,
                 "siteSearchModel" => $siteSearchModel,
@@ -132,6 +141,9 @@ class ClientController extends BaseController
                 "notesSearchModel" => $notesSearchModel,
                 "quotesDataProvider" => $quotesDataProvider,
                 "quotesSearchModel" => $quotesSearchModel,
+                "customPriceDataProvider" => $customPriceDataProvider,
+                "customPriceSearchModel" => $customPriceSearchModel,
+
                 "invoiceAddUrl" => $this->clientType == C::CLIENT_TYPE_CUSTOMER ?   "customer/add-invoice" : "vendor/add-invoice",
                 "invoiceEditUrl" => $this->clientType == C::CLIENT_TYPE_CUSTOMER ?  "customer/edit-invoice" : "vendor/edit-invoice",
                 "invoiceViewUrl" => $this->clientType == C::CLIENT_TYPE_CUSTOMER ?  "customer/view-invoice" : "vendor/view-invoice",
@@ -569,7 +581,68 @@ class ClientController extends BaseController
 
         $redirectUrl = $this->clientType == C::CLIENT_TYPE_CUSTOMER ? "customer" : "vendor";
         Yii::$app->getSession()->setFlash('e', "Record not found!");
-        return $this->redirect([$redirectUrl]);
-        
+        return $this->redirect([$redirectUrl]);   
     }
+
+     /**
+     * Creates a new ClientMaster model.
+     * If creation is successful, the browser will be redirected to the 'view' page.
+     * @return string|\yii\web\Response
+     */
+    public function actionAddCustomPrice($id)
+    {
+        $title = $this->clientType == C::CLIENT_TYPE_CUSTOMER ? "Customer" : "Vendor";
+        $client = ClientMaster::findOne(['id' => $id]);
+        if (!$client instanceof ClientMaster) {
+            \Yii::$app->getSession()->setFlash('e', 'Record not found');
+            return $this->redirect([$title . '/index']);
+            exit();
+        }
+
+        $model = new ClientPlanMapping(['scenario' => ClientPlanMapping::SCENARIO_CREATE]);
+        if ($this->request->isPost) {
+            $model->client_type = $client->client_type;
+            $model->client_id = $client->id;
+            if ($model->load($this->request->post()) && $model->save()) {
+                $redirectUrl = $this->clientType == C::CLIENT_TYPE_CUSTOMER ? "customer/view-customer" : "vendor/view-vendor";
+                \Yii::$app->getSession()->setFlash('s', "Custom Price has been added successfully.");
+                return $this->redirect([$redirectUrl, "id" => $id, "pg" => "custom-price"]);
+            }
+        }
+
+        return $this->render('@app/views/client/form-custom-price', [
+            'model' => $model,
+            "title" => $this->title
+        ]);
+    }
+
+    /**
+     * Updates an existing ClientMaster model.
+     * If update is successful, the browser will be redirected to the 'view' page.
+     * @param int $id ID
+     * @return string|\yii\web\Response
+     * @throws NotFoundHttpException if the model cannot be found
+     */
+    public function actionEditCustomPrice($id)
+    {
+        $title = $this->clientType == C::CLIENT_TYPE_CUSTOMER ? "client" : "vendor";
+        $model = ClientPlanMapping::findOne(['id'=>$id]);
+        $model->scenario = ClientPlanMapping::SCENARIO_UPDATE;
+        if (!$model instanceof ClientPlanMapping) {
+            \Yii::$app->getSession()->setFlash('e', 'Record not found');
+            return $this->redirect([$title . '/index']);
+            exit();
+        }
+        
+        if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
+            \Yii::$app->getSession()->setFlash('s', "Custom Price has been updated successfully.");
+            $redirectUrl = $this->clientType == C::CLIENT_TYPE_CUSTOMER ? "customer/view-customer" : "vendor/view-vendor";
+            return $this->redirect([$redirectUrl, "id" => $model->client_id, "pg" => "custom-price"]);
+        }
+
+        return $this->render('@app/views/client/form-custom-price', [
+            'model' => $model,
+        ]);
+    }
+
 }

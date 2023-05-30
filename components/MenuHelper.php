@@ -39,6 +39,9 @@ class MenuHelper
                     ['module' => '', 'controller' => 'customer', 'action' => 'add-note', 'label' => 'Add Notes', 'is_menu' => false, 'icon' => "icon icon ion-ios-photos-outline"],
                     ['module' => '', 'controller' => 'customer', 'action' => 'edit-note', 'label' => 'Edit Notes', 'is_menu' => false, 'icon' => "icon icon ion-ios-photos-outline"],
                     ['module' => '', 'controller' => 'customer', 'action' => 'print-note', 'label' => 'Print Notes', 'is_menu' => false, 'icon' => "icon icon ion-ios-photos-outline"],
+                    ['module' => '', 'controller' => 'customer', 'action' => 'custom-price', 'label' => 'Custom Price', 'is_menu' => false, 'icon' => "icon icon ion-ios-photos-outline"],
+                    ['module' => '', 'controller' => 'customer', 'action' => 'add-custom-price', 'label' => 'Custom Price', 'is_menu' => false, 'icon' => "icon icon ion-ios-photos-outline"],
+                    ['module' => '', 'controller' => 'customer', 'action' => 'edit-custom-price', 'label' => 'Custom Price', 'is_menu' => false, 'icon' => "icon icon ion-ios-photos-outline"],
                 ],
             ]
         ],
@@ -62,6 +65,9 @@ class MenuHelper
                     ['module' => '', 'controller' => 'vendor', 'action' => 'add-note', 'label' => 'Add Notes', 'is_menu' => false, 'icon' => "icon icon ion-ios-photos-outline"],
                     ['module' => '', 'controller' => 'vendor', 'action' => 'edit-note', 'label' => 'Edit Notes', 'is_menu' => false, 'icon' => "icon icon ion-ios-photos-outline"],
                     ['module' => '', 'controller' => 'vendor', 'action' => 'print-note', 'label' => 'Print Notes', 'is_menu' => false, 'icon' => "icon icon ion-ios-photos-outline"],
+                    ['module' => '', 'controller' => 'vendor', 'action' => 'custom-price', 'label' => 'Custom Price', 'is_menu' => false, 'icon' => "icon icon ion-ios-photos-outline"],
+                    ['module' => '', 'controller' => 'vendor', 'action' => 'add-custom-price', 'label' => 'Custom Price', 'is_menu' => false, 'icon' => "icon icon ion-ios-photos-outline"],
+                    ['module' => '', 'controller' => 'vendor', 'action' => 'edit-custom-price', 'label' => 'Custom Price', 'is_menu' => false, 'icon' => "icon icon ion-ios-photos-outline"],
                 ]
             ]
         ],

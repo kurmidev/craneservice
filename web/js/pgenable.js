@@ -1,11 +1,20 @@
 $(function () {
 
-    $('.cal').datepicker({
-        format: "yyyy-mm-dd"
-    });
+     $('.cal').datepicker({
+         format: "yyyy-mm-dd"
+     });
 
-    $('.timepick').datepicker({
+
+    $('.timepick').daterangepicker({
+        singleDatePicker: true,
+        timePicker: true,
+        timePicker24Hour: true,
+        timePickerIncrement: 1,
+        locale: {
             format: 'HH:mm'
+        }
+    }).on('show.daterangepicker', function (ev, picker) {
+        picker.container.find(".calendar-table").hide();
     });
 
     $(".searchd").hide();

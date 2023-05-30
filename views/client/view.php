@@ -77,6 +77,9 @@ use app\components\Constants as C;
                             <li class="nav-item">
                                 <?= Html::a("Add Site", Yii::$app->urlManager->createUrl([$baseUrl, "pg" => 'add-site', "id" => $model->id]), ["class" => "nav-link " . ($pg == "add-site" ? "active" : "")]) ?>
                             </li>
+                            <li class="nav-item">
+                                <?= Html::a("Custom Price", Yii::$app->urlManager->createUrl([$baseUrl, "pg" => 'custom-price', "id" => $model->id]), ["class" => "nav-link " . ($pg == "custom-price" ? "active" : "")]) ?>
+                            </li>
                         <?php  } ?>
                     </ul>
                 </div>
@@ -87,10 +90,7 @@ use app\components\Constants as C;
                                 'searchModel' => $searchModel,
                                 'dataProvider' => $dataProvider,
                                 "model" => $model,
-                                "addUrl" => $challanAddUrl,
-                                "editUrl" => $challanEditUrl,
-                                "viewUrl" => $challanViewUrl,
-                                "printUrl" => $challanPrintUrl
+                                "base_controller" => $base_controller
                             ]) ?>
                         <?php } else if ($pg == "add-site") { ?>
                             <?= $this->render("@app/views/client/site-address", [
@@ -135,9 +135,14 @@ use app\components\Constants as C;
                                 "editUrl" => $quoteEditUrl,
                                 "printUrl" => $quotePrint
                             ]) ?>
-
+                        <?php } else if (in_array($pg, ["custom-price"])) { ?>
+                            <?= $this->render("@app/views/client/custom-price", [
+                                'searchModel' => $customPriceSearchModel,
+                                'dataProvider' => $customPriceDataProvider,
+                                "model" => $model,
+                                "base_controller" => $base_controller
+                            ]) ?>
                         <?php } ?>
-
                     </div>
                 </div>
             </div>

@@ -5,6 +5,7 @@ use yii\helpers\Html;
 use yii\helpers\ArrayHelper;
 use app\components\Constants as C;
 use app\models\City;
+use app\models\ClientPlanMapping;
 use app\models\ClientSite;
 use app\models\CompanyMaster;
 use app\models\EmployeeMaster;
@@ -256,11 +257,12 @@ use yii\web\View;
 <?php
 
 $plans = PlanMaster::find()->active()->asArray()->all();
+$customPlan = ClientPlanMapping::find()->where(["client_id"=>$model->client_id])->indexBy('plan_id')->asArray()->all();
 
 $plan_amount_mapping = $plan_type_mapping = $plan_shift_mapping = [];
 foreach ($plans as $plan) {
     $plan_type_mapping[$plan["id"]] = $plan['type'];
-    $plan_amount_mapping[$plan["id"]] = $plan['price'];
+    $plan_amount_mapping[$plan["id"]] =  !empty($customPlan[$plan["id"]])?$customPlan[$plan["id"]]["custom_price"] :$plan['price'];
     if($plan['type']==C::PACKAGE_WISE_SHIFT){
         $plan_shift_mapping[$plan["id"]] = $plan['shift_hrs'];
     }

@@ -23,13 +23,15 @@ class AppAsset extends AssetBundle
         'css/bootstrap.css',
         "css/fonts.css",
         "css/font.css",
+        "css/daterangetime.css",
         "css/datetime.css",
         'css/site.css'
     ];
     public $js = [
         //"js/jquery.min.js",
         "js/moment.js",
-        //"js/bootstrap.js",
+        //"js/bootstrap.js"
+        "js/datetime.js",
         "js/datepicker.js",
         "js/main.js",
         'js/chart.js',

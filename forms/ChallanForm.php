@@ -77,6 +77,7 @@ class ChallanForm extends BaseForm
                     $plan = PlanMaster::findOne(['id' => $plan_id]);
                     $model = new Challan(['scenario' => Challan::SCENARIO_CREATE]);
                     $model->client_id = $this->client_id;
+                    $model->client_type = $this->client_type;
                     $model->challan_date = $this->challan_date;
                     $model->site_address = !empty($this->site_address) ? $this->site_address : null;
                     $model->operator_id =  !empty($this->operator_id) ? $this->operator_id : null;
@@ -106,17 +107,17 @@ class ChallanForm extends BaseForm
                     if ($plan->type == C::PACKAGE_WISE_SHIFT) {
                         $totalHrs =  date("H", strtotime($model->plan_end_time) - strtotime($model->plan_start_time));
                         if($item['plan_shift_type']==C::PACKAGE_SHIFT_TYPE_HOURS){
-                            $perhrs = $plan->price /$plan->shift_hrs;
+                            $perhrs = (!empty($item['amount'])?$item['amount']:$plan->price )/$plan->shift_hrs;
                             $model->extra =  ($totalHrs - $plan->shift_hrs)* $perhrs;
                         }else{
-                            $model->extra = ($totalHrs < $plan->shift_hrs) ? 0 : ((($totalHrs - $plan->shift_hrs) > 4 ? $plan->price : ($plan->price / 2)));
+                            $model->extra = ($totalHrs < $plan->shift_hrs) ? 0 : ((($totalHrs - $plan->shift_hrs) > 4 ? (!empty($item['amount'])?$item['amount']:$plan->price ) : ((!empty($item['amount'])?$item['amount']:$plan->price ) / 2)));
                         }
                         
                     }else if($plan->type== C::PACKAGE_WISE_TRIP){
-                        $model->amount = $plan->price * $item['plan_trip'] * $item['plan_measure'];
+                        $model->amount = (!empty($item['amount'])?$item['amount']:$plan->price ) * $item['plan_trip'] * $item['plan_measure'];
                     }else if($plan->type==C::PACKAGE_WISE_CHALLAN){
                         $totalMinutes = (strtotime($model->plan_end_time) - strtotime($model->plan_start_time))/60;
-                        $model->amount =  ($plan->price/60)*$totalMinutes;
+                        $model->amount =  ((!empty($item['amount'])?$item['amount']:$plan->price )/60)*$totalMinutes;
                     }else if($plan->type==C::PACKAGE_WISE_DESTINATION){
 
                     }else if($plan->type==C::PACKAGE_WISE_MONTH){

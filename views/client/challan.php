@@ -16,7 +16,7 @@ use app\models\PlanMaster;
     <div class="card-header">
         <h3 class="card-title"></h3>
         <div class="card-tools">
-            <?= Html::a(Html::tag('span', '', ['class' => 'fa fa-plus']), \Yii::$app->urlManager->createUrl([$addUrl, "id" => $model->id]), ['title' => 'Add Challan', 'class' => 'btn btn-primary btn-sm']) ?>
+            <?= Html::a(Html::tag('span', '', ['class' => 'fa fa-plus']), \Yii::$app->urlManager->createUrl(["{$base_controller}/add-challan", "id" => $model->id]), ['title' => 'Add Challan', 'class' => 'btn btn-primary btn-sm']) ?>
         </div>
     </div>
     <div class="card-body p-0 table-responsive">
@@ -63,9 +63,12 @@ use app\models\PlanMaster;
                 ],
                 [
                     "label" => "Action",
-                    "content" => function ($data) use ($editUrl, $printUrl) {
-                        return Html::a(Html::tag('span', '', ['class' => 'fa fa-edit']), \Yii::$app->urlManager->createUrl([$editUrl, 'id' => $data['id']]), ['title' => 'Update ' . $data['challan_no'], 'class' => 'btn btn-primary-alt'])
-                            . Html::a(Html::tag('span', '', ['class' => 'fa fa-print']), \Yii::$app->urlManager->createUrl([$printUrl, 'id' => $data['id']]), ['title' => 'Print ' . $data['challan_no'], 'class' => 'btn btn-primary-alt']);
+                    "content" => function ($data) use ($base_controller) {
+                        $print = Html::a(Html::tag('span', '', ['class' => 'fa fa-edit']), \Yii::$app->urlManager->createUrl(["{$base_controller}/edit-challan", 'id' => $data['id']]), ['title' => 'Update ' . $data['challan_no'], 'class' => 'btn btn-primary-alt'])
+                            . Html::a(Html::tag('span', '', ['class' => 'fa fa-print']), \Yii::$app->urlManager->createUrl(["{$base_controller}/print-challan", 'id' => $data['id']]), ['title' => 'Print ' . $data['challan_no'], 'class' => 'btn btn-primary-alt']);
+                            if(empty($data['invoice_id'])){
+                                $print.= Html::a(Html::tag('span', '', ['class' => 'fa fa-delete']), \Yii::$app->urlManager->createUrl(["{$base_controller}/delete-challan", 'id' => $data['id']]), ['title' => 'Print ' . $data['challan_no'], 'class' => 'btn btn-primary-alt']);
+                            }
                     }
                 ]
             ],
