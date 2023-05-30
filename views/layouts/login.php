@@ -19,6 +19,22 @@ $this->registerMetaTag(['name' => 'description', 'content' => $this->params['met
 $this->registerMetaTag(['name' => 'keywords', 'content' => $this->params['meta_keywords'] ?? '']);
 $this->registerLinkTag(['rel' => 'icon', 'type' => 'image/x-icon', 'href' => Yii::getAlias('@web/favicon.ico')]);
 ?>
+<style type="text/css">
+    section{
+        background-image: url('../dist/img/loginpage.jpg') !important;
+    }
+    .vh-100{
+     background-color: #ffffff;   
+     width: 100%;
+    }
+    .divider:after,
+    .divider:before {
+        content: "";
+        flex: 1;
+        height: 1px;
+        background: #eee;
+    }
+</style>
 <?php $this->beginPage() ?>
 <!DOCTYPE html>
 <html lang="<?= Yii::$app->language ?>">
@@ -31,19 +47,7 @@ $this->registerLinkTag(['rel' => 'icon', 'type' => 'image/x-icon', 'href' => Yii
 <body class="hold-transition  login-page">
     <?php $this->beginBody() ?>
 
-    <div class="login-box">
-        <!-- /.login-logo -->
-        <div class="card card-outline card-primary">
-            <div class="card-header text-center">
-                <a href="#" class="h1"><b><?=SITE_NAME?></b></a>
-            </div>
-            <div class="card-body">
-                <p class="login-box-msg">Sign in to start your session</p>
-                <?= $content ?>
-            </div>
-            <!-- /.card-body -->
-        </div>
-    </div>
+    <?= $content ?>
 
     <?php $this->endBody() ?>
 </body>

@@ -192,7 +192,15 @@ class MenuHelper
                     ['module' => '', 'controller' => 'report', 'action' => 'package-summary', 'label' => 'Package Summary', 'is_menu' => true, 'icon' => "icon icon ion-ios-photos-outline"]
                 ],
             ]
-        ]
+            ],
+            "logout" => [
+                "config" => ["class" => "nav-icon fas fa-sign-out-alt"],
+                "items" => [
+                    "logout" => [
+                        ['module' => '', 'controller' => 'site', 'action' => 'logout', 'label' => 'Logout', 'is_menu' => true, 'icon' => "icon icon ion-ios-photos-outline"]
+                    ],
+                ]
+            ]
     ];
 
 
