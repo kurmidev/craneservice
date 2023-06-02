@@ -1,7 +1,10 @@
 $(function () {
 
-     $('.cal').datepicker({
-         format: "yyyy-mm-dd"
+     $('.cal').daterangepicker({
+        singleDatePicker: true,
+        locale: {
+         format: "yyyy-MM-DD"
+        }
      });
 
 

@@ -12,8 +12,8 @@ $this->params['breadcrumbs'][] = $this->title;
 ?>
 <section class="vh-100" >
     <div class="container">
-        <div class="row d-flex align-items-center h-100">
-            <div class="col-md-7 col-lg-5 col-xl-5 card">
+        <div class="row d-flex align-items-center">
+            <div class="col-md-4 col-lg-4 col-xl-4 card m-10">
                 <div class="card-header">
                     <h3 class="card-title">Crane Service</h3>
                 </div>

@@ -151,6 +151,10 @@ class Constants
     3. Shift- the given quotation is for 10 hrs shift (including lunch )in a single strength & 26 shifts for a month.
     4. Reaching time will be extra 30 min";
 
+
+    const PAYMENT_IR_RESPECTIVE_INVOICE = 1;
+    const PAYMENT_INVOICEWISE = 2;
+
     public static function getTimeList()
     {
         $resp = [];

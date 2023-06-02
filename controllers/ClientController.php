@@ -76,7 +76,7 @@ class ClientController extends BaseController
             $dataProvider = $searchModel->search($this->request->queryParams);
             $dataProvider->query->andWhere(["client_id" => $model->id]);
             if ($pg == "pending-challan") {
-                $dataProvider->query->andWhere(['is_processed' => C::STATUS_INACTIVE, 'invoice_id' => null]);
+                $dataProvider->query->andWhere(["client_id" => $model->id, "invoice_id"=>null]);
             } else {
                 $dataProvider->query->andWhere(['is_processed' => C::STATUS_ACTIVE])->andWhere(['>', 'invoice_id', 0]);
             }
@@ -88,11 +88,6 @@ class ClientController extends BaseController
 
             $invoiceSearchModel = new InvoiceMasterSearch();
             $invoiceDataProvider = $invoiceSearchModel->search($this->request->queryParams);
-            if ($pg == "pending-invoice") {
-                $invoiceDataProvider->query->andWhere(["client_id" => $model->id, "invoice_id"=>null]);
-            } else {
-                $invoiceDataProvider->query->andWhere(["client_id" => $model->id])->andWhere(['not',["invoice_id"=>null]]);
-            }
 
             $invoiceAmount = Challan::find()->where(['client_id' => $model->id, 'is_processed' => C::STATUS_ACTIVE])->andWhere([">", "invoice_id", 0])->active()->sum("total-amount_paid");
 
@@ -414,6 +409,8 @@ class ClientController extends BaseController
         $model->client_type = $client->type;
         $model->status = C::STATUS_ACTIVE;
         if ($this->request->isPost) {
+            $model->load($this->request->post());
+            
             if ($model->load($this->request->post()) && $model->validate() && $model->save()) {
                 $title = $this->clientType == C::CLIENT_TYPE_CUSTOMER ? "Customer" : "Vendor";
                 $redirectUrl = $this->clientType == C::CLIENT_TYPE_CUSTOMER ? "customer/view-customer" : "vendor/view-vendor";
@@ -426,6 +423,7 @@ class ClientController extends BaseController
         $model->amount_paid = !empty($model->amount_paid) ? $model->amount_paid : ($invoiceAmount - $paymentDone);
         return $this->render('@app/views/payments/form-payment', [
             'model' => $model,
+            'client'=>$client
         ]);
     }
 

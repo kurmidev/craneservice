@@ -65,6 +65,10 @@
     line-height: 1;
     color: #212529;
     text-align: left;
+    
+    background-image: url('../dist/img/loginpage.jpg') !important;
+    background-size: 100%;
+    background-repeat: no-repeat;
     background-color: #fff;
   }
   
@@ -11748,9 +11752,6 @@
     }
   }
   
-  .content-wrapper {
-    background-color: #f4f6f9;
-  }
   
   .content-wrapper > .content {
     padding: 0 0.5rem;

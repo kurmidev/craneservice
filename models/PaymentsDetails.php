@@ -14,6 +14,11 @@ use Yii;
  * @property int $invoice_id
  * @property int $challan_id
  * @property int $status
+ * @property int $deduction_number
+ * @property int $tds_number
+ * @property float $amount_paid
+ * @property float $deduction_amount
+ * @property float $tds_amount
  * @property float $amount_adjsuted
  * @property string $created_at
  * @property string|null $updated_at
@@ -36,8 +41,8 @@ class PaymentsDetails extends \app\models\BaseModel
 
     public function scenarios(){
         return [
-            self::SCENARIO_CREATE=>['payment_id', 'invoice_id', 'challan_id', 'amount_adjsuted','status','client_id','payment_id'],
-            self::SCENARIO_UPDATE=>['payment_id', 'invoice_id', 'challan_id', 'amount_adjsuted','status','client_id','payment_id'],
+            self::SCENARIO_CREATE=>['payment_id', 'invoice_id', 'challan_id', 'amount_adjsuted','status','client_id','payment_id','amount_paid','deduction_amount','deduction_number','tds_amount','tds_number'],
+            self::SCENARIO_UPDATE=>['payment_id', 'invoice_id', 'challan_id', 'amount_adjsuted','status','client_id','payment_id','amount_paid','deduction_amount','deduction_number','tds_amount','tds_number'],
         ];
     }
 
@@ -48,8 +53,8 @@ class PaymentsDetails extends \app\models\BaseModel
     {
         return [
             [['payment_id', 'invoice_id', 'challan_id', 'amount_adjsuted','status'], 'required'],
-            [['payment_id', 'invoice_id', 'challan_id', 'created_by', 'updated_by','status'], 'integer'],
-            [['amount_adjsuted'], 'number'],
+            [['payment_id', 'invoice_id', 'challan_id', 'created_by', 'updated_by','status','deduction_number','tds_number'], 'integer'],
+            [['amount_adjsuted','amount_paid','deduction_amount','tds_amount'], 'number'],
             [['created_at', 'updated_at'], 'safe'],
             [['client_id'], 'exist', 'skipOnError' => true, 'targetClass' => ClientMaster::class, 'targetAttribute' => ['client_id' => 'id']],
             [['payment_id'], 'exist', 'skipOnError' => true, 'targetClass' => Payments::class, 'targetAttribute' => ['payment_id' => 'id']],
@@ -69,6 +74,11 @@ class PaymentsDetails extends \app\models\BaseModel
             'client_type' => 'Client Type',
             'challan_id' => 'Challan',
             'amount_adjsuted' => 'Amount Adjsuted',
+            'amount_paid'=> 'Amount Paid',
+            'deduction_amount'=>'Deduction Amount',
+            'deduction_number'=>'Deduction Number',
+            'tds_amount'=>'TDS Amounnt',
+            'tds_number'=> 'TDS Number',
             'status' => 'Status',
             'created_at' => 'Created At',
             'updated_at' => 'Updated At',

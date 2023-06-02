@@ -22,6 +22,8 @@ $this->registerLinkTag(['rel' => 'icon', 'type' => 'image/x-icon', 'href' => Yii
 <style type="text/css">
     section{
         background-image: url('../dist/img/loginpage.jpg') !important;
+        background-size: 100%;
+        background-repeat: no-repeat;
     }
     .vh-100{
      background-color: #ffffff;   
