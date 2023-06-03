@@ -16,13 +16,11 @@ use app\models\PlanMaster;
     <div class="card-header">
         <h3 class="card-title"></h3>
         <div class="card-tools">
-            <?= Html::a(Html::tag('span', '', ['class' => 'fa fa-plus']), \Yii::$app->urlManager->createUrl([$addUrl, "id" => $model->id]), ['title' => 'Add Invoice', 'class' => 'btn btn-primary btn-sm']) ?>
-            <?= Html::a(Html::tag('span', '', ['class' => 'fa fa-cash-register']), \Yii::$app->urlManager->createUrl([$payUrl, "id" => $model->id]), ['title' => 'Pay Invoice', 'class' => 'btn btn-primary btn-sm']) ?>
+            <?= Html::a(Html::tag('span', '', ['class' => 'fa fa-plus']), \Yii::$app->urlManager->createUrl(["{$base_controller}/add-invoice", "id" => $model->id]), ['title' => 'Add Invoice', 'class' => 'btn btn-primary btn-sm']) ?>
+            <?= Html::a(Html::tag('span', '', ['class' => 'fa fa-cash-register']), \Yii::$app->urlManager->createUrl(["{$base_controller}/pay-invoice", "id" => $model->id]), ['title' => 'Pay Invoice', 'class' => 'btn btn-primary btn-sm']) ?>
         </div>
     </div>
     <div class="card-body p-0 table-responsive">
-
-
         <?= GridView::widget([
             'dataProvider' => $dataProvider,
             'filterModel' => $searchModel,
@@ -49,14 +47,26 @@ use app\models\PlanMaster;
                 [
                     'attribute' => 'status', 'label' => 'Status',
                     'content' => function ($model) {
-                        return !empty($model->status) ? "Paid" : "Pending";
+                        if($model->status==C::STATUS_DELETED){
+                            return "Deleted";
+                        }else if($model->payment<$model->total && $model->payment>0){
+                            return "Partial Paid";
+                        }else if($model->payment>=$model->total){
+                            return "Paid";
+                        }else{
+                            return 'UN Paid';
+                        }
                     },
                 ],
                 [
                     "label" => "Action",
-                    "content" => function ($data) use ($editUrl, $printUrl) {
-                        return Html::a(Html::tag('span', '', ['class' => 'fa fa-edit']), \Yii::$app->urlManager->createUrl([$editUrl, 'id' => $data['id']]), ['title' => 'Update ' . $data['invoice_no'], 'class' => 'btn btn-primary-alt'])
-                            . Html::a(Html::tag('span', '', ['class' => 'fa fa-print']), \Yii::$app->urlManager->createUrl([$printUrl, 'id' => $data['id']]), ['title' => 'Update ' . $data['invoice_no'], 'class' => 'btn btn-primary-alt',"target"=>"_blank"]);
+                    "content" => function ($data) use ($base_controller) {
+                        $print =//Html::a(Html::tag('span', '', ['class' => 'fa fa-edit']), \Yii::$app->urlManager->createUrl(["{$base_controller}/edit-invoice", 'id' => $data['id']]), ['title' => 'Update ' . $data['invoice_no'], 'class' => 'btn btn-primary-alt'])
+                             Html::a(Html::tag('span', '', ['class' => 'fa fa-print']), \Yii::$app->urlManager->createUrl(["{$base_controller}/print-invoice", 'id' => $data['id']]), ['title' => 'Print ' . $data['invoice_no'], 'class' => 'btn btn-primary-alt',"target"=>"_blank"]);
+                            if($data['payment']<=0){
+                                $print.= Html::a(Html::tag('span', '', ['class' => 'fa fa-trash']), \Yii::$app->urlManager->createUrl(["{$base_controller}/delete-invoice", 'id' => $data['id']]), ['title' => 'Delete ' . $data['invoice_no'], 'class' => 'btn btn-primary-alt']);
+                            }
+                            return $print;
                     }
                 ]
             ],

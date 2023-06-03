@@ -64,7 +64,7 @@ class Payments extends \app\models\BaseModel
             [['amount_paid'], 'number'],
             [['intrument_no', 'remark', 'receipt_no'], 'string', 'max' => 255],
             [['challans'], 'required', 'when' => function () {
-                return PAYMENT_METHOD == C::PAYMENT_INVOICEWISE;
+                return PAYMENT_METHOD == C::PAYMENT_INVOICEWISE && $this->scenario==self::SCENARIO_CREATE;
             }]
         ];
     }
@@ -148,7 +148,6 @@ class Payments extends \app\models\BaseModel
     public function adjustPaymentInvoiceWise()
     {
         $amount_received  = 0;
-        echo "<pre>";
         if (!empty($this->challans)) {
             $challan_ids = array_keys($this->challans);
             $chalanObj = Challan::find()->active()->andWhere(['id' => $challan_ids, 'client_id' => $this->client_id])->all();
@@ -235,5 +234,17 @@ class Payments extends \app\models\BaseModel
             return implode(",", ArrayHelper::getColumn($this->paymentsDetails, 'invoice.invoice_no'));
         }
         return "";
+    }
+
+    public function deletePayment(){
+        $model = PaymentsDetails::find()->where(['payment_id' => $this->id])->all();
+        foreach($model as $m){
+            $m->scenario = PaymentsDetails::SCENARIO_UPDATE;
+            $m->status = C::STATUS_DELETED;
+            if($m->validate() && $m->save()){
+                Challan::updateAll(['amount_paid'=>0,"payment_status"=>0],['id'=>$m->challan_id]);
+                InvoiceMaster::updateAll(["payment"=>0],["id"=>$m->invoice_id]);
+            }
+        }
     }
 }

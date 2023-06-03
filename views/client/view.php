@@ -103,11 +103,7 @@ use app\components\Constants as C;
                                 'searchModel' => $invoiceSearchModel,
                                 'dataProvider' => $invoiceDataProvider,
                                 "model" => $model,
-                                "addUrl" => $invoiceAddUrl,
-                                "editUrl" => $invoiceEditUrl,
-                                "viewUrl" => $invoiceViewUrl,
-                                "printUrl" => $invoicePrintUrl,
-                                "payUrl" => $invoicePayUrl
+                                "base_controller" => $base_controller
                             ]) ?>
                         <?php } else if (in_array($pg, ["payment"])) { ?>
                             <?= $this->render("@app/views/payments/payment", [
@@ -115,7 +111,7 @@ use app\components\Constants as C;
                                 'dataProvider' => $paymentDataProvider,
                                 "model" => $model,
                                 "detailUrl" => $viewPaymentDetails,
-                                "printlUrl" => $printPayment
+                                "base_controller" => $base_controller
                             ]) ?>
                         <?php } else if (in_array($pg, ["credit_notes"])) { ?>
                             <?= $this->render("@app/views/payments/credit-notes", [

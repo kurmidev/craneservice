@@ -101,8 +101,8 @@ class ChallanForm extends BaseForm
                     $model->invoice_id = null;
                     $model->is_processed = C::STATUS_INACTIVE;
                     $model->status = C::STATUS_ACTIVE;
-                    $model->base_amount = $plan->price;
-                    $model->amount = $plan->price;
+                    $model->base_amount = (!empty($item['amount'])?$item['amount']:$plan->price ) ;
+                    $model->amount = (!empty($item['amount'])?$item['amount']:$plan->price ) ;
                     $model->extra = 0;
                     if ($plan->type == C::PACKAGE_WISE_SHIFT) {
                         $totalHrs =  date("H", strtotime($model->plan_end_time) - strtotime($model->plan_start_time));

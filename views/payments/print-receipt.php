@@ -21,7 +21,9 @@ $f = new NumberFormatter("en", NumberFormatter::SPELLOUT);
                 </td>
             </tr>
             <tr>
-                <td></td>
+                <td width="70%" style="padding:10px;">
+                    <b>Amount : </b> <?= $model->amount_paid ?>
+                </td>
                 <td  style="padding:10px;"><b>Tds :-</b> Rs 0</td>
             </tr>
             <tr>

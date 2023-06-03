@@ -124,4 +124,19 @@ class InvoiceMaster extends \app\models\BaseModel
         }
         return true;
     }
+
+    public function deleteInvoice(){
+        $model = Challan::find()->where(['invoice_id'=>$this->id])->all();
+        foreach($model as $challan){
+            $challan->scenario = Challan::SCENARIO_UPDATE;
+            $challan->is_processed=0;
+            $challan->invoice_id =null;
+            $challan->amount_paid =0;
+            $challan->payment_status =0;
+            if($challan->validate() && $challan->save()){
+
+            }
+        }
+       
+    }
 }

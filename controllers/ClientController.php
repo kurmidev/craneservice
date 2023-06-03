@@ -74,7 +74,7 @@ class ClientController extends BaseController
         if ($model instanceof ClientMaster) {
             $searchModel = new ChallanSearch();
             $dataProvider = $searchModel->search($this->request->queryParams);
-            $dataProvider->query->andWhere(["client_id" => $model->id]);
+            $dataProvider->query->active()->andWhere(["client_id" => $model->id]);
             if ($pg == "pending-challan") {
                 $dataProvider->query->andWhere(["client_id" => $model->id, "invoice_id"=>null]);
             } else {
@@ -83,25 +83,25 @@ class ClientController extends BaseController
 
             $siteSearchModel = new ClientSiteSearch();
             $siteDataProvider = $siteSearchModel->search($this->request->queryParams);
-            $siteDataProvider->query->andWhere(["client_id" => $model->id]);
+            $siteDataProvider->query->active()->andWhere(["client_id" => $model->id]);
 
 
             $invoiceSearchModel = new InvoiceMasterSearch();
             $invoiceDataProvider = $invoiceSearchModel->search($this->request->queryParams);
-
+            $invoiceDataProvider->query->active()->andWhere(["client_id" => $model->id]);
             $invoiceAmount = Challan::find()->where(['client_id' => $model->id, 'is_processed' => C::STATUS_ACTIVE])->andWhere([">", "invoice_id", 0])->active()->sum("total-amount_paid");
 
             $paymentSearchModel = new PaymentSearch();
             $paymentDataProvider = $paymentSearchModel->search($this->request->queryParams);
-            $paymentDataProvider->query->andWhere(["client_id" => $model->id]);
+            $paymentDataProvider->query->andWhere(["client_id" => $model->id])->active();
 
             $notesSearchModel = new PaymentNotesSearch();
             $notesDataProvider = $notesSearchModel->search($this->request->queryParams);
-            $notesDataProvider->query->andWhere(["client_id" => $model->id]);
+            $notesDataProvider->query->andWhere(["client_id" => $model->id])->active();
 
             $quotesSearchModel = new QuotationMasterSearch();
             $quotesDataProvider = $quotesSearchModel->search($this->request->queryParams);
-            $quotesDataProvider->query->andWhere(["client_id" => $model->id]);
+            $quotesDataProvider->query->andWhere(["client_id" => $model->id])->active();
 
             $customPriceSearchModel = new ClientPlanMappingSearch();
             $customPriceDataProvider = $customPriceSearchModel->search($this->request->queryParams);
@@ -119,10 +119,6 @@ class ClientController extends BaseController
                 "viewUrl" => $this->clientType == C::CLIENT_TYPE_CUSTOMER ? "customer/view-customer" : "vendor/view-vendor",
                 
                 "base_controller" =>  $this->clientType == C::CLIENT_TYPE_CUSTOMER ? "customer" : "vendor",
-                "challanAddUrl" => $this->clientType == C::CLIENT_TYPE_CUSTOMER ? "customer/add-challan" : "vendor/add-challan",
-                "challanEditUrl" => $this->clientType == C::CLIENT_TYPE_CUSTOMER ? "customer/edit-challan" : "vendor/edit-challan",
-                "challanViewUrl" => $this->clientType == C::CLIENT_TYPE_CUSTOMER ? "customer/view-challan" : "vendor/view-challan",
-                "challanPrintUrl" => $this->clientType == C::CLIENT_TYPE_CUSTOMER ? "customer/print-challan" : "vendor/print-challan",
                 "company_id" => $this->clientType == C::CLIENT_TYPE_CUSTOMER ? "customer/view-challan" : "vendor/view-challan",
 
                 "pg" => $pg,
@@ -139,11 +135,7 @@ class ClientController extends BaseController
                 "customPriceDataProvider" => $customPriceDataProvider,
                 "customPriceSearchModel" => $customPriceSearchModel,
 
-                "invoiceAddUrl" => $this->clientType == C::CLIENT_TYPE_CUSTOMER ?   "customer/add-invoice" : "vendor/add-invoice",
-                "invoiceEditUrl" => $this->clientType == C::CLIENT_TYPE_CUSTOMER ?  "customer/edit-invoice" : "vendor/edit-invoice",
-                "invoiceViewUrl" => $this->clientType == C::CLIENT_TYPE_CUSTOMER ?  "customer/view-invoice" : "vendor/view-invoice",
-                "invoicePrintUrl" => $this->clientType == C::CLIENT_TYPE_CUSTOMER ? "customer/print-invoice" : "vendor/print-invoice",
-                "invoicePayUrl" => $this->clientType == C::CLIENT_TYPE_CUSTOMER ? "customer/pay-invoice" : "vendor/pay-invoice",
+                
                 "viewPaymentDetails" => $this->clientType == C::CLIENT_TYPE_CUSTOMER ? "customer/pay-details" : "vendor/pay-details",
                 "printPayment" => $this->clientType == C::CLIENT_TYPE_CUSTOMER ? "customer/print-receipt" : "vendor/print-receipt",
                 "noteAddUrl" => $this->clientType == C::CLIENT_TYPE_CUSTOMER ?   "customer/add-note" : "vendor/add-note",
@@ -293,7 +285,7 @@ class ClientController extends BaseController
                 $title = $this->clientType == C::CLIENT_TYPE_CUSTOMER ? "Customer" : "Vendor";
                 $redirectUrl = $this->clientType == C::CLIENT_TYPE_CUSTOMER ? "customer/view-customer" : "vendor/view-vendor";
                 \Yii::$app->getSession()->setFlash('s', "Challan has been added successfully.");
-                return $this->redirect([$redirectUrl, "id" => $id]);
+                return $this->redirect([$redirectUrl, "pg"=>"pending-challan","id" => $id]);
             }
         }
 
@@ -643,4 +635,68 @@ class ClientController extends BaseController
         ]);
     }
 
+    public function actionDeleteChallan($id){
+        $challan = Challan::findOne(['id'=>$id]);
+        $redirectUrl = $this->clientType == C::CLIENT_TYPE_CUSTOMER ? "customer/view-customer" : "vendor/view-vendor";
+        if($challan instanceof Challan){
+            if($challan->amount_paid<=0 && $challan->payment_status==0){
+                $challan->scenario = Challan::SCENARIO_UPDATE;
+                $challan->status = C::STATUS_DELETED;
+                $challan->amount_paid = 0;
+                $challan->payment_status = 0;
+                if($challan->validate() && $challan->save()){
+                    \Yii::$app->getSession()->setFlash('s', "Challan {$challan->challan_no} has been deleted successfully.");
+                    return $this->redirect([$redirectUrl, "id" => $challan->client_id, "pg" => "pending-challan"]);
+                }
+            }else{
+                \Yii::$app->getSession()->setFlash('e', "Please delete invoice of {$challan->challan_no}.");
+                return $this->redirect([$redirectUrl, "id" => $challan->client_id, "pg" => "pending-challan"]);
+            }
+        }
+        \Yii::$app->getSession()->setFlash('e', 'Record not found');
+        return $this->redirect([$redirectUrl . '/index']);
+    }
+
+    public function actionDeleteInvoice($id){
+        $invoice = InvoiceMaster::findOne(['id'=>$id]);
+        $redirectUrl = $this->clientType == C::CLIENT_TYPE_CUSTOMER ? "customer/view-customer" : "vendor/view-vendor";
+        if($invoice instanceof InvoiceMaster){
+            if($invoice->payment<=0){
+                $invoice->scenario = InvoiceMaster::SCENARIO_UPDATE;
+                $invoice->status = C::STATUS_DELETED;
+                $invoice->payment = 0;
+                if($invoice->validate() && $invoice->save()){
+                    $invoice->deleteInvoice();
+                    \Yii::$app->getSession()->setFlash('s', "Invoice {$invoice->invoice_no} has been deleted successfully.");
+                    return $this->redirect([$redirectUrl, "id" => $invoice->client_id, "pg" => "pending-invoice"]);
+                }
+            }else{
+                \Yii::$app->getSession()->setFlash('e', "Please delete payment of {$invoice->invoice_no}.");
+                return $this->redirect([$redirectUrl, "id" => $invoice->client_id, "pg" => "pending-invoice"]);
+            }
+        }
+        \Yii::$app->getSession()->setFlash('e', 'Record not found');
+        return $this->redirect([$redirectUrl . '/index']);
+    }
+
+    public function actionDeletePayment($id){
+        $payment = Payments::findOne(['id'=>$id]);
+        $redirectUrl = $this->clientType == C::CLIENT_TYPE_CUSTOMER ? "customer/view-customer" : "vendor/view-vendor";
+        if($payment instanceof Payments){
+            
+                $payment->scenario = Payments::SCENARIO_UPDATE;
+                $payment->status = C::STATUS_DELETED;
+                if($payment->validate() && $payment->save()){
+                    $payment->deletePayment();
+                    \Yii::$app->getSession()->setFlash('s', "Payment {$payment->receipt_no} has been deleted successfully.");
+                    return $this->redirect([$redirectUrl, "id" => $payment->client_id, "pg" => "payment"]);
+                }else{
+                    print_r($payment->errors);
+                    exit;
+                }
+            
+        }
+        \Yii::$app->getSession()->setFlash('e', 'Record not found');
+        return $this->redirect([$redirectUrl . '/index']);
+    }
 }
