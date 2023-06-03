@@ -196,4 +196,12 @@ class Challan extends \app\models\BaseModel
         }
         return '';
     }
+
+    public function getAuditMessage(){
+        if($this->status==C::STATUS_ACTIVE){
+            return "Challan {$this->challan_no} has been created by {$this->actionBy} of amount {$this->base_amount}";
+        }else if($this->status==C::STATUS_DELETED){
+            return "Challan {$this->challan_no} has been deleted by {$this->actionBy} on {$this->updated_at}";
+        }
+    }
 }

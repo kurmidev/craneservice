@@ -19,6 +19,7 @@ use app\models\InvoiceMasterSearch;
 use Yii;
 use app\components\ConstFunc as F;
 use app\forms\QuotationForm;
+use app\models\AuditLogsSearch;
 use app\models\ClientPlanMapping;
 use app\models\ClientPlanMappingSearch;
 use app\models\PaymentNotes;
@@ -107,6 +108,11 @@ class ClientController extends BaseController
             $customPriceDataProvider = $customPriceSearchModel->search($this->request->queryParams);
             $customPriceDataProvider->query->andWhere(["client_id" => $model->id]);
 
+            $logSearchModel = new AuditLogsSearch();
+            $logDataProvider = $logSearchModel->search($this->request->queryParams);
+            $logDataProvider->query->andWhere(["client_id" => $model->id]);
+
+
             return $this->render('@app/views/client/view', [
                 'model' => $model,
                 "title" => $this->title,
@@ -134,6 +140,8 @@ class ClientController extends BaseController
                 "quotesSearchModel" => $quotesSearchModel,
                 "customPriceDataProvider" => $customPriceDataProvider,
                 "customPriceSearchModel" => $customPriceSearchModel,
+                "logSearchModel" => $logSearchModel,
+                "logDataProvider"=> $logDataProvider,
 
                 
                 "viewPaymentDetails" => $this->clientType == C::CLIENT_TYPE_CUSTOMER ? "customer/pay-details" : "vendor/pay-details",

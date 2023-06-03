@@ -71,7 +71,7 @@ use app\components\Constants as C;
                             <?= Html::a("Quotation", Yii::$app->urlManager->createUrl([$baseUrl, "pg" => 'quotation', "id" => $model->id]), ["class" => "nav-link " . ($pg == "quotation" ? "active" : "")]) ?>
                         </li>
                         <li class="nav-item">
-                            <?= Html::a("Logs", Yii::$app->urlManager->createUrl([$baseUrl, "pg" => 'logs', "id" => $model->id]), ["class" => "nav-link " . ($pg == "payment" ? "active" : "")]) ?>
+                            <?= Html::a("Logs", Yii::$app->urlManager->createUrl([$baseUrl, "pg" => 'logs', "id" => $model->id]), ["class" => "nav-link " . ($pg == "logs" ? "active" : "")]) ?>
                         </li>
                         <?php if ($model->client_type == C::CLIENT_TYPE_CUSTOMER) { ?>
                             <li class="nav-item">
@@ -135,6 +135,13 @@ use app\components\Constants as C;
                             <?= $this->render("@app/views/client/custom-price", [
                                 'searchModel' => $customPriceSearchModel,
                                 'dataProvider' => $customPriceDataProvider,
+                                "model" => $model,
+                                "base_controller" => $base_controller
+                            ]) ?>
+                        <?php } else if (in_array($pg, ["logs"])) {  ?>
+                            <?= $this->render("@app/views/client/logs", [
+                                'searchModel' => $logSearchModel,
+                                'dataProvider' => $logDataProvider,
                                 "model" => $model,
                                 "base_controller" => $base_controller
                             ]) ?>

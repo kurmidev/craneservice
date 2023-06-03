@@ -137,6 +137,13 @@ class InvoiceMaster extends \app\models\BaseModel
 
             }
         }
-       
+    }
+
+    public function getAuditMessage(){
+        if($this->status==C::STATUS_ACTIVE){
+            return "Invoice {$this->invoice_no} has been created by {$this->actionBy} of amount {$this->total}";
+        }else if($this->status==C::STATUS_DELETED){
+            return "Invoice {$this->invoice_no} has been deleted by {$this->actionBy} on {$this->updated_at}";
+        }
     }
 }

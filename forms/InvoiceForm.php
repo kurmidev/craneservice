@@ -73,7 +73,7 @@ class InvoiceForm extends BaseForm
         $model->description = $this->description;
         $model->invoice_date = $this->invoice_date;
         $model->remark = $this->remark;
-        $model->status = C::STATUS_INACTIVE;
+        $model->status = C::STATUS_ACTIVE;
         if ($model->validate() && $model->save()) {
             $this->mapChallans($this->challan_ids, $model->id);
             return true;
