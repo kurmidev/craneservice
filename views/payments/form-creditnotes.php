@@ -16,7 +16,7 @@ $list = InvoiceMaster::find()
         <div class="card card-secondary">
             <div class="card-header">
                 <div class="card-title">
-                
+                    <?=$model->client_type==C::CLIENT_TYPE_CUSTOMER?"Credit Notes":"Debit Notes" ?>
                 </div>
             </div>
             <div class="card-body">

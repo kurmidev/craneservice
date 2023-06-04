@@ -65,7 +65,11 @@ use app\components\Constants as C;
                             <?= Html::a("Payment", Yii::$app->urlManager->createUrl([$baseUrl, "pg" => 'payment', "id" => $model->id]), ["class" => "nav-link " . ($pg == "payment" ? "active" : "")]) ?>
                         </li>
                         <li class="nav-item">
+                        <?php if ($model->client_type == C::CLIENT_TYPE_CUSTOMER) { ?>
                             <?= Html::a("Credit Notes", Yii::$app->urlManager->createUrl([$baseUrl, "pg" => 'credit_notes', "id" => $model->id]), ["class" => "nav-link " . ($pg == "credit_notes" ? "active" : "")]) ?>
+                            <?php } else{ ?>
+                                <?= Html::a("Debit Notes", Yii::$app->urlManager->createUrl([$baseUrl, "pg" => 'credit_notes', "id" => $model->id]), ["class" => "nav-link " . ($pg == "credit_notes" ? "active" : "")]) ?>
+                           <?php  } ?>
                         </li>
                         <li class="nav-item">
                             <?= Html::a("Quotation", Yii::$app->urlManager->createUrl([$baseUrl, "pg" => 'quotation', "id" => $model->id]), ["class" => "nav-link " . ($pg == "quotation" ? "active" : "")]) ?>
