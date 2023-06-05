@@ -17,7 +17,7 @@ use yii\web\View;
 <?php $form = ActiveForm::begin(['id' => 'form-client', 'options' => ['enctype' => 'multipart/form-data', 'class' => 'form-bordered', 'enableAjaxValidation' => true]]); ?>
 <div class="row">
     <div class="col-lg-12 col-sm-12 col-xs-12">
-        <div class="card card-secondary">
+        <div class="card">
             <div class="card-header">
                 <div class="card-title">
                     Add Challan
@@ -40,49 +40,46 @@ use yii\web\View;
                 </div>
                 <?= $form->field($model, 'challan_image')->end() ?>
 
-                <?php if($model->client_type==C::CLIENT_TYPE_CUSTOMER){?>
+                <?php if ($model->client_type == C::CLIENT_TYPE_CUSTOMER) { ?>
 
-                <?= $form->field($model, 'site_address', ['options' => ['class' => 'form-group']])->begin() ?>
-                <?= Html::activeLabel($model, 'site_address', ['class' => 'col-lg-12 col-sm-12 col-xs-12 control-label']); ?>
-                <div class="col-lg-6 col-sm-6 col-xs-6">
-                    <?= Html::activeDropDownList($model, 'site_address',ArrayHelper::map(ClientSite::find()->where(['client_id'=>$model->client_id])->active()->all(),'id','address'), ['class' => 'form-control','prompt'=>"Select one"]) ?>
-                    <?= Html::error($model, 'site_address', ['class' => 'error help-block']) ?>
-                </div>
-                <?= $form->field($model, 'site_address')->end() ?>
+                    <?= $form->field($model, 'site_address', ['options' => ['class' => 'form-group']])->begin() ?>
+                    <?= Html::activeLabel($model, 'site_address', ['class' => 'col-lg-12 col-sm-12 col-xs-12 control-label']); ?>
+                    <div class="col-lg-6 col-sm-6 col-xs-6">
+                        <?= Html::activeDropDownList($model, 'site_address', ArrayHelper::map(ClientSite::find()->where(['client_id' => $model->client_id])->active()->all(), 'id', 'address'), ['class' => 'form-control', 'prompt' => "Select one"]) ?>
+                        <?= Html::error($model, 'site_address', ['class' => 'error help-block']) ?>
+                    </div>
+                    <?= $form->field($model, 'site_address')->end() ?>
 
-                <?= $form->field($model, 'helper_id', ['options' => ['class' => 'form-group']])->begin() ?>
-                <?= Html::activeLabel($model, 'helper_id', ['class' => 'col-lg-12 col-sm-12 col-xs-12 control-label']); ?>
-                <div class="col-lg-6 col-sm-6 col-xs-6">
-                    <?= Html::activeDropDownList($model, 'helper_id', ArrayHelper::map(EmployeeMaster::find()->active()->all(),'id','name'),['class' => 'form-control','prompt'=>"Select One"]) ?>
-                    <?= Html::error($model, 'helper_id', ['class' => 'error help-block']) ?>
-                </div>
-                <?= $form->field($model, 'helper_id')->end() ?>
+                    <?= $form->field($model, 'helper_id', ['options' => ['class' => 'form-group']])->begin() ?>
+                    <?= Html::activeLabel($model, 'helper_id', ['class' => 'col-lg-12 col-sm-12 col-xs-12 control-label']); ?>
+                    <div class="col-lg-6 col-sm-6 col-xs-6">
+                        <?= Html::activeDropDownList($model, 'helper_id', ArrayHelper::map(EmployeeMaster::find()->active()->all(), 'id', 'name'), ['class' => 'form-control', 'prompt' => "Select One"]) ?>
+                        <?= Html::error($model, 'helper_id', ['class' => 'error help-block']) ?>
+                    </div>
+                    <?= $form->field($model, 'helper_id')->end() ?>
 
-                <?= $form->field($model, 'operator_id', ['options' => ['class' => 'form-group']])->begin() ?>
-                <?= Html::activeLabel($model, 'operator_id', ['class' => 'col-lg-12 col-sm-12 col-xs-12 control-label']); ?>
-                <div class="col-lg-6 col-sm-6 col-xs-6">
-                    <?= Html::activeDropDownList($model, 'operator_id', ArrayHelper::map(EmployeeMaster::find()->active()->all(),'id','name'),['class' => 'form-control','prompt'=>"Select One"]) ?>
-                    <?= Html::error($model, 'operator_id', ['class' => 'error help-block']) ?>
-                </div>
-                <?= $form->field($model, 'operator_id')->end() ?>
-
-
+                    <?= $form->field($model, 'operator_id', ['options' => ['class' => 'form-group']])->begin() ?>
+                    <?= Html::activeLabel($model, 'operator_id', ['class' => 'col-lg-12 col-sm-12 col-xs-12 control-label']); ?>
+                    <div class="col-lg-6 col-sm-6 col-xs-6">
+                        <?= Html::activeDropDownList($model, 'operator_id', ArrayHelper::map(EmployeeMaster::find()->active()->all(), 'id', 'name'), ['class' => 'form-control', 'prompt' => "Select One"]) ?>
+                        <?= Html::error($model, 'operator_id', ['class' => 'error help-block']) ?>
+                    </div>
+                    <?= $form->field($model, 'operator_id')->end() ?>
                 <?php } ?>
-
-
             </div>
         </div>
     </div>
 
     <div class="col-lg-12 col-sm-12 col-xs-12">
-        <div class="card card-secondary">
+        <div class="card">
             <div class="card-header">
-                <div class="card-title">
-                    ADD Package
+                <h3 class="card-title">ADD Package</h3>
+                <div class="card-tools">
+                    <?= Html::a(Html::tag('span', '', ['class' => 'fa fa-plus']), "#", ['title' => 'Add More', 'class' => 'btn btn-primary btn-sm', "onclick" => "addmoretablerowdetails()"]) ?>
                 </div>
             </div>
             <div class="card-body">
-                <table class="table table-bordered">
+                <table class="table table-bordered" id="clonetable">
                     <thead>
                         <tr>
                             <th>Particulars</th>
@@ -127,7 +124,7 @@ use yii\web\View;
                             <td>
                                 <?= $form->field($model, 'items[0][plan_start_time]', ['options' => ['class' => 'form-group']])->begin() ?>
                                 <div class="col-lg-12 col-sm-12 col-xs-12">
-                                    <?= Html::activeTextInput($model, 'items[0][plan_start_time]', ['class' => 'form-control timepick caldiff', "id" => "challanform_items_0_plan_start_time","rel" => "challanform_items_0"]) ?>
+                                    <?= Html::activeTextInput($model, 'items[0][plan_start_time]', ['class' => 'form-control timepick caldiff', "id" => "challanform_items_0_plan_start_time", "rel" => "challanform_items_0"]) ?>
                                     <?= Html::error($model, 'items[0][plan_start_time]', ['class' => 'error help-block']) ?>
                                 </div>
                                 <?= $form->field($model, 'items[0][plan_start_time]')->end() ?>
@@ -141,14 +138,14 @@ use yii\web\View;
 
                                 <?= $form->field($model, 'items[0][plan_trip]', ['options' => ['class' => 'form-group']])->begin() ?>
                                 <div class="col-lg-12 col-sm-12 col-xs-12">
-                                    <?= Html::activeTextInput($model, 'items[0][plan_trip]', ['class' => 'form-control hide', "id" => "challanform_items_0_plan_trip","placeholder"=>"Trip/Quantity"]) ?>
+                                    <?= Html::activeTextInput($model, 'items[0][plan_trip]', ['class' => 'form-control hide', "id" => "challanform_items_0_plan_trip", "placeholder" => "Trip/Quantity"]) ?>
                                     <?= Html::error($model, 'items[0][plan_trip]', ['class' => 'error help-block']) ?>
                                 </div>
                                 <?= $form->field($model, 'items[0][plan_trip]')->end() ?>
 
                                 <?= $form->field($model, 'items[0][from_destination]', ['options' => ['class' => 'form-group']])->begin() ?>
                                 <div class="col-lg-12 col-sm-12 col-xs-12">
-                                    <?= Html::activeTextInput($model, 'items[0][from_destination]', ['class' => 'form-control hide', "id" => "challanform_items_0_from_destination","placeholder"=>"From Destination"]) ?>
+                                    <?= Html::activeTextInput($model, 'items[0][from_destination]', ['class' => 'form-control hide', "id" => "challanform_items_0_from_destination", "placeholder" => "From Destination"]) ?>
                                     <?= Html::error($model, 'items[0][from_destination]', ['class' => 'error help-block']) ?>
                                 </div>
                                 <?= $form->field($model, 'items[0][from_destination]')->end() ?>
@@ -158,21 +155,21 @@ use yii\web\View;
                             <td>
                                 <?= $form->field($model, 'items[0][plan_end_time]', ['options' => ['class' => 'form-group']])->begin() ?>
                                 <div class="col-lg-12 col-sm-12 col-xs-12">
-                                    <?= Html::activeTextInput($model, 'items[0][plan_end_time]', ['class' => 'form-control timepick caldiff', 'id' => "challanform_items_0_plan_end_time","rel" => "challanform_items_0"]) ?>
+                                    <?= Html::activeTextInput($model, 'items[0][plan_end_time]', ['class' => 'form-control timepick caldiff', 'id' => "challanform_items_0_plan_end_time", "rel" => "challanform_items_0"]) ?>
                                     <?= Html::error($model, 'items[0][plan_end_time]', ['class' => 'error help-block']) ?>
                                 </div>
                                 <?= $form->field($model, 'items[0][plan_end_time]')->end() ?>
 
                                 <?= $form->field($model, 'items[0][plan_measure]', ['options' => ['class' => 'form-group']])->begin() ?>
                                 <div class="col-lg-12 col-sm-12 col-xs-12">
-                                    <?= Html::activeTextInput($model, 'items[0][plan_measure]', ['class' => 'form-control hide', "id" => "challanform_items_0_plan_measure","placeholder"=>'Brass/Litre']) ?>
+                                    <?= Html::activeTextInput($model, 'items[0][plan_measure]', ['class' => 'form-control hide', "id" => "challanform_items_0_plan_measure", "placeholder" => 'Brass/Litre']) ?>
                                     <?= Html::error($model, 'items[0][plan_measure]', ['class' => 'error help-block']) ?>
                                 </div>
                                 <?= $form->field($model, 'items[0][plan_measure]')->end() ?>
 
                                 <?= $form->field($model, 'items[0][to_destination]', ['options' => ['class' => 'form-group']])->begin() ?>
                                 <div class="col-lg-12 col-sm-12 col-xs-12">
-                                    <?= Html::activeTextInput($model, 'items[0][to_destination]', ['class' => 'form-control hide', 'id' => "challanform_items_0_to_destination","placeholder"=>"To Destination"]) ?>
+                                    <?= Html::activeTextInput($model, 'items[0][to_destination]', ['class' => 'form-control hide', 'id' => "challanform_items_0_to_destination", "placeholder" => "To Destination"]) ?>
                                     <?= Html::error($model, 'items[0][to_destination]', ['class' => 'error help-block']) ?>
                                 </div>
                                 <?= $form->field($model, 'items[0][to_destination]')->end() ?>
@@ -207,7 +204,7 @@ use yii\web\View;
 
                                 <?= $form->field($model, 'items[0][plan_extra_hours]', ['options' => ['class' => 'form-group']])->begin() ?>
                                 <div class="col-lg-12 col-sm-12 col-xs-12">
-                                    <?= Html::activeTextInput($model, 'items[0][plan_extra_hours]', ['class' => 'form-control', "id" => "challanform_items_0_plan_extra_hours","placeholder"=>"Extra Hours"]) ?>
+                                    <?= Html::activeTextInput($model, 'items[0][plan_extra_hours]', ['class' => 'form-control', "id" => "challanform_items_0_plan_extra_hours", "placeholder" => "Extra Hours"]) ?>
                                     <?= Html::error($model, 'items[0][plan_extra_hours]', ['class' => 'error help-block']) ?>
                                 </div>
                                 <?= $form->field($model, 'items[0][plan_extra_hours]')->end() ?>
@@ -224,7 +221,7 @@ use yii\web\View;
 
                                 <?= $form->field($model, 'items[0][plan_shift_type]', ['options' => ['class' => 'form-group']])->begin() ?>
                                 <div class="col-lg-12 col-sm-12 col-xs-12">
-                                    <?= Html::activeDropDownList($model, 'items[0][plan_shift_type]',C::PACKAGE_SHIFT_TYPE ,['class' => 'form-control', "id" => "challanform_items_0_plan_shift_type"]) ?>
+                                    <?= Html::activeDropDownList($model, 'items[0][plan_shift_type]', C::PACKAGE_SHIFT_TYPE, ['class' => 'form-control', "id" => "challanform_items_0_plan_shift_type"]) ?>
                                     <?= Html::error($model, 'items[0][plan_shift_type]', ['class' => 'error help-block']) ?>
                                 </div>
                                 <?= $form->field($model, 'items[0][plan_shift_type]')->end() ?>
@@ -257,16 +254,15 @@ use yii\web\View;
 <?php
 
 $plans = PlanMaster::find()->active()->asArray()->all();
-$customPlan = ClientPlanMapping::find()->where(["client_id"=>$model->client_id])->indexBy('plan_id')->asArray()->all();
+$customPlan = ClientPlanMapping::find()->where(["client_id" => $model->client_id])->indexBy('plan_id')->asArray()->all();
 
 $plan_amount_mapping = $plan_type_mapping = $plan_shift_mapping = [];
 foreach ($plans as $plan) {
     $plan_type_mapping[$plan["id"]] = $plan['type'];
-    $plan_amount_mapping[$plan["id"]] =  !empty($customPlan[$plan["id"]])?$customPlan[$plan["id"]]["custom_price"] :$plan['price'];
-    if($plan['type']==C::PACKAGE_WISE_SHIFT){
+    $plan_amount_mapping[$plan["id"]] =  !empty($customPlan[$plan["id"]]) ? $customPlan[$plan["id"]]["custom_price"] : $plan['price'];
+    if ($plan['type'] == C::PACKAGE_WISE_SHIFT) {
         $plan_shift_mapping[$plan["id"]] = $plan['shift_hrs'];
     }
-    
 }
 
 $js = '
@@ -306,24 +302,20 @@ $(".caldiff").change(function(){
     }
 });
 
-$(".challan_options").change(function () {
+$("body").on("change", ".challan_options",function () {
     var rel = $(this).attr("rel");
     var value = $(this).val();
     var type =  plan_type_mapping[value];
     var amount = plan_amount_mapping[value];
     
-
     $("#"+rel+"_day_wise").hide();
     $("#"+rel+"_plan_trip").hide();
     $("#"+rel+"_from_destination").hide();
     $("#"+rel+"_plan_shift_type").hide();
+    $("#"+rel+"_plan_measure").hide();
+    $("#"+rel+"_to_destination").hide();
+    $("#"+rel+"_plan_extra_hours").hide();
     
-    $("#challanform_items_0_plan_measure").hide();
-    $("#challanform_items_0_to_destination").hide();
-    $("#challanform_items_0_plan_extra_hours").hide();
-    
-
-
     switch (type) {
         case "1":
             $("#"+rel+"_plan_shift_type").hide();
