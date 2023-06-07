@@ -12,7 +12,7 @@ $documentValues = !empty($model->documents)?ArrayHelper::index($model->documents
 <?php $form = ActiveForm::begin(['id' => 'form-plan', 'options' => ['enctype' => 'multipart/form-data', 'class' => 'form-bordered']]); ?>
 <div class="row">
     <div class="col-md-6">
-        <div class="card card-secondary">
+        <div class="card ">
             <div class="card-header">
                 <div class="card-title">
                     Vehicle Details
@@ -83,7 +83,7 @@ $documentValues = !empty($model->documents)?ArrayHelper::index($model->documents
         </div>
     </div>
     <div class="col-md-6">
-        <div class="card card-secondary">
+        <div class="card ">
             <div class="card-header">
                 <div class="card-title">
                     Vehicle Maintenance

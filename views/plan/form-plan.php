@@ -9,7 +9,7 @@ use app\components\Constants as C;
 
 <div class="row">
     <div class="col-md-12">
-        <div class="card card-secondary">
+        <div class="card ">
             <div class="card-header">
                 <div class="card-title">
                     <?=($model->isNewRecord ? "Add New Plan" : "Update {$model->name}")?>

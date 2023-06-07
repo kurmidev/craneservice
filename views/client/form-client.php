@@ -12,7 +12,7 @@ use app\models\CompanyMaster;
 <?php $form = ActiveForm::begin(['id' => 'form-client', 'options' => ['enctype' => 'multipart/form-data', 'class' => 'form-bordered']]); ?>
 <div class="row">
     <div class="col-lg-6 col-sm-6 col-xs-6">
-        <div class="card card-secondary">
+        <div class="card ">
             <div class="card-header">
                 <div class="card-title">
                     Personal Details
@@ -100,7 +100,7 @@ use app\models\CompanyMaster;
     </div>
 
     <div class="col-lg-6 col-sm-6 col-xs-6">
-        <div class="card card-secondary">
+        <div class="card">
             <div class="card-header">
                 <div class="card-title">
                     KYC Details
@@ -133,7 +133,7 @@ use app\models\CompanyMaster;
 
 
     <div class="col-lg-6 col-sm-6 col-xs-6">
-        <div class="card card-secondary">
+        <div class="card ">
             <div class="card-header">
                 <div class="card-title">
                     Billing Address
@@ -169,7 +169,7 @@ use app\models\CompanyMaster;
     </div>
 
     <div class="col-lg-6 col-sm-6 col-xs-6">
-        <div class="card card-secondary">
+        <div class="card ">
             <div class="card-header">
                 <div class="card-title">
                     Site Address

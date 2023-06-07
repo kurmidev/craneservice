@@ -12,7 +12,7 @@ $pendingChallanList = Challan::find()->with(['plan'])->where(['client_id' => $cl
 
 <div class="row">
     <div class="col-md-12">
-        <div class="card card-secondary">
+        <div class="card ">
             <div class="card-header">
                 <div class="card-title">
                     Add Payments

@@ -43,7 +43,7 @@ use app\models\State;
                 [
                     "attribute"=>"first_name","label"=>'First Name',
                     "content"=> function($model) use ($viewUrl){
-                        return Html::a($model->first_name." ".$model->last_name,Yii::$app->urlManager->createUrl([$viewUrl, 'id' => $model->id]),["target"=>"_blank"]);
+                        return Html::a($model->first_name." ".$model->last_name,Yii::$app->urlManager->createUrl([$viewUrl, 'id' => $model->id]));
                     }
                 ],
                 //'last_name',

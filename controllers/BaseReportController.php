@@ -14,7 +14,7 @@ class BaseReportController extends BaseController{
         $searchModel = new ChallanSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
         $dataProvider->query->joinWith(['client c', 'plan p'])->onlyActive()->andWhere(['c.client_type' => $client_type]);
-        $dataProvider->pagination->pageSize = 100;
+        $dataProvider->pagination->pageSize = 20;
         return $this->render('@app/views/reports/index', [
                     'searchModel' => $searchModel,
                     'dataProvider' => $dataProvider,
@@ -28,7 +28,7 @@ class BaseReportController extends BaseController{
         $searchModel = new InvoiceMasterSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
         $dataProvider->query->joinWith(['client c'])->onlyActive()->andWhere(['c.client_type' => $client_type]);
-        $dataProvider->pagination->pageSize = 100;
+        $dataProvider->pagination->pageSize = 20;
         return $this->render('@app/views/reports/index', [
                     'searchModel' => $searchModel,
                     'dataProvider' => $dataProvider,
@@ -43,7 +43,7 @@ class BaseReportController extends BaseController{
         $searchModel = new PaymentSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
         $dataProvider->query->joinWith(['client c'])->onlyActive()->andWhere(['c.client_type' => $client_type]);
-        $dataProvider->pagination->pageSize = 100;
+        $dataProvider->pagination->pageSize = 20;
         return $this->render('@app/views/reports/index', [
                     'searchModel' => $searchModel,
                     'dataProvider' => $dataProvider,

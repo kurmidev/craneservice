@@ -15,7 +15,7 @@ $vehicleList = ArrayHelper::map(VehicleMaster::find()->active()->asArray()->all(
 <?php $form = ActiveForm::begin(['id' => 'form-quotation', 'options' => ['enctype' => 'mutipart/form-data', 'class' => 'form-horizontal form-bordered']]); ?>
 <div class="row">
     <div class="col-md-4">
-        <div class="card card-secondary">
+        <div class="card ">
             <div class="card-header">
                 <div class="card-title">
                     <?= $model->id ? "Add Quotation" : "Edit Quotation" ?>

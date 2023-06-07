@@ -11,7 +11,7 @@ use app\models\VehicleMaster;
 <?php $form = ActiveForm::begin(['id' => 'form-plan', 'options' => ['enctype' => 'multipart/form-data', 'class' => 'form-bordered']]); ?>
 <div class="row">
     <div class="col-md-6">
-        <div class="card card-secondary">
+        <div class="card ">
             <div class="card-header">
                 <div class="card-title">
                     Personal Details
@@ -90,7 +90,7 @@ use app\models\VehicleMaster;
     </div>
 
     <div class="col-md-6">
-        <div class="card card-secondary">
+        <div class="card ">
             <div class="card-header">
                 <div class="card-title">
                     KYC Details
@@ -123,7 +123,7 @@ use app\models\VehicleMaster;
 
 
     <div class="col-md-6">
-        <div class="card card-secondary">
+        <div class="card ">
             <div class="card-header">
                 <div class="card-title">
                     Other Details
@@ -168,7 +168,7 @@ use app\models\VehicleMaster;
     </div>
 
     <div class="col-md-6">
-        <div class="card card-secondary">
+        <div class="card ">
             <div class="card-header">
                 <div class="card-title">
                     Bank Details

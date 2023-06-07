@@ -3,7 +3,7 @@
 use yii\widgets\Menu;
 use app\components\MenuHelper;
 ?>
-<aside class="main-sidebar sidebar-dark-primary elevation-4">
+<aside class="main-sidebar elevation-4 sidebar-light-pink">
     <!-- Brand Logo -->
     <a href="index3.html" class="brand-link">
         <img src="<?= SITE_LOGO ?>" alt="Crane Service" class="brand-image img-circle elevation-3" style="opacity: .8">

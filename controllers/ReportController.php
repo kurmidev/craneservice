@@ -64,7 +64,7 @@ class ReportController extends BaseReportController
             ->groupBy(['vehicle_no'])
             ->orderBy(['sales_amount' => SORT_DESC]);
 
-        $dataProvider->pagination->pageSize = 100;
+        $dataProvider->pagination->pageSize = 20;
         return $this->render('@app/views/reports/index', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
@@ -87,7 +87,7 @@ class ReportController extends BaseReportController
             "invoice_amount"=>"sum(case when e.id is not null then e.total else 0 end )",
         ])->groupBy(['a.name']);
 
-        $dataProvider->pagination->pageSize = 100;
+        $dataProvider->pagination->pageSize = 20;
         return $this->render('@app/views/reports/index', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,

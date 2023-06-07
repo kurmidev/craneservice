@@ -8,7 +8,7 @@ use app\components\Constants as C;
 <?php $form = ActiveForm::begin(['id' => 'form-client', 'options' => ['enctype' => 'multipart/form-data', 'class' => 'form-bordered', 'enableAjaxValidation' => true]]); ?>
 <div class="row">
     <div class="col-lg-12 col-sm-12 col-xs-12">
-        <div class="card card-secondary">
+        <div class="card ">
             <div class="card-header">
                 <div class="card-title">
                     Add Challan
@@ -70,7 +70,7 @@ use app\components\Constants as C;
     </div>
 
     <div class="col-lg-12 col-sm-12 col-xs-12">
-        <div class="card card-secondary">
+        <div class="card ">
             <div class="card-header">
                 <div class="card-title">
                     ADD Challan

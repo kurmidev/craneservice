@@ -10,23 +10,30 @@ use app\models\Challan;
 use app\models\ClientMaster;
 use app\models\ExpenseMaster;
 use app\models\InvoiceMaster;
+use app\models\Payments;
 use app\models\VehicleMaster;
+use yii\bootstrap5\Html;
 use yii\helpers\ArrayHelper;
 
 class Dashboard extends Model
 {
 
     public $client_type;
+    public $baseUrl ;
+
+    public function __construct(){
+        $this->baseUrl = $this->client_type==C::CLIENT_TYPE_VENDOR?"vendor":"customer";
+    }
+
 
     public function getTotalCustomer()
     {
-
-        return ClientMaster::find()->onlyActive()->andFilterWhere(["client_type" => $this->client_type])->count();
+        return ClientMaster::find()->active()->andFilterWhere(["client_type" => $this->client_type])->count();
     }
 
     public function getTotalInvoice()
     {
-        return InvoiceMaster::find()->onlyActive()->andFilterWhere(["client_type" => $this->client_type])->sum('total');
+        return InvoiceMaster::find()->active()->andFilterWhere(["client_type" => $this->client_type])->sum('total');
     }
 
     public function getTotalOutstanding()
@@ -36,7 +43,7 @@ class Dashboard extends Model
 
     public function getTotalPaid()
     {
-        return InvoiceMaster::find()->onlyActive()->andFilterWhere(["client_type" => $this->client_type])->sum("payment");
+        return Payments::find()->onlyActive()->andFilterWhere(["client_type" => $this->client_type])->sum("amount_paid");
     }
 
     public function getTotalChallan()
@@ -50,7 +57,7 @@ class Dashboard extends Model
     {
         $query =  Challan::find()->alias('a');
         $query->setAlias('a');
-        return $query->joinWith(['client c'])->andFilterWhere(["c.client_type" => $this->client_type])->andWhere('a.total-a.amount_paid>0')->count();
+        return $query->joinWith(['client c'])->andFilterWhere(["c.client_type" => $this->client_type])->active()->andWhere('a.total-a.amount_paid>0')->count();
     }
 
     public function getMonthlyOutstanding()
@@ -63,7 +70,10 @@ class Dashboard extends Model
         $response = [];
         foreach ($model as $d) {
             $response[] = [
-                "invoice_month" => date("Y-m-01", strtotime($d['invoice_date'])),
+                "invoice_month" => Html::a(date("Y-m-01", strtotime($d['invoice_date'])),
+                            Yii::$app->urlManager->createUrl(["report/".$this->baseUrl."-invoice","InvoiceMasterSearch[invoice_date_start]"=>date("Y-m-01", strtotime($d['invoice_date'])),
+                            "InvoiceMasterSearch[invoice_date_end]"=>date("Y-m-t", strtotime($d['invoice_date']))
+                        ])),
                 "pending_count" => $d['pending_count'],
                 "pending_amount" => round($d['pending_amount'], 2)
             ];
@@ -85,11 +95,11 @@ class Dashboard extends Model
 
         $d = !empty($d[0]) ? $d[0] : [];
         return  [
-            "total_invoice" => !empty($d["total_invoice"]) ? round($d["total_invoice"], 2) : "0",
+            "total_invoice" => !empty($d["total_invoice"]) ? Html::a(round($d["total_invoice"], 2),Yii::$app->urlManager->createUrl(["report/".$this->baseUrl."-invoice"])) : "0",
             "total_amount" => !empty($d["total_amount"]) ? round($d["total_amount"], 2) : "0",
-            "pending_invoice" => !empty($d["pending_invoice"]) ? $d["pending_invoice"] : "0",
+            "pending_invoice" => !empty($d["pending_invoice"]) ?  Html::a(round($d["pending_invoice"], 2),Yii::$app->urlManager->createUrl(["report/".$this->baseUrl."-invoice","InvoiceMasterSearch[invoice_status]"=>1])) : "0",
             "pending_amount" => !empty($d["pending_invoice_amount"]) ? round($d["pending_invoice_amount"], 2) : "0",
-            "paid" => !empty($d["paid_invoice"]) ? $d["paid_invoice"] : "0",
+            "paid" => !empty($d["paid_invoice"]) ?  Html::a(round($d["paid_invoice"], 2),Yii::$app->urlManager->createUrl(["report/".$this->baseUrl."-invoice","InvoiceMasterSearch[invoice_status]"=>2])) : "0",
             "paid_amount" => !empty($d["paid_invoice_amount"]) ? round($d["paid_invoice_amount"], 2) : "0",
         ];
     }
@@ -98,7 +108,7 @@ class Dashboard extends Model
     {
         $query =  Challan::find()->alias('a');
         $query->setAlias('a');
-        $d = $query->joinWith(['client c'])->andFilterWhere(["c.client_type" => $this->client_type]) //->andFilterWhere(["client_type"=>$this->client_type])
+        $d = $query->joinWith(['client c'])->andFilterWhere(["c.client_type" => $this->client_type])->andWhere(['a.status'=>C::STATUS_ACTIVE])
             ->select([
                 "total_challan" => "count(a.id)",
                 "total_amount" => "sum(a.total)",
@@ -110,26 +120,29 @@ class Dashboard extends Model
 
         $d = !empty($d[0]) ? $d[0] : [];
         return  [
-            "total" => !empty($d["total_challan"]) ? round($d["total_challan"], 2) : "0",
-            "total_amount" => !empty($d["total_amount"]) ? round($d["total_amount"], 2) : "0",
-            "pending" => !empty($d["pending_challan"]) ? round($d["pending_challan"], 2) : "0",
+            "total" => !empty($d["total_challan"]) ? Html::a(round($d["total_challan"], 2),Yii::$app->urlManager->createUrl(["report/".$this->baseUrl."-challan"]))  : "0",
+            "total_amount" => !empty($d["total_amount"]) ?  round($d["total_amount"], 2) : "0",
+            "pending" => !empty($d["pending_challan"]) ? Html::a(round($d["pending_challan"], 2),Yii::$app->urlManager->createUrl(["report/".$this->baseUrl."-challan","ChallanSearch[challan_status]"=>2]))  : "0",
             "pending_amount" => !empty($d["pending_challan_amount"]) ? round($d["pending_challan_amount"], 2) : "0",
-            "paid" => !empty($d["paid_challan"]) ? $d["paid_challan"] : "0",
+            "paid" => !empty($d["paid_challan"]) ? Html::a(round($d["paid_challan"], 2),Yii::$app->urlManager->createUrl(["report/".$this->baseUrl."-challan","ChallanSearch[challan_status]"=>1])) : "0",
             "paid_amount" => !empty($d["paid_challan_amount"]) ? round($d["paid_challan_amount"], 2) : "0",
         ];
     }
 
     public function getMonthlyChallanOutstanding()
     {
-        $model = Challan::find()->alias('a')->joinWith(['client c'])
-            ->select(["challan_date" => new Expression("left(a.challan_date,7)"), "challan_count" => "count(a.id)", "challan_amount" => "sum(a.total)"])
+        $model = Challan::find()->alias('a')->joinWith(['client c'])->andWhere(['a.status'=>C::STATUS_ACTIVE])
+            ->select(["challan_date" => new Expression("left(a.challan_date,7)"), "challan_count" => "count(a.id)", "challan_amount" => "sum(a.base_amount)"])
             ->andFilterWhere(["c.client_type" => $this->client_type])
-            ->groupBy(['a.challan_date'])
+            ->groupBy(['left(a.challan_date,7)'])
             ->asArray()->all();
         $response = [];
         foreach ($model as $d) {
             $response[] = [
-                "challan_date" => date("Y-m-01", strtotime($d['challan_date'])),
+                "challan_date" =>   Html::a(date("Y-m-01", strtotime($d['challan_date'])),
+                Yii::$app->urlManager->createUrl(["report/".$this->baseUrl."-challan","ChallanSearch[challan_created_start]"=>date("Y-m-01", strtotime($d['challan_date'])),
+                "ChallanSearch[challan_created_end]"=>date("Y-m-t", strtotime($d['challan_date']))
+            ])),
                 "challan_count" => $d['challan_count'],
                 "challan_amount" => round($d['challan_amount'], 2)
             ];
@@ -150,7 +163,7 @@ class Dashboard extends Model
         $resp = [];
         foreach ($model as $d) {
             $resp[] = [
-                "vehicle_no" => $d['vehicle_no'],
+                "vehicle_no" => Html::a($d['vehicle_no'],Yii::$app->urlManager->createUrl(["report/vehicle-summary","VehicleMasterSearch[vehicle_no]"=>$d['vehicle_no']])),
                 "sales_amount" => round($d['sales_amount'], 2),
                 "expenses" => round($d['expenses'], 2),
                 "profit_loss" => round($d['sales_amount'] - $d['expenses'], 2)
@@ -224,7 +237,14 @@ class Dashboard extends Model
 
     public function getTopFiveVehicle()
     {
-        $model  = $this->vehicleSummary;
+        $model = VehicleMaster::find()->alias("a")
+        ->leftJoin("challan c", "c.vehicle_id=a.id and c.status=" . C::STATUS_ACTIVE)
+        ->leftJoin("expense_master e", "e.vehicle_id=a.id  and e.status=" . C::STATUS_ACTIVE)
+        ->andWhere(['a.status' => C::STATUS_ACTIVE])
+        ->select(['vehicle_no', "sales_amount" => "sum(c.total)", "expenses" => "sum(e.total)"])
+        ->groupBy(['vehicle_no'])
+        ->orderBy(['sales_amount' => SORT_DESC])
+        ->asArray()->all();
 
         $resp = [];
         if (!empty($model)) {
