@@ -43,7 +43,7 @@ $i=0;
                     <?= Html::a(Html::tag('span', '', ['class' => 'fa fa-plus']), "#", ['title' => 'Add More', 'class' => 'btn btn-primary btn-sm', "onclick" => "addmoretablerowdetails()"]) ?>
                 </div>
             </div>
-            <div class="card-body">
+            <div>
                 <table class="table table-bordered" id="clonetable">
                     <thead>
                         <tr>
@@ -69,157 +69,117 @@ $i=0;
                             <?php if ($model->client_type == C::CLIENT_TYPE_CUSTOMER) { ?>
                                 <td>
                                     <?= $form->field($model, 'items[0][site_address]', ['options' => ['class' => 'form-group']])->begin() ?>
-                                    <div class="col-lg-12 col-sm-12 col-xs-12">
                                         <?= Html::activeDropDownList($model, 'items[0][site_address]',  ArrayHelper::map(ClientSite::find()->where(['client_id' => $model->client_id])->active()->all(), 'id', 'address'), ['class' => 'form-control', 'id' => "challanform_items_0_site_address", 'prompt' => "Select option"]) ?>
                                         <?= Html::error($model, 'items[0][site_address]', ['class' => 'error help-block']) ?>
-                                    </div>
                                     <?= $form->field($model, 'items[0][site_address]')->end() ?>
                                 </td>
                                 <td>
                                     <?= $form->field($model, 'items[0][helper_id]', ['options' => ['class' => 'form-group']])->begin() ?>
-                                    <div class="col-lg-12 col-sm-12 col-xs-12">
                                         <?= Html::activeDropDownList($model, 'items[0][helper_id]', ArrayHelper::map(EmployeeMaster::find()->active()->all(), 'id', 'name'), ['class' => 'form-control', 'id' => "challanform_items_0_helper_id", 'prompt' => "Select option"]) ?>
                                         <?= Html::error($model, 'items[0][helper_id]', ['class' => 'error help-block']) ?>
-                                    </div>
                                     <?= $form->field($model, 'items[0][helper_id]')->end() ?>
                                 </td>
                                 <td>
                                     <?= $form->field($model, 'items[0][operator_id]', ['options' => ['class' => 'form-group']])->begin() ?>
-                                    <div class="col-lg-12 col-sm-12 col-xs-12">
                                         <?= Html::activeDropDownList($model, 'items[0][operator_id]',  ArrayHelper::map(EmployeeMaster::find()->active()->all(), 'id', 'name'), ['class' => 'form-control challan_options', 'id' => "challanform_items_0_operator_id", 'prompt' => "Select option"]) ?>
                                         <?= Html::error($model, 'items[0][operator_id]', ['class' => 'error help-block']) ?>
-                                    </div>
                                     <?= $form->field($model, 'items[0][operator_id]')->end() ?>
                                 </td>
                             <?php } ?>
                             <td>
                                 <?= $form->field($model, 'items[0][plan_id]', ['options' => ['class' => 'form-group']])->begin() ?>
-                                <div class="col-lg-12 col-sm-12 col-xs-12">
                                     <?= Html::activeDropDownList($model, 'items[0][plan_id]', ArrayHelper::map(PlanMaster::find()->active()->all(), 'id', 'name'), ['class' => 'form-control challan_options', 'id' => "challanform_items_0_plan_id", 'prompt' => "Select option", "rel" => "challanform_items_0"]) ?>
                                     <?= Html::error($model, 'items[0][plan_id]', ['class' => 'error help-block']) ?>
-                                </div>
                                 <?= $form->field($model, 'items[0][plan_id]')->end() ?>
                             </td>
                             <td>
                                 <?= $form->field($model, 'items[0][vehicle_id]', ['options' => ['class' => 'form-group']])->begin() ?>
-                                <div class="col-lg-12 col-sm-12 col-xs-12">
                                     <?= Html::activeDropDownList($model, 'items[0][vehicle_id]', ArrayHelper::map(VehicleMaster::find()->active()->all(), 'id', 'name'), ['class' => 'form-control', 'id' => 'challanform_items_0_vehicle_id', 'prompt' => "Select option"]) ?>
                                     <?= Html::error($model, 'items[0][vehicle_id]', ['class' => 'error help-block']) ?>
-                                </div>
                                 <?= $form->field($model, 'items[0][vehicle_id]')->end() ?>
                             </td>
                             <td>
                                 <?= $form->field($model, 'items[0][challan_no]', ['options' => ['class' => 'form-group']])->begin() ?>
-                                <div class="col-lg-12 col-sm-12 col-xs-12">
                                     <?= Html::activeTextInput($model, 'items[0][challan_no]', ['class' => 'form-control', 'id' => 'challanform_items_0_challan_no']) ?>
                                     <?= Html::error($model, 'items[0][challan_no]', ['class' => 'error help-block']) ?>
-                                </div>
                                 <?= $form->field($model, 'items[0][challan_no]')->end() ?>
                             </td>
 
                             <td>
                                 <?= $form->field($model, 'items[0][plan_start_time]', ['options' => ['class' => 'form-group']])->begin() ?>
-                                <div class="col-lg-12 col-sm-12 col-xs-12">
                                     <?= Html::activeTextInput($model, 'items[0][plan_start_time]', ['class' => 'form-control timepick caldiff', "id" => "challanform_items_0_plan_start_time", "rel" => "challanform_items_0"]) ?>
                                     <?= Html::error($model, 'items[0][plan_start_time]', ['class' => 'error help-block']) ?>
-                                </div>
                                 <?= $form->field($model, 'items[0][plan_start_time]')->end() ?>
 
                                 <?= $form->field($model, 'items[0][day_wise]', ['options' => ['class' => 'form-group']])->begin() ?>
-                                <div class="col-lg-12 col-sm-12 col-xs-12">
                                     <?= Html::activeDropDownList($model, 'items[0][day_wise]', C::DAYWISE_LABEL, ['class' => 'form-control hide', 'prompt' => "Select option", "id" => 'challanform_items_0_day_wise']) ?>
                                     <?= Html::error($model, 'items[0][day_wise]', ['class' => 'error help-block']) ?>
-                                </div>
                                 <?= $form->field($model, 'items[0][day_wise]')->end() ?>
 
                                 <?= $form->field($model, 'items[0][plan_trip]', ['options' => ['class' => 'form-group']])->begin() ?>
-                                <div class="col-lg-12 col-sm-12 col-xs-12">
                                     <?= Html::activeTextInput($model, 'items[0][plan_trip]', ['class' => 'form-control hide', "id" => "challanform_items_0_plan_trip", "placeholder" => "Trip/Quantity"]) ?>
                                     <?= Html::error($model, 'items[0][plan_trip]', ['class' => 'error help-block']) ?>
-                                </div>
                                 <?= $form->field($model, 'items[0][plan_trip]')->end() ?>
 
                                 <?= $form->field($model, 'items[0][from_destination]', ['options' => ['class' => 'form-group']])->begin() ?>
-                                <div class="col-lg-12 col-sm-12 col-xs-12">
                                     <?= Html::activeTextInput($model, 'items[0][from_destination]', ['class' => 'form-control hide', "id" => "challanform_items_0_from_destination", "placeholder" => "From Destination"]) ?>
                                     <?= Html::error($model, 'items[0][from_destination]', ['class' => 'error help-block']) ?>
-                                </div>
                                 <?= $form->field($model, 'items[0][from_destination]')->end() ?>
 
                             </td>
 
                             <td>
                                 <?= $form->field($model, 'items[0][plan_end_time]', ['options' => ['class' => 'form-group']])->begin() ?>
-                                <div class="col-lg-12 col-sm-12 col-xs-12">
                                     <?= Html::activeTextInput($model, 'items[0][plan_end_time]', ['class' => 'form-control timepick caldiff', 'id' => "challanform_items_0_plan_end_time", "rel" => "challanform_items_0"]) ?>
                                     <?= Html::error($model, 'items[0][plan_end_time]', ['class' => 'error help-block']) ?>
-                                </div>
                                 <?= $form->field($model, 'items[0][plan_end_time]')->end() ?>
 
                                 <?= $form->field($model, 'items[0][plan_measure]', ['options' => ['class' => 'form-group']])->begin() ?>
-                                <div class="col-lg-12 col-sm-12 col-xs-12">
                                     <?= Html::activeTextInput($model, 'items[0][plan_measure]', ['class' => 'form-control hide', "id" => "challanform_items_0_plan_measure", "placeholder" => 'Brass/Litre']) ?>
                                     <?= Html::error($model, 'items[0][plan_measure]', ['class' => 'error help-block']) ?>
-                                </div>
                                 <?= $form->field($model, 'items[0][plan_measure]')->end() ?>
 
                                 <?= $form->field($model, 'items[0][to_destination]', ['options' => ['class' => 'form-group']])->begin() ?>
-                                <div class="col-lg-12 col-sm-12 col-xs-12">
                                     <?= Html::activeTextInput($model, 'items[0][to_destination]', ['class' => 'form-control hide', 'id' => "challanform_items_0_to_destination", "placeholder" => "To Destination"]) ?>
                                     <?= Html::error($model, 'items[0][to_destination]', ['class' => 'error help-block']) ?>
-                                </div>
                                 <?= $form->field($model, 'items[0][to_destination]')->end() ?>
 
                             </td>
 
                             <td>
                                 <?= $form->field($model, 'items[0][amount]', ['options' => ['class' => 'form-group']])->begin() ?>
-                                <div class="col-lg-12 col-sm-12 col-xs-12">
                                     <?= Html::activeTextInput($model, 'items[0][amount]', ['class' => 'form-control', 'id' => 'challanform_items_0_amount']) ?>
                                     <?= Html::error($model, 'items[0][amount]', ['class' => 'error help-block']) ?>
-                                </div>
                                 <?= $form->field($model, 'items[0][amount]')->end() ?>
                             </td>
                             <td>
                                 <?= $form->field($model, 'items[0][break_time]', ['options' => ['class' => 'form-group']])->begin() ?>
-                                <div class="col-lg-12 col-sm-12 col-xs-12">
                                     <?= Html::activeDropDownList($model, 'items[0][break_time]', C::getTimeList(), ['class' => 'form-control', 'prompt' => "Select option", "id" => "challanform_items_0_break_time"]) ?>
                                     <?= Html::error($model, 'items[0][break_time]', ['class' => 'error help-block']) ?>
-                                </div>
                                 <?= $form->field($model, 'items[0][break_time]')->end() ?>
                                 <span id="challanform_items_0_break_time_span"></span>
                             </td>
 
                             <td>
                                 <?= $form->field($model, 'items[0][up_time]', ['options' => ['class' => 'form-group']])->begin() ?>
-                                <div class="col-lg-12 col-sm-12 col-xs-12">
                                     <?= Html::activeDropDownList($model, 'items[0][up_time]', C::getTimeList(), ['class' => 'form-control', 'prompt' => "Select option", "id" => "challanform_items_0_up_time"]) ?>
                                     <?= Html::error($model, 'items[0][up_time]', ['class' => 'error help-block']) ?>
-                                </div>
                                 <?= $form->field($model, 'items[0][up_time]')->end() ?>
 
                                 <?= $form->field($model, 'items[0][plan_extra_hours]', ['options' => ['class' => 'form-group']])->begin() ?>
-                                <div class="col-lg-12 col-sm-12 col-xs-12">
                                     <?= Html::activeTextInput($model, 'items[0][plan_extra_hours]', ['class' => 'form-control', "id" => "challanform_items_0_plan_extra_hours", "placeholder" => "Extra Hours"]) ?>
                                     <?= Html::error($model, 'items[0][plan_extra_hours]', ['class' => 'error help-block']) ?>
-                                </div>
                                 <?= $form->field($model, 'items[0][plan_extra_hours]')->end() ?>
-
-
                             </td>
                             <td>
                                 <?= $form->field($model, 'items[0][down_time]', ['options' => ['class' => 'form-group']])->begin() ?>
-                                <div class="col-lg-12 col-sm-12 col-xs-12">
                                     <?= Html::activeDropDownList($model, 'items[0][down_time]', C::getTimeList(), ['class' => 'form-control', 'prompt' => "Select option", "id" => "challanform_items_0_down_time"]) ?>
                                     <?= Html::error($model, 'items[0][down_time]', ['class' => 'error help-block']) ?>
-                                </div>
                                 <?= $form->field($model, 'items[0][down_time]')->end() ?>
 
                                 <?= $form->field($model, 'items[0][plan_shift_type]', ['options' => ['class' => 'form-group']])->begin() ?>
-                                <div class="col-lg-12 col-sm-12 col-xs-12">
                                     <?= Html::activeDropDownList($model, 'items[0][plan_shift_type]', C::PACKAGE_SHIFT_TYPE, ['class' => 'form-control', "id" => "challanform_items_0_plan_shift_type"]) ?>
                                     <?= Html::error($model, 'items[0][plan_shift_type]', ['class' => 'error help-block']) ?>
-                                </div>
                                 <?= $form->field($model, 'items[0][plan_shift_type]')->end() ?>
 
                             </td>
