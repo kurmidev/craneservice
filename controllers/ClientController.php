@@ -308,26 +308,39 @@ class ClientController extends BaseController
      * Creates a new ClientMaster model.
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return string|\yii\web\Response
-     *
+     */
     public function actionEditChallan($id)
     {
+        $challan = Challan::findOne(['id'=>$id]);
+        if(!$challan instanceof Challan){
+            $redirectUrl = $this->clientType == C::CLIENT_TYPE_CUSTOMER ? "customer" : "vendor";
+            \Yii::$app->getSession()->setFlash('e', "Record not found!");
+            return $this->redirect([$redirectUrl]);
+        }
+        $item = [$challan->attributes];
         $model = new ChallanForm(['scenario' => ClientMaster::SCENARIO_CREATE]);
-
+        $model->items = $item;
+        $model->client_id = $challan->client_id;
+        $model->client_type = $challan->client_type;
+        $model->id = $challan->id;
         if ($this->request->isPost) {
             $model->client_type = $this->clientType;
+            $model->scenario = Challan::SCENARIO_UPDATE;
+            $model->load($this->request->post()) ;
             if ($model->load($this->request->post()) && $model->save()) {
                 $title = $this->clientType == C::CLIENT_TYPE_CUSTOMER ? "Customer" : "Vendor";
-                $redirectUrl = $this->clientType == C::CLIENT_TYPE_CUSTOMER ? "customer/index" : "vendor/index";
-                \Yii::$app->getSession()->setFlash('s', "{$title} has been added successfully.");
-                return $this->redirect([$redirectUrl]);
+                $redirectUrl = $this->clientType == C::CLIENT_TYPE_CUSTOMER ? "customer/view-customer" : "vendor/view-vendor";
+                \Yii::$app->getSession()->setFlash('s', "Challan {$challan->challan_no} has been updated successfully.");
+                return $this->redirect([$redirectUrl, "pg"=>"pending-challan","id" => $challan->client_id]);
             }
         }
 
-        return $this->render('@app/views/client/form-client', [
+        return $this->render('@app/views/challan/challan-edit-form', [
             'model' => $model,
+            'challan'=> $challan,
             "title" => $this->title
         ]);
-    }*/
+    }
 
     /**
      * Creates a new ClientMaster model.

@@ -12,7 +12,7 @@ use app\models\EmployeeMaster;
 use app\models\PlanMaster;
 use app\models\VehicleMaster;
 use yii\web\View;
-$i=0;
+
 ?>
 <?php $form = ActiveForm::begin(['id' => 'form-client', 'options' => ['enctype' => 'multipart/form-data', 'class' => 'form-bordered', 'enableAjaxValidation' => true]]); ?>
 <div class="row">
@@ -40,7 +40,7 @@ $i=0;
             <div class="card-header">
                 <h3 class="card-title">ADD Package</h3>
                 <div class="card-tools">
-                    <?= Html::a(Html::tag('span', '', ['class' => 'fa fa-plus']), "#", ['title' => 'Add More', 'class' => 'btn btn-primary btn-sm', "onclick" => "addmoretablerowdetails()"]) ?>
+                
                 </div>
             </div>
             <div class="card-body">
@@ -225,9 +225,7 @@ $i=0;
                             </td>
 
                             <td>
-                                <button type="button" class="btn btn-danger">
-                                    <span class="fa fa-minus" onclick="<?= $i > 0 ? "$(this).closest('tr').remove();" : "" ?>"></span>
-                                </button>
+                                <span></span>
                             </td>
                         </tr>
                     </tbody>
@@ -300,6 +298,64 @@ $(".caldiff").change(function(){
     }
 });
 
+var rel = "challanform_items_0";
+if('.($challan->plan->type===C::PACKAGE_WISE_CHALLAN?"1===1":"1===2").'){
+    $("#"+rel+"_plan_shift_type").hide();
+    $("#"+rel+"_plan_extra_hours").hide();
+} else if('.($challan->plan->type===C::PACKAGE_WISE_DAY?"1===1":"1===2").'){
+    $("#"+rel+"_break_time").show();
+    $("#"+rel+"_up_time").show();
+    $("#"+rel+"_plan_start_time").hide();
+    $("#"+rel+"_plan_end_time").hide();
+    $("#"+rel+"_day_wise").hide();
+    $("#"+rel+"_plan_trip").hide();
+    $("#"+rel+"_from_destination").hide();
+    $("#"+rel+"_plan_measure").hide();
+    $("#"+rel+"_to_destination").hide();
+    $("#"+rel+"_plan_extra_hours").hide();
+    $("#"+rel+"_day_wise").show();
+} else if('.($challan->plan->type===C::PACKAGE_WISE_TRIP?"1===1":"1===2").'){
+    $("#"+rel+"_break_time").show();
+    $("#"+rel+"_up_time").show();
+    $("#"+rel+"_plan_trip").show();
+    $("#"+rel+"_plan_measure").show();
+    $("#"+rel+"_plan_start_time").hide();
+    $("#"+rel+"_day_wise").hide();
+    $("#"+rel+"_plan_end_time").hide();
+    $("#"+rel+"_from_destination").hide();
+    $("#"+rel+"_plan_extra_hours").hide();
+} else if('.($challan->plan->type===C::PACKAGE_WISE_DESTINATION?"1===1":"1===2").'){
+    $("#"+rel+"_from_destination").show();
+    $("#"+rel+"_to_destination").show();
+    $("#"+rel+"_plan_start_time").hide();
+    $("#"+rel+"_plan_end_time").hide();
+} else if('.($challan->plan->type===C::PACKAGE_WISE_MONTH?"1===1":"1===2").'){
+    $("#"+rel+"_break_time").show();
+    $("#"+rel+"_up_time").show();
+    $("#"+rel+"_plan_start_time").show();
+    $("#"+rel+"_plan_end_time").show();
+    $("#"+rel+"_day_wise").hide();
+    $("#"+rel+"_plan_trip").hide();
+    $("#"+rel+"_from_destination").hide();
+    $("#"+rel+"_plan_measure").hide();
+    $("#"+rel+"_to_destination").hide();
+    $("#"+rel+"_plan_extra_hours").hide();
+} else if('.($challan->plan->type===C::PACKAGE_WISE_SHIFT?"1===1":"1===2").'){
+    $("#"+rel+"_plan_start_time").show();
+    $("#"+rel+"_plan_end_time").show();
+    $("#"+rel+"_plan_shift_type").show();
+    $("#"+rel+"_break_time").hide();
+    $("#"+rel+"_up_time").hide();
+    $("#"+rel+"_down_time").hide();
+    $("#"+rel+"_day_wise").hide();
+    $("#"+rel+"_plan_trip").hide();
+    $("#"+rel+"_from_destination").hide();
+    $("#"+rel+"_plan_measure").hide();
+    $("#"+rel+"_to_destination").hide();
+    $("#"+rel+"_plan_extra_hours").show();
+}
+
+
 $("body").on("change", ".challan_options",function () {
     var rel = $(this).attr("rel");
     var value = $(this).val();
@@ -313,7 +369,7 @@ $("body").on("change", ".challan_options",function () {
     $("#"+rel+"_plan_measure").hide();
     $("#"+rel+"_to_destination").hide();
     $("#"+rel+"_plan_extra_hours").hide();
-    
+
     switch (type) {
         case "1":
             $("#"+rel+"_plan_shift_type").hide();

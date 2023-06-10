@@ -1,8 +1,7 @@
 <?php
 
 
-use yii\grid\GridView;
-use yii\widgets\Pjax;
+use app\components\ImsGridView;
 use yii\helpers\Html;
 use yii\helpers\Url;
 use yii\helpers\ArrayHelper;
@@ -22,7 +21,7 @@ use app\models\PlanMaster;
     <div class="card-body p-0 table-responsive">
 
 
-        <?= GridView::widget([
+        <?= ImsGridView::widget([
             'dataProvider' => $dataProvider,
             'filterModel' => $searchModel,
             'columns' => [
@@ -53,8 +52,8 @@ use app\models\PlanMaster;
                 "break_time",
                 "up_time",
                 "down_time",
+                "base_amount",
                 "amount",
-                "total",
                 [
                     'attribute' => 'invoice_id', 'label' => 'Is Invoice Generated',
                     'content' => function ($model) {

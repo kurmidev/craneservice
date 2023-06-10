@@ -7,47 +7,53 @@ use app\components\Constants as C;
 
 <div class="container-fluid">
     <div class="row">
-        <div class="col-md-3">
+        <div class="col-md-12">
             <div class="card card-primary card-outline">
                 <div class="card-body box-profile">
                     <div class="text-center">
                     </div>
                     <h3 class="profile-username text-center">
-                        <?= $model->company_name ?>
+                        <?= $model->company_name ?>(Total Outstanding : <b><?= CURRENCY_SYMBOL ?> <?= $balance ?></b>)
                     </h3>
-                    <ul class="list-group list-group-unbordered mb-3">
-                        <li class="list-group-item">
-                            <b>Email: </b>
-                            <?= $model->email ?>
-                        </li>
-                        <li class="list-group-item">
-                            <b>Mobile No: </b>
-                            <?= $model->mobile_no ?>
-                        </li>
-                        <li class="list-group-item">
-                            <b>Phone No: </b>
-                            <?= $model->phone_no ?>
-                        </li>
-                        <li class="list-group-item">
-                            <b>Address: </b>
-                            <?= $model->address ?>
-                        </li>
-                        <li class="list-group-item">
-                            <b>GSTIN / UIN: </b>
-
-                        </li>
-                        <li class="list-group-item">
-                            <b>PAN No: </b>
-
-                        </li>
-                    </ul>
+                    <div class="row">
+                        <div class="col-6">
+                            <ul class="list-group list-group-unbordered mb-3">
+                                <li class="list-group-item">
+                                    <b>Email: </b>
+                                    <?= $model->email ?>
+                                </li>
+                                <li class="list-group-item">
+                                    <b>Mobile No: </b>
+                                    <?= $model->mobile_no ?>
+                                </li>
+                                <li class="list-group-item">
+                                    <b>Phone No: </b>
+                                    <?= $model->phone_no ?>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="col-6">
+                            <ul  class="list-group list-group-unbordered mb-3">
+                                <li class="list-group-item">
+                                    <b>Address: </b>
+                                    <?= $model->address ?>
+                                </li>
+                                <li class="list-group-item">
+                                    <b>GSTIN / UIN: </b>
+                                </li>
+                                <li class="list-group-item">
+                                    <b>PAN No: </b>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
-        <div class="col-md-9">
+        <div class="col-md-12">
             <div class="card">
                 <div class="card-header p-2">
-                    <strong> Total Outstanding : <b><?= CURRENCY_SYMBOL ?> <?= $balance ?></b></strong>
+                    
                 </div>
                 <div class="card-header p-2">
 
@@ -65,11 +71,11 @@ use app\components\Constants as C;
                             <?= Html::a("Payment", Yii::$app->urlManager->createUrl([$baseUrl, "pg" => 'payment', "id" => $model->id]), ["class" => "nav-link " . ($pg == "payment" ? "active" : "")]) ?>
                         </li>
                         <li class="nav-item">
-                        <?php if ($model->client_type == C::CLIENT_TYPE_CUSTOMER) { ?>
-                            <?= Html::a("Credit Notes", Yii::$app->urlManager->createUrl([$baseUrl, "pg" => 'credit_notes', "id" => $model->id]), ["class" => "nav-link " . ($pg == "credit_notes" ? "active" : "")]) ?>
-                            <?php } else{ ?>
+                            <?php if ($model->client_type == C::CLIENT_TYPE_CUSTOMER) { ?>
+                                <?= Html::a("Credit Notes", Yii::$app->urlManager->createUrl([$baseUrl, "pg" => 'credit_notes', "id" => $model->id]), ["class" => "nav-link " . ($pg == "credit_notes" ? "active" : "")]) ?>
+                            <?php } else { ?>
                                 <?= Html::a("Debit Notes", Yii::$app->urlManager->createUrl([$baseUrl, "pg" => 'credit_notes', "id" => $model->id]), ["class" => "nav-link " . ($pg == "credit_notes" ? "active" : "")]) ?>
-                           <?php  } ?>
+                            <?php  } ?>
                         </li>
                         <li class="nav-item">
                             <?= Html::a("Quotation", Yii::$app->urlManager->createUrl([$baseUrl, "pg" => 'quotation', "id" => $model->id]), ["class" => "nav-link " . ($pg == "quotation" ? "active" : "")]) ?>
