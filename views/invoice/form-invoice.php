@@ -51,7 +51,7 @@ use app\components\Constants as C;
                 <?= $form->field($model, 'is_tax_applicable', ['options' => ['class' => 'form-group']])->begin() ?>
                 <?= Html::activeLabel($model, 'is_tax_applicable', ['class' => 'col-lg-12 col-sm-12 col-xs-12 control-label']); ?>
                 <div class="col-lg-6 col-sm-6 col-xs-6">
-                    <?= Html::activeDropDownList($model, 'is_tax_applicable', C::IS_YES_NO, ['class' => 'form-control', 'prompt' => "Select One"]) ?>
+                    <?= Html::activeDropDownList($model, 'is_tax_applicable', C::IS_YES_NO, ['class' => 'form-control', 'prompt' => "Select One", "value" => (!empty($model->is_tax_applicable) ? 1 : 0)]) ?>
                     <?= Html::error($model, 'is_tax_applicable', ['class' => 'error help-block']) ?>
                 </div>
                 <?= $form->field($model, 'is_tax_applicable')->end() ?>
@@ -89,24 +89,43 @@ use app\components\Constants as C;
                             <th>Hour</th>
                             <th>Base Amount</th>
                             <th>Total Amount</th>
-                            <th></th>
+                            <th>
+                                <?= Html::checkbox("Select All", false, ["class" => "form-check-input", "onclick" => "$(':checkbox').each(function() { this.checked = !this.checked; });"]) ?>
+                            </th>
                         </tr>
                     </thead>
                     <tbody>
+
                         <?php foreach ($challan_list as $challan) { ?>
                             <tr>
                                 <td><?= $challan["challan_no"] ?></td>
                                 <td><?= $challan["challan_date"] ?></td>
                                 <td><?= $challan["plan"]["name"] ?></td>
                                 <td><?= $challan["id"] ?></td>
-                                <td><?= $challan['plan_start_time']!="00:00:00"? $challan["plan_start_time"]:(!empty($challan['day_wise'])?$challan['day_wise']:(!empty($challan['plan_trip'])?$challan['plan_trip']:$challan['from_destination']) )?></td>
-                                <td><?= $challan['plan_end_time']!="00:00:00"? $challan["plan_end_time"]:(!empty($challan['plan_measure'])?$challan['plan_measure']:$challan['to_destination'])?></td>
+                                <td><?= $challan['plan_start_time'] != "00:00:00" ? $challan["plan_start_time"] : (!empty($challan['day_wise']) ? $challan['day_wise'] : (!empty($challan['plan_trip']) ? $challan['plan_trip'] : $challan['from_destination'])) ?></td>
+                                <td><?= $challan['plan_end_time'] != "00:00:00" ? $challan["plan_end_time"] : (!empty($challan['plan_measure']) ? $challan['plan_measure'] : $challan['to_destination']) ?></td>
                                 <td><?= !empty($challan['plan_start_time'])   ? date("H:i", (strtotime($challan['plan_start_time']) - strtotime($challan['plan_end_time']))) : $challan['plan_measure'] ?></td>
-                                <td><?= $challan["amount"] ?></td>
-                                <td><?= $challan["total"] ?></td>
+                                <?php if (!$is_edit) { ?>
+                                    <td><?= $challan["base_amount"] ?></td>
+                                    <td><?= $challan["amount"] ?></td>
+                                <?php } else { ?>
+                                    <?php
+                                    $onclickCallBack = "";
+                                    if ($challan['plan']['type'] == C::PACKAGE_WISE_TRIP) {
+                                        $onclickCallBack = '(function(){ $("#challan_amount_' . $challan['id'] . '").val(' . ($challan['plan_trip'] * $challan['plan_measure']) . ' * $("#challan_base_'.$challan['id'].'").val() );})()';
+                                    } else if ($challan['plan']['type'] == C::PACKAGE_WISE_CHALLAN) {
+                                        $totalMinutes = (strtotime($challan['plan_end_time']) - strtotime($challan['plan_start_time'])) / 60;
+                                        $onclickCallBack = '(function(){ $("#challan_amount_' . $challan['id'] . '").val(($("#challan_base_'.$challan['id'].'").val()/60)*' . $totalMinutes . ');})()';
+                                    } else {
+                                        $onclickCallBack = '(function(){ $("#challan_amount_' . $challan['id'] . '").val($("#challan_base_'.$challan['id'].'").val());})()';
+                                    }
+                                    ?>
+                                    <td><?= Html::activeTextInput($model, 'challan_amount[' . $challan['id'] . '][base_amount]', ["class" => "form-control", "value" => $challan["base_amount"],'onchange'=>$onclickCallBack,"id"=>"challan_base_".$challan['id']]) ?></td>
+                                    <td><?= Html::activeTextInput($model, 'challan_amount[' . $challan['id'] . '][amount]', ["class" => "form-control", "value" => $challan["amount"], "id" => "challan_amount_".$challan['id']]) ?></td>
+                                <?php }  ?>
                                 <td>
                                     <div class="p-10">
-                                        <?= Html::activeCheckbox($model, 'challan_ids[' . $challan['id'] . ']', ["class" => "form-check-input", "label" => false]) ?>
+                                        <?= Html::activeCheckbox($model, 'challan_ids[' . $challan['id'] . ']', ["class" => "form-check-input", "label" => false, 'checked' => (in_array($challan['id'], $challan_ids) ? true : false)]) ?>
                                     </div>
                                 </td>
                             </tr>

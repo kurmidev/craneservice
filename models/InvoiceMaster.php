@@ -67,6 +67,11 @@ class InvoiceMaster extends \app\models\BaseModel
         ];
     }
 
+
+    public function attributes()
+    {
+        return array_merge(parent::attributes(),['is_tax_applicable']) ;
+    }
     /**
      * {@inheritdoc}
      */
@@ -139,11 +144,24 @@ class InvoiceMaster extends \app\models\BaseModel
         }
     }
 
-    public function getAuditMessage(){
-        if($this->status==C::STATUS_ACTIVE){
-            return "Invoice {$this->invoice_no} has been created by {$this->actionBy} of amount {$this->total}";
-        }else if($this->status==C::STATUS_DELETED){
-            return "Invoice {$this->invoice_no} has been deleted by {$this->actionBy} on {$this->updated_at}";
+    public function getAuditMessage($oldAttr, $newAttr, $changeAttr)
+    {
+        if (empty($oldAttr)) {
+            return "Invoice {$this->invoice_no} has been created by {$this->actionBy} of amount {$this->base_amount}";
+        } else if (!empty($changeAttr)) {
+            if ($this->status == C::STATUS_DELETED) {
+                return "Invoice {$this->invoice_no} has been deleted by {$this->actionBy} on {$this->updated_at}";
+            }else if(in_array("payment",array_keys($changeAttr)) && !empty($this->payment)){
+                return  "Invoice {$this->invoice_no}, payment of {$this->payment->receipt_no} by {$this->actionBy} on {$this->updated_at}";
+            } else {
+                $listValue = $this->generateText($oldAttr, $newAttr, $changeAttr);
+                return  "Invoice {$this->invoice_no} values {$listValue} been changed by {$this->actionBy} on {$this->updated_at}";
+            }
         }
+        return "";
+    }
+
+    public function getIs_tax_applicable(){
+        return !empty($this->tax)?1:0;
     }
 }

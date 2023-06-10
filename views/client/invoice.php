@@ -27,6 +27,7 @@ use app\models\PlanMaster;
             'columns' => [
                 ['class' => 'yii\grid\SerialColumn'],
                 'invoice_no',
+                'invoice_date:date',
                 [
                     'attribute' => 'invoice_type', 'label' => 'Invoice Type',
                     'content' => function ($model) {
@@ -64,6 +65,7 @@ use app\models\PlanMaster;
                         $print =//Html::a(Html::tag('span', '', ['class' => 'fa fa-edit']), \Yii::$app->urlManager->createUrl(["{$base_controller}/edit-invoice", 'id' => $data['id']]), ['title' => 'Update ' . $data['invoice_no'], 'class' => 'btn btn-primary-alt'])
                              Html::a(Html::tag('span', '', ['class' => 'fa fa-print']), \Yii::$app->urlManager->createUrl(["{$base_controller}/print-invoice", 'id' => $data['id']]), ['title' => 'Print ' . $data['invoice_no'], 'class' => 'btn btn-primary-alt',"target"=>"_blank"]);
                             if($data['payment']<=0){
+                                $print.= Html::a(Html::tag('span', '', ['class' => 'fa fa-edit']), \Yii::$app->urlManager->createUrl(["{$base_controller}/edit-invoice", 'id' => $data['id']]), ['title' => 'Edit ' . $data['invoice_no'], 'class' => 'btn btn-primary-alt']);
                                 $print.= Html::a(Html::tag('span', '', ['class' => 'fa fa-trash']), \Yii::$app->urlManager->createUrl(["{$base_controller}/delete-invoice", 'id' => $data['id']]), ['title' => 'Delete ' . $data['invoice_no'], 'class' => 'btn btn-primary-alt']);
                             }
                             return $print;

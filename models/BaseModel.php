@@ -9,6 +9,7 @@ use yii\behaviors\TimestampBehavior;
 use yii\db\BaseActiveRecord;
 use yii\db\Expression;
 use app\components\Constants as C;
+
 class BaseModel extends ActiveRecord
 {
 
@@ -128,19 +129,19 @@ class BaseModel extends ActiveRecord
             if (!empty($this->_changedata)) {
                 $auditTrails = new AuditLogs();
                 $auditTrails->table_name = $this->tableName();
-                $auditTrails->client_id = !empty($this->client_id)?$this->client_id:null;
-                $auditTrails->client_type = !empty($this->client_type)?$this->client_type:null;
+                $auditTrails->client_id = !empty($this->client_id) ? $this->client_id : null;
+                $auditTrails->client_type = !empty($this->client_type) ? $this->client_type : null;
                 $this->_newData = $this->attributes;
                 $auditTrails->old_value = json_encode($this->_oldData);
                 $auditTrails->changed_value = json_encode($this->_changedata);
                 $auditTrails->new_value = json_encode($this->_newData);
                 $auditTrails->primary_id = $this->id;
-                $auditTrails->action_taken = !empty($this->status) ?$this->status:1;
+                $auditTrails->action_taken = !empty($this->status) ? $this->status : 1;
                 $auditTrails->created_by = \Yii::$app->user->getId();
                 $auditTrails->created_at = date("Y-m-d H:i:s");
-                $auditTrails->remark = $this->getAuditMessage();
-                if($auditTrails->validate() && $auditTrails->save()){
-             //       return true;
+                $auditTrails->remark = $this->getAuditMessage($this->_oldData,$this->_newData,$this->_changedata);
+                if ($auditTrails->validate() && $auditTrails->save()) {
+                    //       return true;
                 }
             }
         } catch (Exception $e) {
@@ -149,7 +150,21 @@ class BaseModel extends ActiveRecord
         parent::afterSave($insert, $changedAttributes);
     }
 
-    public function getAuditMessage(){
+    public function getAuditMessage($oldAttr, $newAttr, $changeAttr)
+    {
         return "";
+    }
+
+    public function generateText($oldAttr, $newAttr, $changeAttr)
+    {
+        $str = "";
+        if (!empty($changeAttr)) {
+            foreach($oldAttr as $key=>$value){
+                if(!empty($oldAttr[$key]) && !empty($newAttr[$key])){
+                    $str.= $key.":".$oldAttr[$key]." to ". $newAttr[$key]; 
+                }
+            }
+        }
+        return $str;
     }
 }

@@ -30,6 +30,7 @@ use app\models\PaymentsDetailsSearch;
 use app\models\PaymentSearch;
 use app\models\QuotationMaster;
 use app\models\QuotationMasterSearch;
+use yii\helpers\ArrayHelper;
 
 /**
  * ClientController implements the CRUD actions for ClientMaster model.
@@ -77,7 +78,7 @@ class ClientController extends BaseController
             $dataProvider = $searchModel->search($this->request->queryParams);
             $dataProvider->query->active()->andWhere(["client_id" => $model->id]);
             if ($pg == "pending-challan") {
-                $dataProvider->query->andWhere(["client_id" => $model->id, "invoice_id"=>null]);
+                $dataProvider->query->andWhere(["client_id" => $model->id, "invoice_id" => null]);
             } else {
                 $dataProvider->query->andWhere(['is_processed' => C::STATUS_ACTIVE])->andWhere(['>', 'invoice_id', 0]);
             }
@@ -123,7 +124,7 @@ class ClientController extends BaseController
                 "addUrl" => $this->clientType == C::CLIENT_TYPE_CUSTOMER ? "customer/add-customer" : "vendor/add-vendor",
                 "seditUrl" => $this->clientType == C::CLIENT_TYPE_CUSTOMER ? "customer/edit-customer" : "vendor/edit-vendor",
                 "viewUrl" => $this->clientType == C::CLIENT_TYPE_CUSTOMER ? "customer/view-customer" : "vendor/view-vendor",
-                
+
                 "base_controller" =>  $this->clientType == C::CLIENT_TYPE_CUSTOMER ? "customer" : "vendor",
                 "company_id" => $this->clientType == C::CLIENT_TYPE_CUSTOMER ? "customer/view-challan" : "vendor/view-challan",
 
@@ -141,9 +142,9 @@ class ClientController extends BaseController
                 "customPriceDataProvider" => $customPriceDataProvider,
                 "customPriceSearchModel" => $customPriceSearchModel,
                 "logSearchModel" => $logSearchModel,
-                "logDataProvider"=> $logDataProvider,
+                "logDataProvider" => $logDataProvider,
 
-                
+
                 "viewPaymentDetails" => $this->clientType == C::CLIENT_TYPE_CUSTOMER ? "customer/pay-details" : "vendor/pay-details",
                 "printPayment" => $this->clientType == C::CLIENT_TYPE_CUSTOMER ? "customer/print-receipt" : "vendor/print-receipt",
                 "noteAddUrl" => $this->clientType == C::CLIENT_TYPE_CUSTOMER ?   "customer/add-note" : "vendor/add-note",
@@ -293,7 +294,7 @@ class ClientController extends BaseController
                 $title = $this->clientType == C::CLIENT_TYPE_CUSTOMER ? "Customer" : "Vendor";
                 $redirectUrl = $this->clientType == C::CLIENT_TYPE_CUSTOMER ? "customer/view-customer" : "vendor/view-vendor";
                 \Yii::$app->getSession()->setFlash('s', "Challan has been added successfully.");
-                return $this->redirect([$redirectUrl, "pg"=>"pending-challan","id" => $id]);
+                return $this->redirect([$redirectUrl, "pg" => "pending-challan", "id" => $id]);
             }
         }
 
@@ -311,8 +312,8 @@ class ClientController extends BaseController
      */
     public function actionEditChallan($id)
     {
-        $challan = Challan::findOne(['id'=>$id]);
-        if(!$challan instanceof Challan){
+        $challan = Challan::findOne(['id' => $id]);
+        if (!$challan instanceof Challan) {
             $redirectUrl = $this->clientType == C::CLIENT_TYPE_CUSTOMER ? "customer" : "vendor";
             \Yii::$app->getSession()->setFlash('e', "Record not found!");
             return $this->redirect([$redirectUrl]);
@@ -326,18 +327,18 @@ class ClientController extends BaseController
         if ($this->request->isPost) {
             $model->client_type = $this->clientType;
             $model->scenario = Challan::SCENARIO_UPDATE;
-            $model->load($this->request->post()) ;
+            $model->load($this->request->post());
             if ($model->load($this->request->post()) && $model->save()) {
                 $title = $this->clientType == C::CLIENT_TYPE_CUSTOMER ? "Customer" : "Vendor";
                 $redirectUrl = $this->clientType == C::CLIENT_TYPE_CUSTOMER ? "customer/view-customer" : "vendor/view-vendor";
                 \Yii::$app->getSession()->setFlash('s', "Challan {$challan->challan_no} has been updated successfully.");
-                return $this->redirect([$redirectUrl, "pg"=>"pending-challan","id" => $challan->client_id]);
+                return $this->redirect([$redirectUrl, "pg" => "pending-challan", "id" => $challan->client_id]);
             }
         }
 
         return $this->render('@app/views/challan/challan-edit-form', [
             'model' => $model,
-            'challan'=> $challan,
+            'challan' => $challan,
             "title" => $this->title
         ]);
     }
@@ -351,21 +352,19 @@ class ClientController extends BaseController
     {
         $this->layout = false;
         $model = Challan::find()->where(['id' => $id])->with(['plan'])->one();
-        if($model instanceof Challan){
+        if ($model instanceof Challan) {
             $filename = "challan_{$model->challan_no}.pdf";
             $this->title = "Challan {$model->challan_no}.pdf";
             $content = $this->render('@app/views/client/print-challan', [
-               'model' => $model
-           ]);
-           
-           return F::printPdf($content, $filename);
+                'model' => $model
+            ]);
+
+            return F::printPdf($content, $filename);
         }
 
         $redirectUrl = $this->clientType == C::CLIENT_TYPE_CUSTOMER ? "customer" : "vendor";
         Yii::$app->getSession()->setFlash('e', "Record not found!");
         return $this->redirect([$redirectUrl]);
-        
-        
     }
 
     public function actionAddInvoice($id)
@@ -382,13 +381,15 @@ class ClientController extends BaseController
                 $redirectUrl = $this->clientType == C::CLIENT_TYPE_CUSTOMER ? "customer/view-customer" : "vendor/view-vendor";
                 \Yii::$app->getSession()->setFlash('s', "Invoice has been added successfully.");
                 return $this->redirect([$redirectUrl, "id" => $id, "pg" => "pending-invoice"]);
-            } 
+            }
         }
-        $challanList  = Challan::find()->with(['plan'])->where(['client_id' => $id, 'invoice_id' => null, 'is_processed' => 0])->all();
+        $challanList  = Challan::find()->with(['plan'])->andWhere(['client_id' => $id, 'invoice_id' => null, 'is_processed' => 0,'status'=>C::STATUS_ACTIVE])->all();
         return $this->render('@app/views/invoice/form-invoice', [
             'model' => $model,
             "title" => $this->title,
-            "challan_list" => $challanList
+            "challan_list" => $challanList,
+            "challan_ids"=> [],
+            "is_edit"=>false
         ]);
     }
 
@@ -423,7 +424,7 @@ class ClientController extends BaseController
         $model->status = C::STATUS_ACTIVE;
         if ($this->request->isPost) {
             $model->load($this->request->post());
-            
+
             if ($model->load($this->request->post()) && $model->validate() && $model->save()) {
                 $title = $this->clientType == C::CLIENT_TYPE_CUSTOMER ? "Customer" : "Vendor";
                 $redirectUrl = $this->clientType == C::CLIENT_TYPE_CUSTOMER ? "customer/view-customer" : "vendor/view-vendor";
@@ -436,7 +437,7 @@ class ClientController extends BaseController
         $model->amount_paid = !empty($model->amount_paid) ? $model->amount_paid : ($invoiceAmount - $paymentDone);
         return $this->render('@app/views/payments/form-payment', [
             'model' => $model,
-            'client'=>$client
+            'client' => $client
         ]);
     }
 
@@ -457,7 +458,7 @@ class ClientController extends BaseController
                 'searchModel' => $searchModel,
                 'dataProvider' => $dataProvider,
                 "title" => $model->receipt_no,
-                
+
             ]);
         }
 
@@ -496,7 +497,7 @@ class ClientController extends BaseController
                 $redirectUrl = $this->clientType == C::CLIENT_TYPE_CUSTOMER ? "customer/view-customer" : "vendor/view-vendor";
                 \Yii::$app->getSession()->setFlash('s', "Payment Notes has been added successfully.");
                 return $this->redirect([$redirectUrl, "id" => $id, "pg" => "credit_notes"]);
-            }else{
+            } else {
                 print_r($model->errors);
                 exit;
             }
@@ -506,7 +507,7 @@ class ClientController extends BaseController
         ]);
     }
 
-    public function actionEditNote($id,$note_id)
+    public function actionEditNote($id, $note_id)
     {
         $client = ClientMaster::findOne(['id' => $id]);
         if (!$client instanceof ClientMaster) {
@@ -514,7 +515,7 @@ class ClientController extends BaseController
             \Yii::$app->getSession()->setFlash('e', "Record not found!");
             return $this->redirect([$redirectUrl]);
         }
-        $model = PaymentNotes::findOne(['id'=>$note_id]);
+        $model = PaymentNotes::findOne(['id' => $note_id]);
         $model->scenario = PaymentNotes::SCENARIO_UPDATE;
         if ($this->request->isPost) {
             if ($model->load($this->request->post()) && $model->validate() && $model->save()) {
@@ -529,7 +530,8 @@ class ClientController extends BaseController
         ]);
     }
 
-    public function actionAddQuotation($id){
+    public function actionAddQuotation($id)
+    {
         $client = ClientMaster::findOne(['id' => $id]);
         if (!$client instanceof ClientMaster) {
             $redirectUrl = $this->clientType == C::CLIENT_TYPE_CUSTOMER ? "customer" : "vendor";
@@ -539,14 +541,14 @@ class ClientController extends BaseController
         $model = new QuotationForm(['scenario' => QuotationMaster::SCENARIO_CREATE]);
         $model->client_id = $client->id;
         $model->client_type = $client->type;
-        $model->terms_and_conditions = !empty($model->terms_and_conditions)?$model->terms_and_conditions:C::DEFAUL_TERMS_CONDITION;
+        $model->terms_and_conditions = !empty($model->terms_and_conditions) ? $model->terms_and_conditions : C::DEFAUL_TERMS_CONDITION;
         if ($this->request->isPost) {
             if ($model->load($this->request->post()) && $model->validate() && $model->save()) {
                 $title = $this->clientType == C::CLIENT_TYPE_CUSTOMER ? "Customer" : "Vendor";
                 $redirectUrl = $this->clientType == C::CLIENT_TYPE_CUSTOMER ? "customer/view-customer" : "vendor/view-vendor";
                 Yii::$app->getSession()->setFlash('s', "Quotation has been created successfully.");
                 return $this->redirect([$redirectUrl, "id" => $id, "pg" => "quotation"]);
-            }else{
+            } else {
                 print_r($model->errors);
                 exit;
             }
@@ -556,14 +558,15 @@ class ClientController extends BaseController
         ]);
     }
 
-    public function actionEditQuotation($id,$quote_id){
+    public function actionEditQuotation($id, $quote_id)
+    {
         $client = ClientMaster::findOne(['id' => $id]);
         if (!$client instanceof ClientMaster) {
             $redirectUrl = $this->clientType == C::CLIENT_TYPE_CUSTOMER ? "customer" : "vendor";
             Yii::$app->getSession()->setFlash('e', "Record not found!");
             return $this->redirect([$redirectUrl]);
         }
-        $model = QuotationMaster::findOne(['id'=>$quote_id]);
+        $model = QuotationMaster::findOne(['id' => $quote_id]);
         $model->scenario = PaymentNotes::SCENARIO_UPDATE;
         if ($this->request->isPost) {
             if ($model->load($this->request->post()) && $model->validate() && $model->save()) {
@@ -578,24 +581,25 @@ class ClientController extends BaseController
         ]);
     }
 
-    public function actionPrintQuotation($id){
+    public function actionPrintQuotation($id)
+    {
         $this->layout = false;
-        $model = QuotationMaster::find()->where(['id' => $id])->with(['client','quotationItems'])->one();
-        if($model instanceof QuotationMaster){
+        $model = QuotationMaster::find()->where(['id' => $id])->with(['client', 'quotationItems'])->one();
+        if ($model instanceof QuotationMaster) {
             $filename = "quotations_{$model->quotation_no}.pdf";
             $content = $this->render('@app/views/payments/print-quotation', [
-               'model' => $model
-           ]);
-           $this->title = "Quotation {$model->quotation_no}.pdf";
-           return F::printPdf($content, $filename);
+                'model' => $model
+            ]);
+            $this->title = "Quotation {$model->quotation_no}.pdf";
+            return F::printPdf($content, $filename);
         }
 
         $redirectUrl = $this->clientType == C::CLIENT_TYPE_CUSTOMER ? "customer" : "vendor";
         Yii::$app->getSession()->setFlash('e', "Record not found!");
-        return $this->redirect([$redirectUrl]);   
+        return $this->redirect([$redirectUrl]);
     }
 
-     /**
+    /**
      * Creates a new ClientMaster model.
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return string|\yii\web\Response
@@ -637,14 +641,14 @@ class ClientController extends BaseController
     public function actionEditCustomPrice($id)
     {
         $title = $this->clientType == C::CLIENT_TYPE_CUSTOMER ? "client" : "vendor";
-        $model = ClientPlanMapping::findOne(['id'=>$id]);
+        $model = ClientPlanMapping::findOne(['id' => $id]);
         $model->scenario = ClientPlanMapping::SCENARIO_UPDATE;
         if (!$model instanceof ClientPlanMapping) {
             \Yii::$app->getSession()->setFlash('e', 'Record not found');
             return $this->redirect([$title . '/index']);
             exit();
         }
-        
+
         if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
             \Yii::$app->getSession()->setFlash('s', "Custom Price has been updated successfully.");
             $redirectUrl = $this->clientType == C::CLIENT_TYPE_CUSTOMER ? "customer/view-customer" : "vendor/view-vendor";
@@ -656,20 +660,21 @@ class ClientController extends BaseController
         ]);
     }
 
-    public function actionDeleteChallan($id){
-        $challan = Challan::findOne(['id'=>$id]);
+    public function actionDeleteChallan($id)
+    {
+        $challan = Challan::findOne(['id' => $id]);
         $redirectUrl = $this->clientType == C::CLIENT_TYPE_CUSTOMER ? "customer/view-customer" : "vendor/view-vendor";
-        if($challan instanceof Challan){
-            if($challan->amount_paid<=0 && $challan->payment_status==0){
+        if ($challan instanceof Challan) {
+            if ($challan->amount_paid <= 0 && $challan->payment_status == 0) {
                 $challan->scenario = Challan::SCENARIO_UPDATE;
                 $challan->status = C::STATUS_DELETED;
                 $challan->amount_paid = 0;
                 $challan->payment_status = 0;
-                if($challan->validate() && $challan->save()){
+                if ($challan->validate() && $challan->save()) {
                     \Yii::$app->getSession()->setFlash('s', "Challan {$challan->challan_no} has been deleted successfully.");
                     return $this->redirect([$redirectUrl, "id" => $challan->client_id, "pg" => "pending-challan"]);
                 }
-            }else{
+            } else {
                 \Yii::$app->getSession()->setFlash('e', "Please delete invoice of {$challan->challan_no}.");
                 return $this->redirect([$redirectUrl, "id" => $challan->client_id, "pg" => "pending-challan"]);
             }
@@ -678,20 +683,21 @@ class ClientController extends BaseController
         return $this->redirect([$redirectUrl . '/index']);
     }
 
-    public function actionDeleteInvoice($id){
-        $invoice = InvoiceMaster::findOne(['id'=>$id]);
+    public function actionDeleteInvoice($id)
+    {
+        $invoice = InvoiceMaster::findOne(['id' => $id]);
         $redirectUrl = $this->clientType == C::CLIENT_TYPE_CUSTOMER ? "customer/view-customer" : "vendor/view-vendor";
-        if($invoice instanceof InvoiceMaster){
-            if($invoice->payment<=0){
+        if ($invoice instanceof InvoiceMaster) {
+            if ($invoice->payment <= 0) {
                 $invoice->scenario = InvoiceMaster::SCENARIO_UPDATE;
                 $invoice->status = C::STATUS_DELETED;
                 $invoice->payment = 0;
-                if($invoice->validate() && $invoice->save()){
+                if ($invoice->validate() && $invoice->save()) {
                     $invoice->deleteInvoice();
                     \Yii::$app->getSession()->setFlash('s', "Invoice {$invoice->invoice_no} has been deleted successfully.");
                     return $this->redirect([$redirectUrl, "id" => $invoice->client_id, "pg" => "pending-invoice"]);
                 }
-            }else{
+            } else {
                 \Yii::$app->getSession()->setFlash('e', "Please delete payment of {$invoice->invoice_no}.");
                 return $this->redirect([$redirectUrl, "id" => $invoice->client_id, "pg" => "pending-invoice"]);
             }
@@ -700,24 +706,81 @@ class ClientController extends BaseController
         return $this->redirect([$redirectUrl . '/index']);
     }
 
-    public function actionDeletePayment($id){
-        $payment = Payments::findOne(['id'=>$id]);
+    public function actionDeletePayment($id)
+    {
+        $payment = Payments::findOne(['id' => $id]);
         $redirectUrl = $this->clientType == C::CLIENT_TYPE_CUSTOMER ? "customer/view-customer" : "vendor/view-vendor";
-        if($payment instanceof Payments){
-            
-                $payment->scenario = Payments::SCENARIO_UPDATE;
-                $payment->status = C::STATUS_DELETED;
-                if($payment->validate() && $payment->save()){
-                    $payment->deletePayment();
-                    \Yii::$app->getSession()->setFlash('s', "Payment {$payment->receipt_no} has been deleted successfully.");
-                    return $this->redirect([$redirectUrl, "id" => $payment->client_id, "pg" => "payment"]);
-                }else{
-                    print_r($payment->errors);
-                    exit;
-                }
-            
+        if ($payment instanceof Payments) {
+
+            $payment->scenario = Payments::SCENARIO_UPDATE;
+            $payment->status = C::STATUS_DELETED;
+            if ($payment->validate() && $payment->save()) {
+                $payment->deletePayment();
+                \Yii::$app->getSession()->setFlash('s', "Payment {$payment->receipt_no} has been deleted successfully.");
+                return $this->redirect([$redirectUrl, "id" => $payment->client_id, "pg" => "payment"]);
+            } else {
+                print_r($payment->errors);
+                exit;
+            }
         }
         \Yii::$app->getSession()->setFlash('e', 'Record not found');
         return $this->redirect([$redirectUrl . '/index']);
+    }
+
+    public function actionPrintLedger($id, $type = 'pending')
+    {
+        $this->layout = false;
+        $model = ClientMaster::findOne(['id' => $id]);
+        $searchModel = new ChallanSearch();
+        $dataProvider = $searchModel->search($this->request->queryParams);
+        $dataProvider->query->with(['plan'])->active()->andWhere(["client_id" => $id]);
+        if ($type == "pending") {
+            $dataProvider->query->andWhere(['amount_paid' => 0]);
+        }
+
+        $filename = "challan_Ledger.pdf";
+        $this->title = "Challan Ledger";
+        $content = $this->render('@app/views/client/print-ledger', [
+            "dataProvider" => $dataProvider,
+            "searchModel" => $searchModel,
+            "model" => $model
+        ]);
+        return $content;
+        return F::printPdf($content, $filename);
+    }
+
+    public function actionEditInvoice($id){
+        $invoice = InvoiceMaster::findOne(['id' => $id]);
+        if (!$invoice instanceof InvoiceMaster) {
+            $redirectUrl = $this->clientType == C::CLIENT_TYPE_CUSTOMER ? "customer" : "vendor";
+            \Yii::$app->getSession()->setFlash('e', "Record not found!");
+            return $this->redirect([$redirectUrl]);
+        }
+        
+        $model = new InvoiceForm(['scenario' => InvoiceMaster::SCENARIO_UPDATE]);
+        $model->load($invoice->attributes,'');
+        $model->client_id = $invoice->client_id;
+        $model->client_type = $invoice->client_type;
+        $model->id = $invoice->id;
+        if ($this->request->isPost) {
+            $model->scenario = Challan::SCENARIO_UPDATE;
+            if ($model->load($this->request->post()) && $model->save()) {
+                $title = $this->clientType == C::CLIENT_TYPE_CUSTOMER ? "Customer" : "Vendor";
+                $redirectUrl = $this->clientType == C::CLIENT_TYPE_CUSTOMER ? "customer/view-customer" : "vendor/view-vendor";
+                \Yii::$app->getSession()->setFlash('s', "Challan {$invoice->invoice_no} has been updated successfully.");
+                return $this->redirect([$redirectUrl, "pg" => "pending-invoice", "id" => $invoice->client_id]);
+            }
+        }
+
+        $challan_ids = !empty($invoice->challans)?array_keys(ArrayHelper::index($invoice->challans, 'id')):[];
+        $challanList  = Challan::find()->with(['plan'])->andWhere(['status'=>C::STATUS_ACTIVE,'id'=>$challan_ids])->all();
+
+        return $this->render('@app/views/invoice/form-invoice', [
+            'model' => $model,
+            "title" => $this->title,
+            "challan_list" => $challanList,
+            "challan_ids"=> $challan_ids,
+            "is_edit"=>true
+        ]);
     }
 }

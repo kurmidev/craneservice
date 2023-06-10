@@ -16,6 +16,7 @@ use app\models\PlanMaster;
         <h3 class="card-title"></h3>
         <div class="card-tools">
             <?= Html::a(Html::tag('span', '', ['class' => 'fa fa-plus']), \Yii::$app->urlManager->createUrl(["{$base_controller}/add-challan", "id" => $model->id]), ['title' => 'Add Challan', 'class' => 'btn btn-primary btn-sm']) ?>
+            <?= Html::a(Html::tag('span', '', ['class' => 'fa fa-download']), \Yii::$app->urlManager->createUrl(["{$base_controller}/print-ledger",'id'=>$model->id]), ['title' => 'Export', 'class' => 'btn btn-primary btn-sm']) ?>
         </div>
     </div>
     <div class="card-body p-0 table-responsive">
