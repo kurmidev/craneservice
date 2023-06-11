@@ -122,8 +122,6 @@ class ChallanForm extends BaseForm
                     $totalAmount = $model->amount + $model->extra;
                     $model->tax = F::calculateTax($totalAmount, $plan->tax_slot);
                     $model->total = $totalAmount+$model->tax;
-                    print_r($model->attributes);
-                    exit("ssss");
                     if ($model->validate() && $model->save()) {
                         $is_valid = $is_valid &&  true;
                     } else {
