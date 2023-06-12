@@ -37,6 +37,7 @@ class ClientPlanMapping extends \app\models\BaseModel
             [['plan_id', 'created_by', 'updated_by','client_id','client_type'], 'integer'],
             [['custom_price'], 'number'],
             [['created_at', 'updated_at'], 'safe'],
+            [["plan_id","client_id"],'unique']
         ];
     }
 

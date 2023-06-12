@@ -15,9 +15,9 @@ class m230601_160829_alter_payment_details_table extends Migration
     {
         $this->addColumn(PaymentsDetails::tableName(),'amount_paid',$this->money());
         $this->addColumn(PaymentsDetails::tableName(),'deduction_amount',$this->money());
-        $this->addColumn(PaymentsDetails::tableName(),'deduction_number',$this->integer());
+        $this->addColumn(PaymentsDetails::tableName(),'deduction_number',$this->string());
         $this->addColumn(PaymentsDetails::tableName(),'tds_amount',$this->money());
-        $this->addColumn(PaymentsDetails::tableName(),'tds_number',$this->integer());
+        $this->addColumn(PaymentsDetails::tableName(),'tds_number',$this->string());
     }
 
     /**

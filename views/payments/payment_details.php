@@ -23,10 +23,10 @@ $this->title = "Payment details for  receipt {$title}";
                 ['class' => 'yii\grid\SerialColumn'],
                 'invoice.invoice_no',
                 'invoice.invoice_date',
-                'challan.challan_no',
-                'challan.challan_date',
-                'challan.total',
-                'challan.amount_paid',
+                'invoice.work_order_no',
+                'invoice.vendor_no',
+                'invoice.total',
+                'invoice.payment'
             ],
         ]); ?>
 

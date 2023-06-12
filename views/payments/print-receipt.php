@@ -59,7 +59,7 @@ $f = new NumberFormatter("en", NumberFormatter::SPELLOUT);
                                 <p class="s6" style="padding-top: 5pt;padding-left: 9pt;text-indent: 0pt;text-align: left;">Balance</p>
                             </td>
                             <td style="width:60%;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                                <p class="s7" style="padding-top: 5pt;padding-left: 6pt;text-indent: 0pt;text-align: left;">Rs. <?= $model->client->getBalance() ?></p>
+                                <p class="s7" style="padding-top: 5pt;padding-left: 6pt;text-indent: 0pt;text-align: left;">Rs.  </p>
                             </td>
                         </tr>
                     </table>

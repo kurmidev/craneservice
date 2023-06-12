@@ -6,8 +6,10 @@ use yii\helpers\ArrayHelper;
 use app\models\PlanAttributes;
 use app\components\Constants as C;
 use app\models\Challan;
+use app\models\InvoiceMaster;
 
-$pendingChallanList = Challan::find()->with(['plan'])->where(['client_id' => $client->id, 'client_type' => $client->client_type])->andWhere("total>amount_paid")->asArray()->all();
+
+$pendingInvoiceList = InvoiceMaster::find()->where(['client_id' => $client->id, 'client_type' => $client->client_type])->andWhere('total>payment')->asArray()->all()
 ?>
 
 <div class="row">
@@ -28,15 +30,6 @@ $pendingChallanList = Challan::find()->with(['plan'])->where(['client_id' => $cl
                     <?= Html::error($model, 'payment_date', ['class' => 'error help-block']) ?>
                 </div>
                 <?= $form->field($model, 'payment_date')->end() ?>
-
-                <?= $form->field($model, 'amount_paid', ['options' => ['class' => 'form-group']])->begin() ?>
-                <?= Html::activeLabel($model, 'amount_paid', ['class' => 'col-lg-6 col-sm-6 col-xs-6 control-label']); ?>
-                <div class="col-lg-6 col-sm-6 col-xs-6">
-                    <?= Html::activeTextInput($model, 'amount_paid', ['class' => 'form-control']) ?>
-                    <?= Html::error($model, 'amount_paid', ['class' => 'error help-block']) ?>
-                </div>
-                <?= $form->field($model, 'amount_paid')->end() ?>
-
 
                 <?= $form->field($model, 'payment_mode', ['options' => ['class' => 'form-group']])->begin() ?>
                 <?= Html::activeLabel($model, 'payment_mode', ['class' => 'col-lg-6 col-sm-6 col-xs-6 control-label']); ?>
@@ -84,9 +77,9 @@ $pendingChallanList = Challan::find()->with(['plan'])->where(['client_id' => $cl
                             <table class="table table-bordered table-responsive">
                                 <thead>
                                     <tr>
-                                        <th>Challan No</th>
-                                        <th>Package</th>
-                                        <th>Challan Amount</th>
+                                        <th>Invoice No</th>
+                                        <th>Invoice Date</th>
+                                        <th>Amount</th>
                                         <th>Amount Paid</th>
                                         <th>Balance</th>
                                         <th>Deduction Amount</th>
@@ -98,18 +91,21 @@ $pendingChallanList = Challan::find()->with(['plan'])->where(['client_id' => $cl
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <?php foreach ($pendingChallanList as $pcl) { ?>
+                                    <?php foreach ($pendingInvoiceList as $pcl) { ?>
                                         <tr>
-                                            <td><?= $pcl["challan_no"] ?></td>
-                                            <td><?= $pcl["plan"]['name'] ?></td>
+                                            <td><?= $pcl["invoice_no"] ?></td>
+                                            <td><?= $pcl["invoice_date"] ?></td>
                                             <td><?= $pcl["total"] ?></td>
-                                            <td><?= $pcl["amount_paid"] ?></td>
-                                            <td><?= $pcl["total"] - $pcl['amount_paid'] ?></td>
-                                            <td><?= Html::activeTextInput($model, 'challans[' . $pcl["id"] . '][deduction_amount]', ['class' => "form-control"]) ?></td>
-                                            <td><?= Html::activeTextInput($model, 'challans[' . $pcl["id"] . '][deduction_number]', ['class' => "form-control"]) ?></td>
-                                            <td><?= Html::activeTextInput($model, 'challans[' . $pcl["id"] . '][tds_amount]', ['class' => "form-control"]) ?></td>
-                                            <td><?= Html::activeTextInput($model, 'challans[' . $pcl["id"] . '][tds_number]', ['class' => "form-control"]) ?></td>
-                                            <td><?= Html::activeTextInput($model, 'challans[' . $pcl["id"] . '][amount_paid]', ['class' => "form-control"]) ?></td>
+                                            <td><?= $pcl["payment"] ?></td>
+                                            <td>
+                                                <?= $pcl["total"] - $pcl['payment'] ?>
+                                                <?= Html::hiddenInput("balance_amount[" . $pcl["id"] . "]", ($pcl["total"] - $pcl['payment']), ["id" => "balance_amount_" . $pcl['id']]) ?>
+                                            </td>
+                                            <td><?= Html::activeTextInput($model, 'challans[' . $pcl["id"] . '][deduction_amount]', ['class' => "form-control calculate ", "id" => "deduction_amount_" . $pcl['id'], "rel" => $pcl['id']]) ?></td>
+                                            <td><?= Html::activeTextInput($model, 'challans[' . $pcl["id"] . '][deduction_number]', ['class' => "form-control "]) ?></td>
+                                            <td><?= Html::activeTextInput($model, 'challans[' . $pcl["id"] . '][tds_amount]', ['class' => "form-control calculate", "id" => "tds_amount_" . $pcl['id'], "rel" => $pcl['id']]) ?></td>
+                                            <td><?= Html::activeTextInput($model, 'challans[' . $pcl["id"] . '][tds_number]', ['class' => "form-control "]) ?></td>
+                                            <td><?= Html::activeTextInput($model, 'challans[' . $pcl["id"] . '][amount_paid]', ['class' => "form-control", "id" => "amount_paid_" . $pcl['id'], "rel" => $pcl['id']]) ?></td>
                                         </tr>
                                     <?php } ?>
                                 </tbody>
@@ -132,7 +128,7 @@ $pendingChallanList = Challan::find()->with(['plan'])->where(['client_id' => $cl
 
 
 <?php
-$payment_mode = !empty($model->payment_mode )?$model->payment_mode :C::PAYMENT_MODE_CASH;
+$payment_mode = !empty($model->payment_mode) ? $model->payment_mode : C::PAYMENT_MODE_CASH;
 $js = '
 if(' . $payment_mode . '=="' . C::PAYMENT_MODE_CASH . '"){
     $("#extra_flds").hide();
@@ -148,6 +144,18 @@ $("#payment_modes").on("change",function(){
         $("#extra_flds").hide();
     }
 });
+
+
+$(".calculate").on("change",function(){
+id = $("#"+this.id).attr("rel");
+alert(id);
+var balance_amount = $("#balance_amount_"+id).val() || 0;
+var deduction_amount = $("#deduction_amount_"+id).val() || 0;
+var tds_amount = $("#tds_amount_"+id).val() || 0;
+var total = parseInt(balance_amount) - parseInt(deduction_amount) + parseInt(tds_amount);
+$("#amount_paid_"+id).val(total);
+})
+
 ';
 
 $this->registerJs($js, $this::POS_READY);

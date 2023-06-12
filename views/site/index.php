@@ -49,6 +49,23 @@
     </div>
 </div>
 <div class="row">
+    <div class="col-md-6">
+    <?= $this->render('_table', [
+            "title" => " Monthly GST",
+            "header" => ["Month", "Count", "Amount"],
+            "response" => $model->monthlyInvoiceGst
+        ]) ?>
+    </div>
+    <div class="col-md-6">
+    <?= $this->render('_table', [
+            "title" => " Monthly Without GST",
+            "header" => ["Month", "Count", "Amount"],
+            "response" => $model->monthlyInvoiceWithoutGst
+        ]) ?>
+    </div>
+</div>
+
+<div class="row">
     <div class="col-md-12">
     <?= $this->render('_table', [
             "title" => "  New Sales & Collection Summary ",

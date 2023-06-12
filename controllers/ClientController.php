@@ -423,6 +423,39 @@ class ClientController extends BaseController
         $model->client_type = $client->type;
         $model->status = C::STATUS_ACTIVE;
         if ($this->request->isPost) {
+            if ($model->load($this->request->post()) && $model->validate() && $model->save()) {
+                $title = $this->clientType == C::CLIENT_TYPE_CUSTOMER ? "Customer" : "Vendor";
+                $redirectUrl = $this->clientType == C::CLIENT_TYPE_CUSTOMER ? "customer/view-customer" : "vendor/view-vendor";
+                \Yii::$app->getSession()->setFlash('s', "payment has been added successfully.");
+                return $this->redirect([$redirectUrl, "id" => $id, "pg" => "payment"]);
+            }else{
+                print_r($model->errors);
+                exit("jndkdkn");
+            }
+        }
+        $invoiceAmount = InvoiceMaster::find()->where(['client_id' => $client->id, 'client_type' => $client->client_type])->active()->sum("total");
+        $paymentDone = Payments::find()->where(['client_id' => $client->id, 'client_type' => $client->client_type])->active()->sum("amount_paid");
+        $model->amount_paid = !empty($model->amount_paid) ? $model->amount_paid : ($invoiceAmount - $paymentDone);
+        return $this->render('@app/views/payments/form-payment', [
+            'model' => $model,
+            'client' => $client
+        ]);
+    }
+
+
+    public function actionPayInvoiceOld($id)
+    {
+        $client = ClientMaster::findOne(['id' => $id]);
+        if (!$client instanceof ClientMaster) {
+            $redirectUrl = $this->clientType == C::CLIENT_TYPE_CUSTOMER ? "customer" : "vendor";
+            \Yii::$app->getSession()->setFlash('e', "Record not found!");
+            return $this->redirect([$redirectUrl]);
+        }
+        $model = new Payments(['scenario' => Payments::SCENARIO_CREATE]);
+        $model->client_id = $client->id;
+        $model->client_type = $client->type;
+        $model->status = C::STATUS_ACTIVE;
+        if ($this->request->isPost) {
             $model->load($this->request->post());
 
             if ($model->load($this->request->post()) && $model->validate() && $model->save()) {

@@ -7,10 +7,13 @@ use app\components\Constants as C;
 use app\models\ClientPlanMapping;
 use app\models\PlanMaster;
 
+
 $clientList = ClientPlanMapping::find()->andWhere(['client_id' => $model->client_id])->indexBy('plan_id')->asArray()->all();
+
+
 $planObj = PlanMaster::find()->active();
 if(empty($model->id)){
-    $planObj->andWhere(['not', ['id' => array_values($clientList)]]);
+    $planObj->andWhere(['not', ['id' => array_keys($clientList)]]);
 }
 
 $planList = $planObj->asArray()->all()

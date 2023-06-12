@@ -58,13 +58,13 @@ class Payments extends \app\models\BaseModel
     public function rules()
     {
         return [
-            [['client_id', 'client_type', 'payment_date', 'amount_paid', 'payment_mode', 'status'], 'required'],
+            [['client_id', 'client_type', 'payment_date', 'payment_mode', 'status'], 'required'],
             [['client_id', 'client_type', 'payment_mode', 'created_by', 'updated_by'], 'integer'],
             [['payment_date', 'instrument_date', 'created_at', 'updated_at', 'invoice_id', 'receipt_no'], 'safe'],
             [['amount_paid'], 'number'],
             [['intrument_no', 'remark', 'receipt_no'], 'string', 'max' => 255],
             [['challans'], 'required', 'when' => function () {
-                return PAYMENT_METHOD == C::PAYMENT_INVOICEWISE && $this->scenario==self::SCENARIO_CREATE;
+                return PAYMENT_METHOD == C::PAYMENT_INVOICEWISE && $this->scenario == self::SCENARIO_CREATE;
             }]
         ];
     }
@@ -122,9 +122,17 @@ class Payments extends \app\models\BaseModel
         return new PaymentsQuery(get_called_class());
     }
 
+    public function beforeValidate()
+    {
+        return parent::beforeValidate();
+    }
+
     public function beforeSave($insert)
     {
-        $this->receipt_no = !empty($this->receipt_no) ? $this->receipt_no : $this->generateSequence("BHP", "PAYMENTS");
+        if (!empty($insert)) {
+            $this->amount_paid = !empty($this->amount_paid) ? $this->amount_paid : 0;
+            $this->receipt_no = !empty($this->receipt_no) ? $this->receipt_no : $this->generateSequence("BHP", "PAYMENTS");
+        }
         return parent::beforeSave($insert);
     }
 
@@ -145,31 +153,109 @@ class Payments extends \app\models\BaseModel
         }
     }
 
+    public function getSelectedInvoice($challans)
+    {
+        $ch = [];
+        foreach ($challans as $challan_id => $challan) {
+            if (!empty($challan['amount_paid'])) {
+                $ch[] = $challan_id;
+            }
+        }
+        return $ch;
+    }
+
     public function adjustPaymentInvoiceWise()
+    {
+        $paid_amount = 0;
+        $invoiceList = $this->getSelectedInvoice($this->challans);
+        if (!empty($invoiceList)) {
+            $invoiceObj = InvoiceMaster::find()->where(['id' => $invoiceList])->all();
+            foreach ($invoiceObj as $invoice) {
+                if ($invoice->total > $invoice->payment) {
+                    $invoice->scenario = InvoiceMaster::SCENARIO_UPDATE;
+                    $invoice->payment += !empty($this->challans[$invoice->id]['amount_paid']) ? $this->challans[$invoice->id]['amount_paid'] : 0;
+                    if ($invoice->validate() && $invoice->save()) {
+                        $this->settleChallans($invoice->id, $this->challans[$invoice->id]['amount_paid']);
+                        $this->markPaymentDetails($invoice);
+                        $paid_amount += !empty($this->challans[$invoice->id]['amount_paid']) ? $this->challans[$invoice->id]['amount_paid'] : 0;
+                    }
+                }
+            }
+
+
+            if ($paid_amount > 0) {
+                Payments::updateAll(['amount_paid' => $paid_amount], ["id" => $this->id]);
+            }
+        }
+    }
+
+    public function settleChallans($invoice_id, $amount)
+    {
+        $challan = Challan::find()->andWhere(['invoice_id' => $invoice_id])->andWhere("total>amount_paid")->all();
+        foreach ($challan as $ch) {
+            if ($amount > 0) {
+                $ch->scenario  = Challan::SCENARIO_UPDATE;
+                $pending_amount = $ch->total - $ch->amount_paid;
+                if ($pending_amount > $amount) {
+                    $ch->payment += $amount;
+                    $amount = 0;
+                } else if ($pending_amount < $amount) {
+                    $ch->payment += $pending_amount;
+                    $amount -= $pending_amount;
+                }
+                if ($ch->validate() && $ch->save()) {
+                } 
+            }
+        }
+    }
+
+    public function markPaymentDetails($invoice)
+    {
+        $paymentDetails = new PaymentsDetails(['scenario' => PaymentsDetails::SCENARIO_CREATE]);
+        $paymentDetails->payment_id = $this->id;
+        $paymentDetails->client_id = $this->client_id;
+        $paymentDetails->client_type = $this->client_type;
+        $paymentDetails->invoice_id = $invoice->id;
+        $paymentDetails->challan_id = 0;
+        $paymentDetails->status = C::STATUS_ACTIVE;
+        $paymentDetails->deduction_amount = !empty($this->challans[$invoice->id]['deduction_amount']) ? $this->challans[$invoice->id]['deduction_amount'] : 0;
+        $paymentDetails->deduction_number = !empty($this->challans[$invoice->id]['deduction_number']) ? $this->challans[$invoice->id]['deduction_number'] : 0;
+        $paymentDetails->tds_amount = !empty($this->challans[$invoice->id]['tds_amount']) ? $this->challans[$invoice->id]['tds_amount'] : 0;
+        $paymentDetails->tds_number = !empty($this->challans[$invoice->id]['tds_number']) ? $this->challans[$invoice->id]['tds_number'] : 0;
+        $paymentDetails->amount_paid = !empty($this->challans[$invoice->id]['amount_paid']) ? $this->challans[$invoice->id]['amount_paid'] : 0;
+        $paymentDetails->amount_adjsuted = !empty($this->challans[$invoice->id]['amount_paid']) ? $this->challans[$invoice->id]['amount_paid'] : 0;
+        if ($paymentDetails->validate() && $paymentDetails->save()) {
+            return true;
+        } 
+    }
+
+    public function adjustPaymentInvoiceWiseOld()
     {
         $amount_received  = 0;
         if (!empty($this->challans)) {
             $challan_ids = array_keys($this->challans);
-            $chalanObj = Challan::find()->active()->andWhere(['id' => $challan_ids, 'client_id' => $this->client_id])->all();
+            $chalanObj = InvoiceMaster::find()->active()->andWhere(['id' => $challan_ids, 'client_id' => $this->client_id])->all();
             foreach ($chalanObj as $challan) {
-                $paymentDetails = new PaymentsDetails(['scenario' => PaymentsDetails::SCENARIO_CREATE]);
-                $paymentDetails->payment_id = $this->id;
-                $paymentDetails->client_id = $this->client_id;
-                $paymentDetails->client_type = $this->client_type;
-                $paymentDetails->invoice_id = $challan->invoice_id;
-                $paymentDetails->challan_id = $challan->id;
-                $paymentDetails->status = C::STATUS_ACTIVE;
-                $paymentDetails->deduction_amount = !empty($this->challans[$challan->id]['deduction_amount']) ? $this->challans[$challan->id]['deduction_amount'] : 0;
-                $paymentDetails->deduction_number = !empty($this->challans[$challan->id]['deduction_number']) ? $this->challans[$challan->id]['deduction_number'] : 0;
-                $paymentDetails->tds_amount = !empty($this->challans[$challan->id]['tds_amount']) ? $this->challans[$challan->id]['tds_amount'] : 0;
-                $paymentDetails->tds_number = !empty($this->challans[$challan->id]['tds_number']) ? $this->challans[$challan->id]['tds_number'] : 0;
-                $paymentDetails->amount_paid = !empty($this->challans[$challan->id]['amount_paid']) ? $this->challans[$challan->id]['amount_paid'] : 0;
-                $paymentDetails->amount_adjsuted = $paymentDetails->amount_paid - $paymentDetails->deduction_amount - $paymentDetails->tds_number;
-                if ($paymentDetails->validate() && $paymentDetails->save()) {
-                    $amount_paid = $challan->amount_paid + $paymentDetails->amount_adjsuted; 
-                    $payment_staus = ($amount_paid>=$challan->total)?C::PAYMENT_STAUS_FULLY_PAID: C::PAYMENT_STATUS_HALF_PAID;
-                    Challan::updateAll(["payment_status" => $payment_staus, 'amount_paid' => $amount_paid], ["id" => $challan->id]);
-                    $amount_received+=$paymentDetails->amount_adjsuted;
+                if (!empty($this->challans[$challan->id]['amount_paid'])) {
+                    $paymentDetails = new PaymentsDetails(['scenario' => PaymentsDetails::SCENARIO_CREATE]);
+                    $paymentDetails->payment_id = $this->id;
+                    $paymentDetails->client_id = $this->client_id;
+                    $paymentDetails->client_type = $this->client_type;
+                    $paymentDetails->invoice_id = $challan->id;
+                    $paymentDetails->challan_id = $challan->id;
+                    $paymentDetails->status = C::STATUS_ACTIVE;
+                    $paymentDetails->deduction_amount = !empty($this->challans[$challan->id]['deduction_amount']) ? $this->challans[$challan->id]['deduction_amount'] : 0;
+                    $paymentDetails->deduction_number = !empty($this->challans[$challan->id]['deduction_number']) ? $this->challans[$challan->id]['deduction_number'] : 0;
+                    $paymentDetails->tds_amount = !empty($this->challans[$challan->id]['tds_amount']) ? $this->challans[$challan->id]['tds_amount'] : 0;
+                    $paymentDetails->tds_number = !empty($this->challans[$challan->id]['tds_number']) ? $this->challans[$challan->id]['tds_number'] : 0;
+                    $paymentDetails->amount_paid = !empty($this->challans[$challan->id]['amount_paid']) ? $this->challans[$challan->id]['amount_paid'] : 0;
+                    $paymentDetails->amount_adjsuted = !empty($this->challans[$challan->id]['amount_paid']) ? $this->challans[$challan->id]['amount_paid'] : 0;
+                    if ($paymentDetails->validate() && $paymentDetails->save()) {
+                        $amount_paid = $challan->amount_paid;
+                        $payment_staus = ($amount_paid >= $challan->total) ? C::PAYMENT_STAUS_FULLY_PAID : C::PAYMENT_STATUS_HALF_PAID;
+                        Challan::updateAll(["payment_status" => $payment_staus, 'amount_paid' => $amount_paid], ["id" => $challan->id]);
+                        $amount_received += $paymentDetails->amount_adjsuted;
+                    }
                 }
             }
             if ($amount_received > 0) {
@@ -236,14 +322,15 @@ class Payments extends \app\models\BaseModel
         return "";
     }
 
-    public function deletePayment(){
+    public function deletePayment()
+    {
         $model = PaymentsDetails::find()->where(['payment_id' => $this->id])->all();
-        foreach($model as $m){
+        foreach ($model as $m) {
             $m->scenario = PaymentsDetails::SCENARIO_UPDATE;
             $m->status = C::STATUS_DELETED;
-            if($m->validate() && $m->save()){
-                Challan::updateAll(['amount_paid'=>0,"payment_status"=>0],['id'=>$m->challan_id]);
-                InvoiceMaster::updateAll(["payment"=>0],["id"=>$m->invoice_id]);
+            if ($m->validate() && $m->save()) {
+                Challan::updateAll(['amount_paid' => 0, "payment_status" => 0], ['id' => $m->challan_id]);
+                InvoiceMaster::updateAll(["payment" => 0], ["id" => $m->invoice_id]);
             }
         }
     }

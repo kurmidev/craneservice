@@ -57,7 +57,7 @@ class Dashboard extends Model
     {
         $query =  Challan::find()->alias('a');
         $query->setAlias('a');
-        return $query->joinWith(['client c'])->andFilterWhere(["c.client_type" => $this->client_type])->active()->andWhere('a.total-a.amount_paid>0')->count();
+        return $query->joinWith(['client c'])->andFilterWhere(["c.client_type" => $this->client_type])->active()->andWhere(['a.amount_paid'=>0])->count();
     }
 
     public function getMonthlyOutstanding()
@@ -112,7 +112,7 @@ class Dashboard extends Model
             ->select([
                 "total_challan" => "count(a.id)",
                 "total_amount" => "sum(a.total)",
-                "pending_challan" => "sum(case when a.total-a.amount_paid>0 then 1 else 0 end)",
+                "pending_challan" => "sum(case when a.amount_paid=0 then 1 else 0 end)",
                 "pending_challan_amount" => "sum(case when a.total-a.amount_paid>0 then a.total-a.amount_paid else 0 end)",
                 "paid_challan" =>  "sum(case when a.total-a.amount_paid<=0 then 1 else 0 end)",
                 "paid_challan_amount" => "sum(case when a.total-a.amount_paid<=0 then a.amount_paid else 0 end)",
@@ -262,5 +262,54 @@ class Dashboard extends Model
             "dataset" => !empty($resp) ? ArrayHelper::getColumn($resp, 'sum') : [],
             "color" => !empty($resp) ? ArrayHelper::getColumn($resp, 'color') : [],
         ];
+    }
+
+
+    public function getMonthlyInvoiceGst()
+    {
+        $model = InvoiceMaster::find()
+            ->select(["invoice_date" => new Expression("left(invoice_date,7)"), "pending_count" => "count(id)", "pending_amount" => "sum(total-payment)"])
+            ->andWhere(['status'=>C::STATUS_ACTIVE,'invoice_type'=>C::INVOICE_TYPE_GST])
+            ->andFilterWhere(["client_type" => $this->client_type])
+            ->groupBy(['left(invoice_date,7)'])
+            ->asArray()->all();
+        $response = [];
+        foreach ($model as $d) {
+            $response[] = [
+                "invoice_month" => Html::a(date("Y-m-01", strtotime($d['invoice_date'])),
+                            Yii::$app->urlManager->createUrl(["report/".$this->baseUrl."-invoice","InvoiceMasterSearch[invoice_date_start]"=>date("Y-m-01", strtotime($d['invoice_date'])),
+                            "InvoiceMasterSearch[invoice_date_end]"=>date("Y-m-t", strtotime($d['invoice_date'])),
+                            "InvoiceMasterSearch[invoice_type]"=> C::INVOICE_TYPE_GST,
+                            "InvoiceMasterSearch[client_type]"=>  $this->client_type
+                        ])),
+                "pending_count" => $d['pending_count'],
+                "pending_amount" => round($d['pending_amount'], 2)
+            ];
+        }
+        return $response;
+    }
+
+    public function getMonthlyInvoiceWithoutGst()
+    {
+        $model = InvoiceMaster::find()
+            ->select(["invoice_date" => new Expression("left(invoice_date,7)"), "pending_count" => "count(id)", "pending_amount" => "sum(total-payment)"])
+            ->andFilterWhere(["client_type" => $this->client_type])
+            ->andWhere(['status'=>C::STATUS_ACTIVE,'invoice_type'=>C::INVOICE_TYPE_PERFORMA])
+            ->groupBy(['left(invoice_date,7)'])
+            ->asArray()->all();
+        $response = [];
+        foreach ($model as $d) {
+            $response[] = [
+                "invoice_month" => Html::a(date("Y-m-01", strtotime($d['invoice_date'])),
+                            Yii::$app->urlManager->createUrl(["report/".$this->baseUrl."-invoice","InvoiceMasterSearch[invoice_date_start]"=>date("Y-m-01", strtotime($d['invoice_date'])),
+                            "InvoiceMasterSearch[invoice_date_end]"=>date("Y-m-t", strtotime($d['invoice_date'])),
+                            "InvoiceMasterSearch[invoice_type]"=> C::INVOICE_TYPE_PERFORMA,
+                            "InvoiceMasterSearch[client_type]"=>  $this->client_type
+                        ])),
+                "pending_count" => $d['pending_count'],
+                "pending_amount" => round($d['pending_amount'], 2)
+            ];
+        }
+        return $response;
     }
 }
