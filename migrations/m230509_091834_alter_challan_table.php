@@ -13,8 +13,12 @@ class m230509_091834_alter_challan_table extends Migration
      */
     public function safeUp()
     {
-        $this->addColumn(Challan::tableName(),'base_amount',$this->money()->notNull()->defaultValue(0));
-        $this->addColumn(Challan::tableName(),'base_amount',$this->money()->notNull()->defaultValue(0));
+        try{
+            $this->addColumn(Challan::tableName(),'base_amount',$this->money()->notNull()->defaultValue(0));
+        }catch(Exception $ex){
+            
+        }
+        
     }
 
     /**
