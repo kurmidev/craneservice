@@ -96,7 +96,7 @@ class Challan extends \app\models\BaseModel
             'id' => 'ID',
             'client_id' => 'Client',
             'challan_date' => 'Challan Date',
-            'site_address' => 'Site Address',
+            'site_address' => 'Shipping Address',
             'operator_id' => 'Operator',
             'helper_id' => 'Helper',
             'plan_id' => 'Plan',

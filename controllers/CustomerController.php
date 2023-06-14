@@ -32,7 +32,7 @@ class CustomerController extends ClientController{
         if ($this->request->isPost) {
             $model->client_id = $id;
             if ($model->load($this->request->post()) && $model->save()) {
-                \Yii::$app->getSession()->setFlash('s', "Site Address has been added successfully.");
+                \Yii::$app->getSession()->setFlash('s', "Shipping Address has been added successfully.");
                 return $this->redirect(['customer/view-customer','id'=>$model->client_id]);
             }
         } 

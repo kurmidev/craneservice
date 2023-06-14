@@ -85,7 +85,7 @@ use app\components\Constants as C;
                         </li>
                         <?php if ($model->client_type == C::CLIENT_TYPE_CUSTOMER) { ?>
                             <li class="nav-item">
-                                <?= Html::a("Add Site", Yii::$app->urlManager->createUrl([$baseUrl, "pg" => 'add-site', "id" => $model->id]), ["class" => "nav-link " . ($pg == "add-site" ? "active" : "")]) ?>
+                                <?= Html::a("Shipping Address", Yii::$app->urlManager->createUrl([$baseUrl, "pg" => 'add-site', "id" => $model->id]), ["class" => "nav-link " . ($pg == "add-site" ? "active" : "")]) ?>
                             </li>
                             <li class="nav-item">
                                 <?= Html::a("Custom Price", Yii::$app->urlManager->createUrl([$baseUrl, "pg" => 'custom-price', "id" => $model->id]), ["class" => "nav-link " . ($pg == "custom-price" ? "active" : "")]) ?>

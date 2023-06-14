@@ -18,7 +18,7 @@ class CompanyMasterSearch extends CompanyMaster
     {
         return [
             [['id', 'city_id', 'pincode', 'state_code', 'status', 'created_by', 'updated_by'], 'integer'],
-            [['name', 'mobile_no', 'phone_no', 'email', 'billing_address', 'gst_in', 'pan_no', 'supply_place', 'created_at', 'updated_at'], 'safe'],
+            [['name', 'mobile_no', 'phone_no', 'email', 'billing_address', 'gst_in', 'pan_no', 'supply_place', 'created_at', 'updated_at','code'], 'safe'],
         ];
     }
 
@@ -60,6 +60,7 @@ class CompanyMasterSearch extends CompanyMaster
         $query->andFilterWhere([
             'id' => $this->id,
             'city_id' => $this->city_id,
+            'code'=>$this->code,
             'pincode' => $this->pincode,
             'state_code' => $this->state_code,
             'status' => $this->status,

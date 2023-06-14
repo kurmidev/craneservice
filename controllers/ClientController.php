@@ -78,10 +78,8 @@ class ClientController extends BaseController
             $dataProvider = $searchModel->search($this->request->queryParams);
             $dataProvider->query->active()->andWhere(["client_id" => $model->id]);
             if ($pg == "pending-challan") {
-                $dataProvider->query->andWhere(["client_id" => $model->id, "invoice_id" => null]);
-            } else {
-                $dataProvider->query->andWhere(['is_processed' => C::STATUS_ACTIVE])->andWhere(['>', 'invoice_id', 0]);
-            }
+                $dataProvider->query->andWhere(["invoice_id" => null]);
+            } 
 
             $siteSearchModel = new ClientSiteSearch();
             $siteDataProvider = $siteSearchModel->search($this->request->queryParams);

@@ -48,7 +48,7 @@ use yii\web\View;
                     <thead>
                         <tr>
                             <?php if ($model->client_type == C::CLIENT_TYPE_CUSTOMER) { ?>
-                                <th>Site Address</th>
+                                <th>Shipping Address</th>
                                 <th>Helper</th>
                                 <th>Operator</th>
                             <?php } ?>

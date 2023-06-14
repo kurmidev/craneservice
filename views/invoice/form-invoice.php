@@ -26,7 +26,7 @@ use app\components\Constants as C;
                 <?= $form->field($model, 'invoice_type', ['options' => ['class' => 'form-group']])->begin() ?>
                 <?= Html::activeLabel($model, 'invoice_type', ['class' => 'col-lg-12 col-sm-12 col-xs-12 control-label']); ?>
                 <div class="col-lg-6 col-sm-6 col-xs-6">
-                    <?= Html::activeDropDownList($model, 'invoice_type', C::INVOICE_TYPE_LIST, ['class' => 'form-control', 'prompt' => "Select One"]) ?>
+                    <?= Html::activeDropDownList($model, 'invoice_type', C::INVOICE_TYPE_LIST, ['class' => 'form-control', 'prompt' => "Select One",'onchange'=>'(()=>{if($(this).val()==="2"){$(\'select[name^="InvoiceForm[is_tax_applicable]"] option[value=1]\').attr("selected","selected")}else{$(\'select[name^="InvoiceForm[is_tax_applicable]"] option[value="1"]\').attr("selected",null);$(\'select[name^="InvoiceForm[is_tax_applicable]"] option[value="0"]\').attr("selected","selected");  } })()']) ?>
                     <?= Html::error($model, 'invoice_type', ['class' => 'error help-block']) ?>
                 </div>
                 <?= $form->field($model, 'invoice_type')->end() ?>

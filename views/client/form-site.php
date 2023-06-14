@@ -11,7 +11,7 @@ use app\components\Constants as C;
         <div class="card card-secondary">
             <div class="card-header">
                 <div class="card-title">
-                    <?=($model->isNewRecord ? "Add New Site" : "Update Site")?>
+                    <?=($model->isNewRecord ? "Add New Shipping Address" : "Update Shipping Address")?>
                 </div>
             </div>
             <div class="card-body">

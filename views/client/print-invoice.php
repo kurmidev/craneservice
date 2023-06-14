@@ -132,7 +132,7 @@ $amount = $tax = $total = 0;
         </tr>
         <tr style="height:17pt">
             <td style="width:555pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt" colspan="10">
-                <p class="s2" style="padding-top: 3pt;padding-left: 4pt;text-indent: 0pt;text-align: left;">SITE ADDRESS : <?= $model->client->site_address ?></p>
+                <p class="s2" style="padding-top: 3pt;padding-left: 4pt;text-indent: 0pt;text-align: left;">Shipping ADDRESS : <?= $model->client->site_address ?></p>
             </td>
         </tr>
         <tr style="height:16pt">

@@ -26,10 +26,18 @@ use app\models\VehicleMaster;
                 </div>
                 <?= $form->field($model, 'name')->end() ?>
 
+                <?= $form->field($model, 'code', ['options' => ['class' => 'form-group']])->begin() ?>
+                <?= Html::activeLabel($model, 'code', ['class' => 'col-lg-12 col-sm-12 col-xs-12 control-label']); ?>
+                <div class="col-lg-6 col-sm-6 col-xs-6">
+                    <?= Html::activeTextInput($model, 'code', ['class' => 'form-control']) ?>
+                    <?= Html::error($model, 'code', ['class' => 'error help-block']) ?>
+                </div>
+                <?= $form->field($model, 'code')->end() ?>
+
                 <?= $form->field($model, 'mobile_no', ['options' => ['class' => 'form-group']])->begin() ?>
                 <?= Html::activeLabel($model, 'mobile_no', ['class' => 'col-lg-12 col-sm-12 col-xs-12 control-label']); ?>
                 <div class="col-lg-6 col-sm-6 col-xs-6">
-                    <?= Html::activeTextInput($model, 'mobile_no', ['class' => 'form-control']) ?>
+                    <?= Html::activeTextInput($model, 'mobile_no', ['class' => 'form-control','maxlength'=>10]) ?>
                     <?= Html::error($model, 'mobile_no', ['class' => 'error help-block']) ?>
                 </div>
                 <?= $form->field($model, 'mobile_no')->end() ?>
@@ -38,7 +46,7 @@ use app\models\VehicleMaster;
                 <?= $form->field($model, 'phone_no', ['options' => ['class' => 'form-group']])->begin() ?>
                 <?= Html::activeLabel($model, 'phone_no', ['class' => 'col-lg-12 col-sm-12 col-xs-12 control-label']); ?>
                 <div class="col-lg-6 col-sm-6 col-xs-6">
-                    <?= Html::activeTextInput($model, 'phone_no', ['class' => 'form-control']) ?>
+                    <?= Html::activeTextInput($model, 'phone_no', ['class' => 'form-control','maxlength'=>10]) ?>
                     <?= Html::error($model, 'phone_no', ['class' => 'error help-block']) ?>
                 </div>
                 <?= $form->field($model, 'phone_no')->end() ?>
@@ -64,7 +72,7 @@ use app\models\VehicleMaster;
                 <?= $form->field($model, 'city_id', ['options' => ['class' => 'form-group']])->begin() ?>
                 <?= Html::activeLabel($model, 'city_id', ['class' => 'col-lg-12 col-sm-12 col-xs-12 control-label']); ?>
                 <div class="col-lg-6 col-sm-6 col-xs-6">
-                    <?= Html::activeDropDownList($model, 'city_id', ArrayHelper::map(City::find()->active()->all(), 'id', 'name'), ['class' => 'form-control']) ?>
+                    <?= Html::activeDropDownList($model, 'city_id', ArrayHelper::map(City::find()->active()->all(), 'id', 'name'), ['class' => 'form-control','prompt'=>"select one"]) ?>
                     <?= Html::error($model, 'city_id', ['class' => 'error help-block']) ?>
                 </div>
                 <?= $form->field($model, 'city_id')->end() ?>
@@ -73,7 +81,7 @@ use app\models\VehicleMaster;
                 <?= $form->field($model, 'pincode', ['options' => ['class' => 'form-group']])->begin() ?>
                 <?= Html::activeLabel($model, 'pincode', ['class' => 'col-lg-12 col-sm-12 col-xs-12 control-label']); ?>
                 <div class="col-lg-6 col-sm-6 col-xs-6">
-                    <?= Html::activeTextInput($model, 'pincode', ['class' => 'form-control']) ?>
+                    <?= Html::activeTextInput($model, 'pincode', ['class' => 'form-control','maxlength'=>6]) ?>
                     <?= Html::error($model, 'pincode', ['class' => 'error help-block']) ?>
                 </div>
                 <?= $form->field($model, 'pincode')->end() ?>
@@ -133,7 +141,7 @@ use app\models\VehicleMaster;
                 <?= $form->field($model, 'gst_in', ['options' => ['class' => 'form-group']])->begin() ?>
                 <?= Html::activeLabel($model, 'gst_in', ['class' => 'col-lg-12 col-sm-12 col-xs-12 control-label']); ?>
                 <div class="col-lg-6 col-sm-6 col-xs-6">
-                    <?= Html::activeTextInput($model, 'gst_in', ['class' => 'form-control']) ?>
+                    <?= Html::activeTextInput($model, 'gst_in', ['class' => 'form-control',"onkeyup"=>"this.value = this.value.toUpperCase();"]) ?>
                     <?= Html::error($model, 'gst_in', ['class' => 'error help-block']) ?>
                 </div>
                 <?= $form->field($model, 'gst_in')->end() ?>
@@ -142,7 +150,7 @@ use app\models\VehicleMaster;
                 <?= $form->field($model, 'pan_no', ['options' => ['class' => 'form-group']])->begin() ?>
                 <?= Html::activeLabel($model, 'pan_no', ['class' => 'col-lg-12 col-sm-12 col-xs-12 control-label']); ?>
                 <div class="col-lg-6 col-sm-6 col-xs-6">
-                    <?= Html::activeTextInput($model, 'pan_no', ['class' => 'form-control']) ?>
+                    <?= Html::activeTextInput($model, 'pan_no', ['class' => 'form-control',"onkeyup"=>"this.value = this.value.toUpperCase();"]) ?>
                     <?= Html::error($model, 'pan_no', ['class' => 'error help-block']) ?>
                 </div>
                 <?= $form->field($model, 'pan_no')->end() ?>

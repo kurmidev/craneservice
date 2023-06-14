@@ -28,7 +28,12 @@ use app\models\PlanMaster;
             'columns' => [
                 ['class' => 'yii\grid\SerialColumn'],
                 'challan_date',
-                'challan_no',
+                [
+                    "attribute"=>"challan_no","label"=>"Challan No",
+                    "content"=> function($model) use($base_controller){
+                        return  Html::a($model->challan_no, \Yii::$app->urlManager->createUrl(["{$base_controller}/print-challan", 'id' => $model->id]), ['title' => 'Print ' . $model->challan_no, ]);
+                    }
+                ],
                 [
                     'attribute' => 'plan_id', 'label' => 'Plan',
                     'content' => function ($model) {

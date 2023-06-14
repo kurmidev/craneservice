@@ -57,7 +57,7 @@ class Dashboard extends Model
     {
         $query =  Challan::find()->alias('a');
         $query->setAlias('a');
-        return $query->joinWith(['client c'])->andFilterWhere(["c.client_type" => $this->client_type])->active()->andWhere(['a.amount_paid'=>0])->count();
+        return $query->joinWith(['client c'])->andFilterWhere(["c.client_type" => $this->client_type])->active()->andWhere(['a.invoice_id'=>null])->count();
     }
 
     public function getMonthlyOutstanding()

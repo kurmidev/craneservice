@@ -11,6 +11,7 @@ use yii\helpers\ArrayHelper;
  *
  * @property int $id
  * @property string $name
+ * @property string $code
  * @property string $mobile_no
  * @property string|null $phone_no
  * @property string|null $email
@@ -51,7 +52,7 @@ class CompanyMaster extends \app\models\BaseModel
         return [
             [['name', 'mobile_no'], 'required'],
             [['city_id', 'pincode', 'state_code', 'status', 'created_by', 'updated_by'], 'integer'],
-            [['created_at', 'updated_at'], 'safe'],
+            [['created_at', 'updated_at', 'code'], 'safe'],
             [['name', 'billing_address'], 'string', 'max' => 250],
             [['mobile_no'], 'string', 'max' => 10, 'min' => 10],
             [['phone_no'], 'string', 'max' => 15, 'min' => 10],
@@ -60,7 +61,8 @@ class CompanyMaster extends \app\models\BaseModel
             [['pan_no'], 'string', 'max' => 10],
             [['supply_place'], 'string', 'max' => 200],
             [['name'], 'unique'],
-            //['pan_no', 'match', 'pattern' => "^[A-Z]{5}[0-9]{4}[A-Z]{1}$"],
+            [['code'], 'unique'],
+            //['pan_no', 'match', 'pattern' => "[A-Z]{5}[0-9]{4}[A-Z]{1}$"],
             //['gst_in', 'match', 'pattern' => "[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}$"],
         ];
     }
@@ -72,8 +74,8 @@ class CompanyMaster extends \app\models\BaseModel
     public function scenarios()
     {
         return [
-            self::SCENARIO_CREATE => ["name", "mobile_no", "city_id", "pincode", "state_code", "status", "billing_address", "phone_no", "email", "gst_in", "pan_no", "supply_place"],
-            self::SCENARIO_UPDATE => ["name", "mobile_no", "city_id", "pincode", "state_code", "status", "billing_address", "phone_no", "email", "gst_in", "pan_no", "supply_place"],
+            self::SCENARIO_CREATE => ["name", "mobile_no", "city_id", "pincode", "state_code", "status", "billing_address", "phone_no", "email", "gst_in", "pan_no", "supply_place", "code"],
+            self::SCENARIO_UPDATE => ["name", "mobile_no", "city_id", "pincode", "state_code", "status", "billing_address", "phone_no", "email", "gst_in", "pan_no", "supply_place", "code"],
         ];
     }
 
@@ -85,6 +87,7 @@ class CompanyMaster extends \app\models\BaseModel
         return [
             'id' => 'ID',
             'name' => 'Name',
+            'code' => "Code",
             'mobile_no' => 'Mobile No',
             'phone_no' => 'Phone No',
             'email' => 'Email',
@@ -141,7 +144,7 @@ class CompanyMaster extends \app\models\BaseModel
      */
     public function getTaxBank()
     {
-        return $this->hasOne(CompanyBank::class,['company_id'=>'id'])->andWhere(['is_taxable'=>C::STATUS_ACTIVE]);
+        return $this->hasOne(CompanyBank::class, ['company_id' => 'id'])->andWhere(['is_taxable' => C::STATUS_ACTIVE]);
     }
 
     /**
@@ -151,7 +154,7 @@ class CompanyMaster extends \app\models\BaseModel
      */
     public function getNonTaxBank()
     {
-        return $this->hasOne(CompanyBank::class,['company_id'=>'id'])->andWhere(['is_taxable'=>C::STATUS_INACTIVE]);
+        return $this->hasOne(CompanyBank::class, ['company_id' => 'id'])->andWhere(['is_taxable' => C::STATUS_INACTIVE]);
     }
 
     /**
@@ -161,18 +164,20 @@ class CompanyMaster extends \app\models\BaseModel
      */
     public function getCity()
     {
-        return $this->hasOne(City::class,['id'=>'city_id']);
+        return $this->hasOne(City::class, ['id' => 'city_id']);
     }
 
-    public function getBankDetails(){
-        return $this->hasMany(CompanyBank::class,['company_id'=>'id']);
+    public function getBankDetails()
+    {
+        return $this->hasMany(CompanyBank::class, ['company_id' => 'id']);
     }
 
-    public function getBanks(){
+    public function getBanks()
+    {
         $bank = $this->bankDetails;
 
-        if(!empty($bank)){
-            $bank = ArrayHelper::index($bank,"is_taxable");
+        if (!empty($bank)) {
+            $bank = ArrayHelper::index($bank, "is_taxable");
         }
         return $bank;
     }

@@ -15,6 +15,7 @@ class CompanyForm extends BaseForm
 
     public $id;
     public $name;
+    public $code;
     public $mobile_no;
     public $email;
     public $phone_no;
@@ -33,8 +34,8 @@ class CompanyForm extends BaseForm
     public function scenarios()
     {
         return [
-            CompanyMaster::SCENARIO_CREATE => ["name", "mobile_no", "email", "phone_no", "billing_address", "city_id", "pincode", "gst_in", "pan_no", "supply_place", "state_code", "status", "banks",'kyc_details'],
-            CompanyMaster::SCENARIO_UPDATE => ["id", "name", "mobile_no", "email", "phone_no", "billing_address", "city_id", "pincode", "gst_in", "pan_no", "supply_place", "state_code", "status", "banks",'kyc_details'],
+            CompanyMaster::SCENARIO_CREATE => ["name", "mobile_no", "email", "phone_no", "billing_address", "city_id", "pincode", "gst_in", "pan_no", "supply_place", "state_code", "status", "banks",'kyc_details','code'],
+            CompanyMaster::SCENARIO_UPDATE => ["id", "name", "mobile_no", "email", "phone_no", "billing_address", "city_id", "pincode", "gst_in", "pan_no", "supply_place", "state_code", "status", "banks",'kyc_details','code'],
         ];
     }
 
@@ -51,7 +52,7 @@ class CompanyForm extends BaseForm
         return [
             [["name", "mobile_no", "billing_address", "city_id", "pincode", "gst_in", "pan_no"], "required"],
             [["state_code", "status", "city_id"], "integer"],
-            [["logo", "kyc_details", "banks"], "safe"],
+            [["logo", "kyc_details", "banks",'code'], "safe"],
             [['banks'], 'ValidateMulti', 'params' => ['isMulti' => TRUE, 'ValidationModel' => $bankModel, 'allowEmpty' => false]],
             [['kyc_details'], 'ValidateMulti', 'params' => ['isMulti' => TRUE, 'ValidationModel' => $kycValidations, 'allowEmpty' => true]],
         ];
@@ -65,6 +66,7 @@ class CompanyForm extends BaseForm
         return [
             'id' => 'ID',
             'name' => 'Name',
+            'code' => 'Code',
             'mobile_no' => 'Mobile No',
             'phone_no' => 'Phone No',
             'email' => 'Email',
@@ -99,6 +101,7 @@ class CompanyForm extends BaseForm
     {
         $model = new CompanyMaster(['scenario' => CompanyMaster::SCENARIO_CREATE]);
         $model->name = $this->name;
+        $model->code = $this->code;
         $model->mobile_no = $this->mobile_no;
         $model->email = $this->email;
         $model->phone_no = $this->phone_no;
@@ -114,7 +117,9 @@ class CompanyForm extends BaseForm
             $this->saveBank($model->id);
             $this->uploadDocs($model->id, C::DOCUMENT_FOR_COMPANY, $this->kyc_details);
             return $model;
-        } 
+        } else{
+            $this->addErrors($model->errors);
+        }
         return false;
     }
 
@@ -124,6 +129,7 @@ class CompanyForm extends BaseForm
         if ($model instanceof CompanyMaster) {
             $model->scenario = CompanyMaster::SCENARIO_UPDATE;
             $model->name = $this->name;
+            $model->code = $this->code;
             $model->mobile_no = $this->mobile_no;
             $model->email = $this->email;
             $model->phone_no = $this->phone_no;
@@ -139,6 +145,8 @@ class CompanyForm extends BaseForm
                 $this->saveBank($model->id);
                 $this->uploadDocs($model->id, C::DOCUMENT_FOR_COMPANY, $this->kyc_details);
                 return $model;
+            }else{
+                $this->addErrors($model->errors);
             }
         }
         return false;

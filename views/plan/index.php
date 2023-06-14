@@ -39,9 +39,8 @@ use app\models\PlanAttributes;
                         },
                         'filter' => C::PACKAGE_WISE,
                     ],
-                    //'type',
-                    //'shift_hrs',
-                    //'tax_slot',
+                    'shift_hrs',
+                    'tax_slot',
                     [
                         'attribute' => 'attrbute_id', 'label' => 'Attributes',
                         'content' => function ($model) {

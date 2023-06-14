@@ -172,7 +172,7 @@ use app\models\CompanyMaster;
         <div class="card ">
             <div class="card-header">
                 <div class="card-title">
-                    Site Address
+                    Shipping Address
                 </div>
             </div>
             <div class="card-body">

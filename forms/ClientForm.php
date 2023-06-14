@@ -49,9 +49,9 @@ class ClientForm extends BaseForm
             [["company_name"], "required", "when" => function () {
                 return $this->client_type == C::CLIENT_IS_COMPANY;
             }],
-            [['company_id', 'city_id', 'pincode', 'site_city_id', 'site_pincode', 'type', 'status','mobile_no', 'first_name', 'last_name'],"required"],
+            [['company_id', 'city_id', 'pincode', 'site_city_id', 'site_pincode', 'type', 'status', 'first_name', 'last_name'],"required"],
             [['client_type', 'company_id', 'city_id', 'pincode', 'site_city_id', 'site_pincode', 'type', 'status'], 'integer'],
-            [['client_type', 'company_name', 'first_name', 'last_name', 'email', 'mobile_no', 'phone_no', 'address', 'site_address'], "string"],
+            [['client_type', 'company_name', 'first_name', 'last_name', 'email', 'mobile_no', 'phone_no', 'address', 'site_address','mobile_no'], "string"],
             [['kyc_details'], 'ValidateMulti', 'params' => ['isMulti' => TRUE, 'ValidationModel' => $kycValidations, 'allowEmpty' => true]],
         ];
     }
