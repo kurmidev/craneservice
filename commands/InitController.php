@@ -1267,10 +1267,7 @@ class InitController extends Controller
             $model->status =  C::STATUS_ACTIVE;
             if ($model->validate() && $model->save()) {
                 echo $model->id . "----" . $model->name . PHP_EOL;
-            } else {
-                print_R($model->attributes);
-                print_r($model->errors);
-            }
+            } 
         }
     }
 

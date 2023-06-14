@@ -157,8 +157,6 @@ class ExpenseForm extends BaseForm
                 $this->saveExpenseItems($this->expense_items,$model);
                 return true;
             } else {
-                print_r($model->errors);
-                exit;
                 $this->addErrors($model->errors);
             }
         }

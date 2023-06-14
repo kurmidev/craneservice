@@ -307,9 +307,6 @@ class Payments extends \app\models\BaseModel
         $model->status = C::STATUS_ACTIVE;
         if ($model->validate() && $model->save()) {
             return $model;
-        } else {
-            print_r($model->errors);
-            exit;
         }
         return false;
     }

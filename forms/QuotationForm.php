@@ -101,8 +101,6 @@ class QuotationForm extends BaseForm
                 return true;
             } else {
                 $this->addErrors($model->errors);
-                print_r($model->errors);
-                exit;
             }
         }
         return false;

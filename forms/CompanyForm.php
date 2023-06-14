@@ -114,9 +114,7 @@ class CompanyForm extends BaseForm
             $this->saveBank($model->id);
             $this->uploadDocs($model->id, C::DOCUMENT_FOR_COMPANY, $this->kyc_details);
             return $model;
-        } else {
-            print_r($model->errors);
-        }
+        } 
         return false;
     }
 
@@ -141,9 +139,6 @@ class CompanyForm extends BaseForm
                 $this->saveBank($model->id);
                 $this->uploadDocs($model->id, C::DOCUMENT_FOR_COMPANY, $this->kyc_details);
                 return $model;
-            }else{
-                print_r($model->errors);
-                
             }
         }
         return false;

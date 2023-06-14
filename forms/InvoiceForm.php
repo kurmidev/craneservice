@@ -140,9 +140,6 @@ class InvoiceForm extends BaseForm
                 if ($challan->validate() && $challan->save()) {
                     $base_amount += $challan->amount;
                      $tax_amount += $challan->tax;
-                }else{
-                    print_r($challan->errors);
-                    exit;
                 }
             }
         }
@@ -177,9 +174,7 @@ class InvoiceForm extends BaseForm
             if ($challan->validate() && $challan->save()) {
                 $base_amount += $challan->base_amount;
                 $tax_amount +=  ($this->is_tax_applicable) ? F::calculateTax($challan->base_amount, $challan->plan->tax_slot) : 0;
-            } else {
-                print_r($challan->errors);
-            }
+            } 
         }
         $discountAmount = is_null($this->discount_amount) ? 0 : $this->discount_amount;
         $recods  =  InvoiceMaster::updateAll(

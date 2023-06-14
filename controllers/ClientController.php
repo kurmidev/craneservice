@@ -428,9 +428,6 @@ class ClientController extends BaseController
                 $redirectUrl = $this->clientType == C::CLIENT_TYPE_CUSTOMER ? "customer/view-customer" : "vendor/view-vendor";
                 \Yii::$app->getSession()->setFlash('s', "payment has been added successfully.");
                 return $this->redirect([$redirectUrl, "id" => $id, "pg" => "payment"]);
-            }else{
-                print_r($model->errors);
-                exit("jndkdkn");
             }
         }
         $invoiceAmount = InvoiceMaster::find()->where(['client_id' => $client->id, 'client_type' => $client->client_type])->active()->sum("total");
@@ -530,10 +527,7 @@ class ClientController extends BaseController
                 $redirectUrl = $this->clientType == C::CLIENT_TYPE_CUSTOMER ? "customer/view-customer" : "vendor/view-vendor";
                 \Yii::$app->getSession()->setFlash('s', "Payment Notes has been added successfully.");
                 return $this->redirect([$redirectUrl, "id" => $id, "pg" => "credit_notes"]);
-            } else {
-                print_r($model->errors);
-                exit;
-            }
+            } 
         }
         return $this->render('@app/views/payments/form-creditnotes', [
             'model' => $model,
@@ -581,10 +575,7 @@ class ClientController extends BaseController
                 $redirectUrl = $this->clientType == C::CLIENT_TYPE_CUSTOMER ? "customer/view-customer" : "vendor/view-vendor";
                 Yii::$app->getSession()->setFlash('s', "Quotation has been created successfully.");
                 return $this->redirect([$redirectUrl, "id" => $id, "pg" => "quotation"]);
-            } else {
-                print_r($model->errors);
-                exit;
-            }
+            } 
         }
         return $this->render('@app/views/payments/form-quotation', [
             'model' => $model,
@@ -751,10 +742,7 @@ class ClientController extends BaseController
                 $payment->deletePayment();
                 \Yii::$app->getSession()->setFlash('s', "Payment {$payment->receipt_no} has been deleted successfully.");
                 return $this->redirect([$redirectUrl, "id" => $payment->client_id, "pg" => "payment"]);
-            } else {
-                print_r($payment->errors);
-                exit;
-            }
+            } 
         }
         \Yii::$app->getSession()->setFlash('e', 'Record not found');
         return $this->redirect([$redirectUrl . '/index']);
