@@ -87,7 +87,7 @@ use app\components\Constants as C;
                             <th>Start Time</th>
                             <th>End Time</th>
                             <th>Hour</th>
-                            <th>Base Amount</th>
+                            <th>Rate</th>
                             <th>Total Amount</th>
                             <th>
                                 <?= Html::checkbox("Select All", false, ["class" => "form-check-input", "onclick" => "$(':checkbox').each(function() { this.checked = !this.checked; });"]) ?>

@@ -172,8 +172,8 @@ class InvoiceForm extends BaseForm
             $challan->invoice_id = $id;
             $challan->is_processed = 1;
             if ($challan->validate() && $challan->save()) {
-                $base_amount += $challan->base_amount;
-                $tax_amount +=  ($this->is_tax_applicable) ? F::calculateTax($challan->base_amount, $challan->plan->tax_slot) : 0;
+                $base_amount += $challan->amount;
+                $tax_amount +=  ($this->is_tax_applicable) ? F::calculateTax($challan->amount, $challan->plan->tax_slot) : 0;
             } 
         }
         $discountAmount = is_null($this->discount_amount) ? 0 : $this->discount_amount;

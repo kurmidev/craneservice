@@ -158,12 +158,9 @@ class Constants
     public static function getTimeList()
     {
         $resp = [];
-        for ($i = 1; $i < 61; $i++) {
-            $resp[$i] = "{$i} minutes";
+        for ($i = 1; $i < 180; $i++) {
+            $resp[$i] = ($i<60)? "{$i} minutes": round(($i/60),0).":".($i%60)." hrs" ;
         }
-        $resp[120]= "2 hrs";
-        $resp[150]= "2:30 hrs";
-        $resp[180]= "3 hrs";
         return $resp;
     }
 }

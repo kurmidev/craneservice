@@ -54,7 +54,7 @@ $i = 0;
                         <tr id="ids">
                             <td>
                                 <?= $form->field($model, 'items[0][challan_date]', ['options' => ['class' => 'form-group']])->begin() ?>
-                                <?= Html::activeDropDownList($model, 'items[0][challan_date]',  ArrayHelper::map(ClientSite::find()->where(['client_id' => $model->client_id])->active()->all(), 'id', 'address'), ['class' => 'form-control', 'id' => "challanform_items_0_site_address", 'prompt' => "Select option"]) ?>
+                                <?= Html::activeTextInput($model, 'items[0][challan_date]', ['class' => 'form-control cal', 'id' => "challanform_items_0_challan_date"]) ?>
                                 <?= Html::error($model, 'items[0][challan_date]', ['class' => 'error help-block']) ?>
                                 <?= $form->field($model, 'items[0][challan_date]')->end() ?>
                             </td>
