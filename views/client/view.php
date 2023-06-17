@@ -100,7 +100,8 @@ use app\components\Constants as C;
                                 'searchModel' => $searchModel,
                                 'dataProvider' => $dataProvider,
                                 "model" => $model,
-                                "base_controller" => $base_controller
+                                "base_controller" => $base_controller,
+                                "amount"=> in_array($pg,['pending-challan',''])?$pendingChallanAmount:$totalChallanAmount
                             ]) ?>
                         <?php } else if ($pg == "add-site") { ?>
                             <?= $this->render("@app/views/client/site-address", [
@@ -113,7 +114,8 @@ use app\components\Constants as C;
                                 'searchModel' => $invoiceSearchModel,
                                 'dataProvider' => $invoiceDataProvider,
                                 "model" => $model,
-                                "base_controller" => $base_controller
+                                "base_controller" => $base_controller,
+                                "amount"=> $totalinvoiceAmount
                             ]) ?>
                         <?php } else if (in_array($pg, ["payment"])) { ?>
                             <?= $this->render("@app/views/payments/payment", [
@@ -121,7 +123,8 @@ use app\components\Constants as C;
                                 'dataProvider' => $paymentDataProvider,
                                 "model" => $model,
                                 "detailUrl" => $viewPaymentDetails,
-                                "base_controller" => $base_controller
+                                "base_controller" => $base_controller,
+                                "amount"=>$paymentAmount
                             ]) ?>
                         <?php } else if (in_array($pg, ["credit_notes"])) { ?>
                             <?= $this->render("@app/views/payments/credit-notes", [

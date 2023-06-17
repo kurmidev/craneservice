@@ -9,6 +9,11 @@ use app\components\Constants as C;
 
 ?>
 <div class="card">
+    <div class="card-header">
+        <h3 class="card-title">
+            <?= !empty($amount) ? ("Total :" . CURRENCY_SYMBOL ." ". $amount) : "" ?>
+        </h3>
+    </div>
     <div class="card-body p-0 table-responsive">
         <?= ImsGridView::widget([
             'dataProvider' => $dataProvider,
@@ -39,11 +44,8 @@ use app\components\Constants as C;
                 [
                     "attribute" => "", "label" => "Aginst Invoice",
                     "content" => function ($m) use ($model, $detailUrl) {
-                        if (!empty($m->paymentsDetails)) {
-                            $d = ArrayHelper::getColumn($m->paymentsDetails, 'invoice_id');
-                            return !empty($d) ? Html::a(count(array_unique($d)), Yii::$app->urlManager->createUrl([$detailUrl, 'pay_id' => $m->id, 'id' => $model->id])) : 0;
-                        }
-                        return 0;
+                        $count = !empty($m->invoice) ? count($m->invoice) : 0;
+                        return !empty($m->invoice) ? Html::a($count, Yii::$app->urlManager->createUrl([$detailUrl, 'pay_id' => $m->id, 'id' => $model->id])) : 0;
                     }
                 ],
                 "intrument_no",

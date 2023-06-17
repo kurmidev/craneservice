@@ -1,3 +1,7 @@
+<?php
+
+use app\forms\SearchForm;
+?>
 <nav class="main-header navbar navbar-expand navbar-white navbar-light">
     <!-- Left navbar links -->
     <ul class="navbar-nav">
@@ -6,5 +10,5 @@
       </li>
     </ul>
 
-    
+    <?=$this->render('@app/views/site/form-search',['model'=>(new SearchForm())])?>
   </nav>

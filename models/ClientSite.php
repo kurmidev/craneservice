@@ -11,6 +11,8 @@ use Yii;
  * @property string $address
  * @property int $client_id
  * @property int $status
+ * @property int $site_city_id
+ * @property string $site_pincode
  * @property string $created_at
  * @property string|null $updated_on
  * @property int|null $created_by
@@ -33,8 +35,8 @@ class ClientSite extends \app\models\BaseModel
      */
     public function scenarios(){
         return [
-            self::SCENARIO_CREATE=>["address","client_id","status"],
-            self::SCENARIO_UPDATE=>["address","client_id","status"],
+            self::SCENARIO_CREATE=>["address","client_id","status",'is_default','site_city_id','site_pincode'],
+            self::SCENARIO_UPDATE=>["address","client_id","status",'is_default','site_city_id','site_pincode'],
         ];
     }
 
@@ -45,8 +47,8 @@ class ClientSite extends \app\models\BaseModel
     {
         return [
             [['address', 'client_id'], 'required'],
-            [['client_id', 'status', 'created_by', 'updated_by'], 'integer'],
-            [['created_at', 'updated_on'], 'safe'],
+            [['client_id', 'status', 'created_by', 'updated_by','is_default'], 'integer'],
+            [['created_at', 'updated_on','site_city_id','site_pincode'], 'safe'],
             [['address'], 'string', 'max' => 255],
             [['client_id'], 'exist', 'skipOnError' => true, 'targetClass' => ClientMaster::class, 'targetAttribute' => ['client_id' => 'id']],
         ];
@@ -62,6 +64,9 @@ class ClientSite extends \app\models\BaseModel
             'address' => 'Address',
             'client_id' => 'Client ID',
             'status' => 'Status',
+            'site_city_id'=>'City',
+            'site_pincode'=>'Pincode',
+            'is_default'=>'Is Default',
             'created_at' => 'Created At',
             'updated_on' => 'Updated On',
             'created_by' => 'Created By',

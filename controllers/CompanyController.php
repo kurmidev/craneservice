@@ -85,9 +85,10 @@ class CompanyController extends BaseController
         $model = new CompanyForm(['scenario' => CompanyMaster::SCENARIO_UPDATE]);
         $model->load($company->attributes, '');
         $model->banks = $company->banks;
+        $model->prefix_data = $company->prefixData;
         $model->kyc_details = !empty($company->documents) ? ArrayHelper::index($company->documents, 'document_type') : [];
         if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
-            \Yii::$app->getSession()->setFlash('s', "Company $model->name updated successfully.");
+            \Yii::$app->getSession()->setFlash('s', $model->message);
             return $this->redirect(['company']);
         }
 

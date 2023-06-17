@@ -54,7 +54,7 @@ class PaymentsDetails extends \app\models\BaseModel
         return [
             [['payment_id', 'invoice_id', 'challan_id', 'amount_adjsuted','status'], 'required'],
             [['payment_id', 'invoice_id', 'challan_id', 'created_by', 'updated_by','status'], 'integer'],
-            [['amount_adjsuted','amount_paid','deduction_amount','tds_amount'], 'number'],
+            [['amount_adjsuted','amount_paid','deduction_amount','tds_amount'], 'double'],
             [['created_at', 'updated_at'], 'safe'],
             [['deduction_number','tds_number'],'safe'],
             [['client_id'], 'exist', 'skipOnError' => true, 'targetClass' => ClientMaster::class, 'targetAttribute' => ['client_id' => 'id']],

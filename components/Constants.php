@@ -132,7 +132,7 @@ class Constants
 
     const CHALLAN_STATUS = [
         self::CHALLAN_UNPAID => "Pending",
-        self::CHALLAN_PAID => "Paid"
+        self::CHALLAN_PAID => "Invoice Generated"
     ];
 
     const INVOICE_PENDING = 1;
@@ -154,6 +154,14 @@ class Constants
 
     const PAYMENT_IR_RESPECTIVE_INVOICE = 1;
     const PAYMENT_INVOICEWISE = 2;
+
+    const PREFIX_GST = 1;
+    const PREFIX_PERFORMA = 2;
+
+    const PREFIX_LIST = [
+        self::PREFIX_GST => "GST",
+        self::PREFIX_PERFORMA => "PERFORMA"
+    ];
 
     public static function getTimeList()
     {

@@ -6,6 +6,7 @@ use app\models\BaseForm;
 use app\models\ClientMaster;
 use yii\base\DynamicModel;
 use app\components\Constants as C;
+use app\models\ClientSite;
 use yii\web\UploadedFile;
 
 class ClientForm extends BaseForm
@@ -49,9 +50,9 @@ class ClientForm extends BaseForm
             [["company_name"], "required", "when" => function () {
                 return $this->client_type == C::CLIENT_IS_COMPANY;
             }],
-            [['company_id', 'city_id', 'pincode', 'site_city_id', 'site_pincode', 'type', 'status', 'first_name', 'last_name'],"required"],
+            [['company_id', 'city_id', 'pincode', 'site_city_id', 'site_pincode', 'type', 'status', 'first_name', 'last_name'], "required"],
             [['client_type', 'company_id', 'city_id', 'pincode', 'site_city_id', 'site_pincode', 'type', 'status'], 'integer'],
-            [['client_type', 'company_name', 'first_name', 'last_name', 'email', 'mobile_no', 'phone_no', 'address', 'site_address','mobile_no'], "string"],
+            [['client_type', 'company_name', 'first_name', 'last_name', 'email', 'mobile_no', 'phone_no', 'address', 'site_address', 'mobile_no'], "string"],
             [['kyc_details'], 'ValidateMulti', 'params' => ['isMulti' => TRUE, 'ValidationModel' => $kycValidations, 'allowEmpty' => true]],
         ];
     }
@@ -75,9 +76,9 @@ class ClientForm extends BaseForm
             'address' => 'Address',
             'city_id' => 'City',
             'pincode' => 'Pincode',
-            'site_address' => 'Site Address',
-            'site_city_id' => 'Site City',
-            'site_pincode' => 'Site Pincode',
+            'site_address' => 'Shipping Address',
+            'site_city_id' => 'Shipping City',
+            'site_pincode' => 'Shipping Pincode',
             'type' => 'Type',
             'status' => 'Status',
             'created_at' => 'Created At',
@@ -119,9 +120,10 @@ class ClientForm extends BaseForm
         $model->type = $this->type;
         $model->status = $this->status;
         if ($model->validate() && $model->save()) {
+            $this->createSite($model->id);
             $this->uploadDocs($model->id, C::DOCUMENT_FOR_COMPANY, $this->kyc_details);
             return $model;
-        } else{
+        } else {
             $this->addErrors($model->errors);
         }
         return false;
@@ -149,9 +151,10 @@ class ClientForm extends BaseForm
             $model->type = $this->type;
             $model->status = $this->status;
             if ($model->validate() && $model->save()) {
+                $this->createSite($model->id);
                 $this->uploadDocs($model->id, C::DOCUMENT_FOR_COMPANY, $this->kyc_details);
                 return $model;
-            }else{
+            } else {
                 $this->addErrors($model->errors);
             }
         }
@@ -181,5 +184,26 @@ class ClientForm extends BaseForm
                 $this->saveProofs($id, $doumentFor, $documents);
             }
         }
+    }
+
+    public function createSite($client_id)
+    {
+        if (!empty($this->site_address)) {
+            $model = ClientSite::findOne(['client_id' => $client_id, 'is_default' => 1]);
+            if (!$model instanceof ClientSite) {
+                $model = new ClientSite(['scenario' => ClientSite::SCENARIO_CREATE]);
+                $model->client_id = $client_id;
+                $model->is_default = C::STATUS_ACTIVE;
+            } else {
+                $model->scenario = ClientSite::SCENARIO_UPDATE;
+            }
+            $model->address = $this->site_address;
+            $model->site_city_id = $this->site_city_id;
+            $model->site_pincode = $this->site_pincode;
+            if ($model->validate() && $model->save()) {
+                return true;
+            }
+        }
+        return false;
     }
 }

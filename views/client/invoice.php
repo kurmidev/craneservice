@@ -14,7 +14,9 @@ use app\models\PlanMaster;
 ?>
 <div class="card">
     <div class="card-header">
-        <h3 class="card-title"></h3>
+        <h3 class="card-title">
+        <?=!empty($amount)?("Total :". CURRENCY_SYMBOL." ".$amount):"" ?>
+        </h3>
         <div class="card-tools">
             <?= Html::a(Html::tag('span', '', ['class' => 'fa fa-plus']), \Yii::$app->urlManager->createUrl(["{$base_controller}/add-invoice", "id" => $model->id]), ['title' => 'Add Invoice', 'class' => 'btn btn-primary btn-sm']) ?>
             <?= Html::a(Html::tag('span', '', ['class' => 'fa fa-cash-register']), \Yii::$app->urlManager->createUrl(["{$base_controller}/pay-invoice", "id" => $model->id]), ['title' => 'Pay Invoice', 'class' => 'btn btn-primary btn-sm']) ?>
@@ -26,7 +28,12 @@ use app\models\PlanMaster;
             'filterModel' => $searchModel,
             'columns' => [
                 ['class' => 'yii\grid\SerialColumn'],
-                'invoice_no',
+                [
+                    "attribute"=>'invoice_no','label'=>"Invoice No",
+                    'content'=> function ($model) use($base_controller){
+                        return Html::a($model->invoice_no, \Yii::$app->urlManager->createUrl(["{$base_controller}/print-invoice", 'id' => $model->id]), ['title' => 'Print ' . $model->invoice_no,"target"=>"_blank"]);
+                    }
+                ],
                 'invoice_date:date',
                 [
                     'attribute' => 'invoice_type', 'label' => 'Invoice Type',

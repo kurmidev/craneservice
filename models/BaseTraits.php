@@ -7,6 +7,7 @@ use app\models\UploadDocument;
 
 trait BaseTraits
 {
+    
     public function ValidateMulti($attribute, $params)
     {
         $input = $this->$attribute;

@@ -116,7 +116,7 @@ use app\models\CompanyMaster;
                     <?= Html::activeLabel($model, 'name', ['class' => 'col-lg-12 col-sm-12 col-xs-12 control-label', "label" => $label]); ?>
                     <div class="row">
                         <div class="col-lg-12 col-sm-12 col-xs-12">
-                            <?= Html::activeTextInput($model, 'kyc_details[' . $key . '][value]', ['class' => 'form-control', "value" => !empty($doc) ? $doc['value'] : ""]) ?>
+                            <?= Html::activeTextInput($model, 'kyc_details[' . $key . '][value]', ['class' => 'form-control', "onkeyup" => "this.value = this.value.toUpperCase();", "value" => !empty($doc) ? $doc['value'] : ""]) ?>
                             <?= Html::error($model, 'kyc_details[' . $key . '][value]', ['class' => 'error help-block']) ?>
                         </div>
                         <div class="col-lg-12 col-sm-12 col-xs-12">

@@ -24,6 +24,7 @@ use app\components\ConstFunc as F;
  * @property float $tds
  * @property float $total
  * @property int $status
+ * @property int $payment_id
  * @property string $remark
  * @property string $created_at
  * @property string|null $updated_at
@@ -46,8 +47,8 @@ class InvoiceMaster extends \app\models\BaseModel
     public function scenarios()
     {
         return [
-            self::SCENARIO_CREATE => ['invoice_type', 'status', 'base_amount', 'discount_amount', 'tax', 'tds', 'total', 'invoice_no', 'work_order_no', 'vendor_no', 'description', 'invoice_date','client_type','client_id','payment','remark'],
-            self::SCENARIO_UPDATE => ['invoice_type', 'status', 'base_amount', 'discount_amount', 'tax', 'tds', 'total', 'invoice_no', 'work_order_no', 'vendor_no', 'description', 'invoice_date','client_type','client_id','payment','remark']
+            self::SCENARIO_CREATE => ['invoice_type', 'status', 'base_amount', 'discount_amount', 'tax', 'tds', 'total', 'invoice_no', 'work_order_no', 'vendor_no', 'description', 'invoice_date','client_type','client_id','payment','remark','payment_id'],
+            self::SCENARIO_UPDATE => ['invoice_type', 'status', 'base_amount', 'discount_amount', 'tax', 'tds', 'total', 'invoice_no', 'work_order_no', 'vendor_no', 'description', 'invoice_date','client_type','client_id','payment','remark','payment_id']
         ];
     }
 
@@ -60,7 +61,7 @@ class InvoiceMaster extends \app\models\BaseModel
             [['invoice_type', 'invoice_date','client_type','client_id'], 'required'],
             [['invoice_type', 'status', 'created_by', 'updated_by'], 'integer'],
             [['base_amount', 'discount_amount', 'tax', 'tds', 'total','payment'], 'number'],
-            [['created_at', 'updated_at'], 'safe'],
+            [['created_at', 'updated_at','payment_id'], 'safe'],
             [['invoice_no', 'work_order_no', 'vendor_no', 'description'], 'string', 'max' => 255],
             [['invoice_no'], 'unique'],
             [['remark'],'string']
@@ -95,6 +96,7 @@ class InvoiceMaster extends \app\models\BaseModel
             'status' => 'Status',
             'payment'=>'Payment',
             'remark' => 'Remark',
+            'payment_id' =>"Payment",
             'created_at' => 'Created At',
             'updated_at' => 'Updated At',
             'created_by' => 'Created By',
@@ -118,6 +120,11 @@ class InvoiceMaster extends \app\models\BaseModel
 
     public function getClient(){
         return $this->hasOne(ClientMaster::class,['id'=>'client_id','client_type'=>'client_type']);
+    }
+
+
+    public function getPayment(){
+        return $this->hasOne(Payments::class,['id'=>'payment_id']);
     }
 
     public function beforeSave($insert){
@@ -152,7 +159,7 @@ class InvoiceMaster extends \app\models\BaseModel
             if ($this->status == C::STATUS_DELETED) {
                 return "Invoice {$this->invoice_no} has been deleted by {$this->actionBy} on {$this->updated_at}";
             }else if(in_array("payment",array_keys($changeAttr)) && !empty($this->payment)){
-                return  "Invoice {$this->invoice_no}, payment of {$this->payment->receipt_no} by {$this->actionBy} on {$this->updated_at}";
+                return  "Invoice {$this->invoice_no}, payment done by {$this->actionBy} on {$this->updated_at}";
             } else {
                 $listValue = $this->generateText($oldAttr, $newAttr, $changeAttr);
                 return  "Invoice {$this->invoice_no} values {$listValue} been changed by {$this->actionBy} on {$this->updated_at}";

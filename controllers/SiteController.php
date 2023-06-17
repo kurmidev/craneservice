@@ -11,6 +11,7 @@ use yii\filters\VerbFilter;
 use app\models\LoginForm;
 use app\models\ContactForm;
 use app\components\Constants as C;
+use app\forms\SearchForm;
 
 class SiteController extends BaseController
 {
@@ -47,7 +48,7 @@ class SiteController extends BaseController
     {
         $model = new Dashboard();
         $model->client_type = C::CLIENT_TYPE_CUSTOMER;
-        return $this->render('index',['model'=>$model]);
+        return $this->render('index', ['model' => $model]);
     }
 
     /**
@@ -59,7 +60,7 @@ class SiteController extends BaseController
     {
         $model = new Dashboard();
         $model->client_type = C::CLIENT_TYPE_CUSTOMER;
-        return $this->render('index',['model'=>$model]);
+        return $this->render('index', ['model' => $model]);
     }
 
     /**
@@ -71,7 +72,7 @@ class SiteController extends BaseController
     {
         $model = new Dashboard();
         $model->client_type = C::CLIENT_TYPE_VENDOR;
-        return $this->render('index',['model'=>$model]);
+        return $this->render('index', ['model' => $model]);
     }
 
     /**
@@ -97,6 +98,24 @@ class SiteController extends BaseController
         ]);
     }
 
+    public function actionSearch()
+    {
+        
+        $model = new SearchForm();
+        
+        if ($model->load(Yii::$app->request->post()) && $model->validate()) {
+            $response = $model->save();
+            if ($response['status']) {
+                //$url = Yii::$app->urlManager->createUrl($response);
+                return Yii::$app->response->redirect($response['url']);
+            }else{
+                Yii::$app->getSession()->setFlash('e', "No Record found.");
+                return Yii::$app->getResponse()->redirect("./".urldecode($response['url']));
+            }
+        }
+    }
+
+
     /**
      * Logout action.
      *
@@ -109,7 +128,8 @@ class SiteController extends BaseController
         return $this->goHome();
     }
 
-    public function actionChangesPassword() {
+    public function actionChangesPassword()
+    {
         $model = new ChangePasswordForm(['scenario' => User::SCENARIO_CREATE]);
         $name = User::loggedInUserName();
         $model->user_id = User::loggedInUserId();
@@ -120,7 +140,7 @@ class SiteController extends BaseController
             return $this->redirect(['index']);
         }
         return $this->render('form-change-password', [
-                    'model' => $model,
+            'model' => $model,
         ]);
     }
 }

@@ -68,9 +68,9 @@ class ChallanSearch extends Challan
 
         if(!empty($this->challan_status)){
             if($this->challan_status==C::CHALLAN_PAID){
-                $query->andWhere(['>',$query->alias.'amount_paid',0]);
+                $query->andWhere(['>',$query->alias.'invoice_id',0]);
             }else if($this->challan_status==C::CHALLAN_UNPAID){
-                $query->andWhere(['amount_paid'=>0]);
+                $query->andWhere(['invoice_id'=>null]);
             }
         }
 

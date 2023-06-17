@@ -9,6 +9,7 @@ use app\models\CompanyMaster;
 use yii\base\DynamicModel;
 use yii\web\UploadedFile;
 use app\components\Constants as C;
+use app\models\CompanyPrefix;
 
 class CompanyForm extends BaseForm
 {
@@ -28,14 +29,18 @@ class CompanyForm extends BaseForm
     public $state_code;
     public $status;
     public $banks;
+    public $prefix;
     public $kyc_details;
+    public $message;
+    public $prefix_data;
+
 
 
     public function scenarios()
     {
         return [
-            CompanyMaster::SCENARIO_CREATE => ["name", "mobile_no", "email", "phone_no", "billing_address", "city_id", "pincode", "gst_in", "pan_no", "supply_place", "state_code", "status", "banks",'kyc_details','code'],
-            CompanyMaster::SCENARIO_UPDATE => ["id", "name", "mobile_no", "email", "phone_no", "billing_address", "city_id", "pincode", "gst_in", "pan_no", "supply_place", "state_code", "status", "banks",'kyc_details','code'],
+            CompanyMaster::SCENARIO_CREATE => ["name", "mobile_no", "email", "phone_no", "billing_address", "city_id", "pincode", "gst_in", "pan_no", "supply_place", "state_code", "status", "banks", 'kyc_details', 'code', 'prefix'],
+            CompanyMaster::SCENARIO_UPDATE => ["id", "name", "mobile_no", "email", "phone_no", "billing_address", "city_id", "pincode", "gst_in", "pan_no", "supply_place", "state_code", "status", "banks", 'kyc_details', 'code', 'prefix'],
         ];
     }
 
@@ -43,22 +48,27 @@ class CompanyForm extends BaseForm
     {
         $bankModel = (new DynamicModel(["account_number", "bank_name", "ifsc_code", "account_name"]))
             ->addRule(["account_number", "bank_name", "ifsc_code", "account_name"], "required");
-            //->addRule(["ifsc_code"], 'match', ['pattern' => "^[A-Z]{4}0[A-Z0-9]{6}$"]);
+        //->addRule(["ifsc_code"], 'match', ['pattern' => "^[A-Z]{4}0[A-Z0-9]{6}$"]);
 
         $kycValidations = (new DynamicModel(['value', 'doc']))
             ->addRule(['value'], 'string')
             ->addRule(['doc'], 'file');
 
+        $prefixValidations = (new DynamicModel(['prefix_for', 'prefix']))
+            ->addRule(['prefix'], 'string')
+            ->addRule(['prefix_for'], 'integer');
+
         return [
             [["name", "mobile_no", "billing_address", "city_id", "pincode", "gst_in", "pan_no"], "required"],
             [["state_code", "status", "city_id"], "integer"],
-            [["logo", "kyc_details", "banks",'code'], "safe"],
+            [["logo", "kyc_details", "banks", 'code'], "safe"],
             [['banks'], 'ValidateMulti', 'params' => ['isMulti' => TRUE, 'ValidationModel' => $bankModel, 'allowEmpty' => false]],
             [['kyc_details'], 'ValidateMulti', 'params' => ['isMulti' => TRUE, 'ValidationModel' => $kycValidations, 'allowEmpty' => true]],
+            [['prefix'], 'ValidateMulti', 'params' => ['isMulti' => TRUE, 'ValidationModel' => $prefixValidations, 'allowEmpty' => true]],
         ];
     }
 
- /**
+    /**
      * {@inheritdoc}
      */
     public function attributeLabels()
@@ -73,8 +83,8 @@ class CompanyForm extends BaseForm
             'billing_address' => 'Billing Addresss',
             'city_id' => 'City',
             'pincode' => 'Pincode',
-            'gst_in' => 'Gst',
-            'pan_no' => 'Pan No',
+            'gst_in' => 'GST',
+            'pan_no' => 'PAN No',
             'supply_place' => 'Supply Place',
             'state_code' => 'State Code',
             'status' => 'Status',
@@ -87,7 +97,7 @@ class CompanyForm extends BaseForm
 
     public function save()
     {
-        if(!$this->hasErrors()){
+        if (!$this->hasErrors()) {
             if (empty($this->id)) {
                 return $this->create();
             } else {
@@ -108,16 +118,19 @@ class CompanyForm extends BaseForm
         $model->billing_address = $this->billing_address;
         $model->city_id = $this->city_id;
         $model->pincode = $this->pincode;
-        $model->gst_in = $this->gst_in;
-        $model->pan_no = $this->pan_no;
+        $model->gst_in = strtoupper($this->gst_in);
+        $model->pan_no = strtoupper($this->pan_no);
         $model->supply_place = $this->supply_place;
         $model->state_code = $this->state_code;
         $model->status = $this->status;
         if ($model->validate() && $model->save()) {
+            $this->message = "Company registeration complete. ";
             $this->saveBank($model->id);
+            $this->addPrefix($model->id);
             $this->uploadDocs($model->id, C::DOCUMENT_FOR_COMPANY, $this->kyc_details);
             return $model;
-        } else{
+        } else {
+            $this->message = "Company registeration failed. ";
             $this->addErrors($model->errors);
         }
         return false;
@@ -143,9 +156,10 @@ class CompanyForm extends BaseForm
             $model->status = $this->status;
             if ($model->validate() && $model->save()) {
                 $this->saveBank($model->id);
+                $this->addPrefix($model->id);
                 $this->uploadDocs($model->id, C::DOCUMENT_FOR_COMPANY, $this->kyc_details);
                 return $model;
-            }else{
+            } else {
                 $this->addErrors($model->errors);
             }
         }
@@ -168,15 +182,17 @@ class CompanyForm extends BaseForm
                 $model->status = C::STATUS_ACTIVE;
                 if ($model->validate() && $model->save()) {
                     $is_valid = $is_valid && true;
+                    $this->message.= $bank['account_number']." details added successfully. ";
                 } else {
                     $is_valid = $is_valid && false;
+                    $this->message.= $bank['account_number']." details addition failed. ";
                 }
             }
         }
         return $is_valid;
     }
 
-    public function uploadDocs($id,$doumentFor,$kyc_details)
+    public function uploadDocs($id, $doumentFor, $kyc_details)
     {
         if (!empty($kyc_details)) {
             $documents = [];
@@ -196,8 +212,42 @@ class CompanyForm extends BaseForm
             }
 
             if (!empty($documents)) {
-                $this->saveProofs($id,$doumentFor, $documents);
+                $this->saveProofs($id, $doumentFor, $documents);
             }
         }
     }
+
+    public function addPrefix($company_id){
+        if(!empty($this->prefix)){
+            
+            foreach($this->prefix as $prefix_for=>$prefixval){
+                $model = CompanyPrefix::findOne(['company_id'=>$company_id,'prefix_for'=>$prefix_for]);
+                if(!$model instanceof CompanyPrefix){
+                    $model = new CompanyPrefix(['scenario'=>CompanyPrefix::SCENARIO_CREATE]);
+                    $model->company_id  = $company_id;
+                    $model->prefix_for = strtoupper($prefix_for);
+                    $model->status = C::STATUS_ACTIVE;
+                }else{
+                    $model->scenario = CompanyPrefix::SCENARIO_UPDATE;
+                }
+                $model->prefix = $prefixval;
+                if($model->validate() && $model->save()){
+                    $this->message.=" Prefix ".$prefixval." added successfully.";
+                }else{
+                    $this->message.=" Prefix ".$prefixval." addition failed.";
+                }
+            }
+        }
+    }
+
+    public function getPrefixData(){
+        $res = [];
+        if(!empty($this->id) && !empty($this->prefix_data)){
+            foreach($this->prefix_data as $prefix_for=>$prefix){
+                $res[$prefix_for] = $prefix; 
+            }
+        }
+        return $res;
+    }
+
 }

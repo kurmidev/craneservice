@@ -13,10 +13,12 @@ use app\models\PlanMaster;
 ?>
 <div class="card">
     <div class="card-header">
-        <h3 class="card-title"></h3>
+        <h3 class="card-title">
+            <?= !empty($amount) ? ("Total :" . CURRENCY_SYMBOL ." ". $amount) : "" ?>
+        </h3>
         <div class="card-tools">
             <?= Html::a(Html::tag('span', '', ['class' => 'fa fa-plus']), \Yii::$app->urlManager->createUrl(["{$base_controller}/add-challan", "id" => $model->id]), ['title' => 'Add Challan', 'class' => 'btn btn-primary btn-sm']) ?>
-            <?= Html::a(Html::tag('span', '', ['class' => 'fa fa-download']), \Yii::$app->urlManager->createUrl(["{$base_controller}/print-ledger",'id'=>$model->id]), ['title' => 'Export', 'class' => 'btn btn-primary btn-sm']) ?>
+            <?= Html::a(Html::tag('span', '', ['class' => 'fa fa-download']), \Yii::$app->urlManager->createUrl(["{$base_controller}/print-ledger", 'id' => $model->id]), ['title' => 'Export', 'class' => 'btn btn-primary btn-sm']) ?>
         </div>
     </div>
     <div class="card-body p-0 table-responsive">
@@ -29,9 +31,9 @@ use app\models\PlanMaster;
                 ['class' => 'yii\grid\SerialColumn'],
                 'challan_date',
                 [
-                    "attribute"=>"challan_no","label"=>"Challan No",
-                    "content"=> function($model) use($base_controller){
-                        return  Html::a($model->challan_no, \Yii::$app->urlManager->createUrl(["{$base_controller}/print-challan", 'id' => $model->id]), ['title' => 'Print ' . $model->challan_no, ]);
+                    "attribute" => "challan_no", "label" => "Challan No",
+                    "content" => function ($model) use ($base_controller) {
+                        return  Html::a($model->challan_no, \Yii::$app->urlManager->createUrl(["{$base_controller}/print-challan", 'id' => $model->id]), ['title' => 'Print ' . $model->challan_no,]);
                     }
                 ],
                 [
@@ -48,9 +50,9 @@ use app\models\PlanMaster;
                     },
                 ],
                 [
-                    "attribute"=>"","label"=>"Total Hours/Qty",
-                    'content' => function($model){
-                        return $model->plan->type==C::PACKAGE_WISE_TRIP?$model->plan_trip:date('H:i', mktime(0, (strtotime($model->plan_end_time) - strtotime($model->plan_start_time)) / 60));
+                    "attribute" => "", "label" => "Total Hours/Qty",
+                    'content' => function ($model) {
+                        return $model->plan->type == C::PACKAGE_WISE_TRIP ? $model->plan_trip : date('H:i', mktime(0, (strtotime($model->plan_end_time) - strtotime($model->plan_start_time)) / 60));
                     }
                 ],
                 "plan_start_time",
@@ -58,7 +60,12 @@ use app\models\PlanMaster;
                 "break_time",
                 "up_time",
                 "down_time",
-                "base_amount",
+                [
+                    'attribute' => 'base_amount', 'label' => 'Rate',
+                    'content' => function ($model) {
+                        return $model->base_amount;
+                    },
+                ],
                 "amount",
                 [
                     'attribute' => 'invoice_id', 'label' => 'Is Invoice Generated',
@@ -71,11 +78,11 @@ use app\models\PlanMaster;
                     "content" => function ($data) use ($base_controller) {
                         $print = Html::a(Html::tag('span', '', ['class' => 'fa fa-edit']), \Yii::$app->urlManager->createUrl(["{$base_controller}/edit-challan", 'id' => $data['id']]), ['title' => 'Update ' . $data['challan_no'], 'class' => 'btn btn-primary-alt'])
                             . Html::a(Html::tag('span', '', ['class' => 'fa fa-print']), \Yii::$app->urlManager->createUrl(["{$base_controller}/print-challan", 'id' => $data['id']]), ['title' => 'Print ' . $data['challan_no'], 'class' => 'btn btn-primary-alt']);
-                            if(empty($data['invoice_id'])){
-                                $print.= Html::a(Html::tag('span', '', ['class' => 'fa fa-trash']), \Yii::$app->urlManager->createUrl(["{$base_controller}/delete-challan", 'id' => $data['id']]), ['title' => 'Print ' . $data['challan_no'], 'class' => 'btn btn-primary-alt']);
-                            }
+                        if (empty($data['invoice_id'])) {
+                            $print .= Html::a(Html::tag('span', '', ['class' => 'fa fa-trash']), \Yii::$app->urlManager->createUrl(["{$base_controller}/delete-challan", 'id' => $data['id']]), ['title' => 'Print ' . $data['challan_no'], 'class' => 'btn btn-primary-alt']);
+                        }
 
-                            return $print;
+                        return $print;
                     }
                 ]
             ],

@@ -196,4 +196,16 @@ class CompanyMaster extends \app\models\BaseModel
     {
         return new CompanyMasterQuery(get_called_class());
     }
+
+    public function getPrefixd(){
+        return $this->hasMany(CompanyPrefix::class,['company_id'=>'id']);
+    }
+
+    public function getPrefixData(){
+        $res = [];
+        foreach($this->prefixd as $p){
+            $res[$p->prefix_for] = $p->prefix; 
+        }
+        return $res;
+    }
 }

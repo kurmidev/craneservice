@@ -37,7 +37,7 @@ use app\models\VehicleMaster;
                 <?= $form->field($model, 'mobile_no', ['options' => ['class' => 'form-group']])->begin() ?>
                 <?= Html::activeLabel($model, 'mobile_no', ['class' => 'col-lg-12 col-sm-12 col-xs-12 control-label']); ?>
                 <div class="col-lg-6 col-sm-6 col-xs-6">
-                    <?= Html::activeTextInput($model, 'mobile_no', ['class' => 'form-control','maxlength'=>10]) ?>
+                    <?= Html::activeTextInput($model, 'mobile_no', ['class' => 'form-control', 'maxlength' => 10]) ?>
                     <?= Html::error($model, 'mobile_no', ['class' => 'error help-block']) ?>
                 </div>
                 <?= $form->field($model, 'mobile_no')->end() ?>
@@ -46,7 +46,7 @@ use app\models\VehicleMaster;
                 <?= $form->field($model, 'phone_no', ['options' => ['class' => 'form-group']])->begin() ?>
                 <?= Html::activeLabel($model, 'phone_no', ['class' => 'col-lg-12 col-sm-12 col-xs-12 control-label']); ?>
                 <div class="col-lg-6 col-sm-6 col-xs-6">
-                    <?= Html::activeTextInput($model, 'phone_no', ['class' => 'form-control','maxlength'=>10]) ?>
+                    <?= Html::activeTextInput($model, 'phone_no', ['class' => 'form-control', 'maxlength' => 10]) ?>
                     <?= Html::error($model, 'phone_no', ['class' => 'error help-block']) ?>
                 </div>
                 <?= $form->field($model, 'phone_no')->end() ?>
@@ -72,7 +72,7 @@ use app\models\VehicleMaster;
                 <?= $form->field($model, 'city_id', ['options' => ['class' => 'form-group']])->begin() ?>
                 <?= Html::activeLabel($model, 'city_id', ['class' => 'col-lg-12 col-sm-12 col-xs-12 control-label']); ?>
                 <div class="col-lg-6 col-sm-6 col-xs-6">
-                    <?= Html::activeDropDownList($model, 'city_id', ArrayHelper::map(City::find()->active()->all(), 'id', 'name'), ['class' => 'form-control','prompt'=>"select one"]) ?>
+                    <?= Html::activeDropDownList($model, 'city_id', ArrayHelper::map(City::find()->active()->all(), 'id', 'name'), ['class' => 'form-control', 'prompt' => "select one"]) ?>
                     <?= Html::error($model, 'city_id', ['class' => 'error help-block']) ?>
                 </div>
                 <?= $form->field($model, 'city_id')->end() ?>
@@ -81,7 +81,7 @@ use app\models\VehicleMaster;
                 <?= $form->field($model, 'pincode', ['options' => ['class' => 'form-group']])->begin() ?>
                 <?= Html::activeLabel($model, 'pincode', ['class' => 'col-lg-12 col-sm-12 col-xs-12 control-label']); ?>
                 <div class="col-lg-6 col-sm-6 col-xs-6">
-                    <?= Html::activeTextInput($model, 'pincode', ['class' => 'form-control','maxlength'=>6]) ?>
+                    <?= Html::activeTextInput($model, 'pincode', ['class' => 'form-control', 'maxlength' => 6]) ?>
                     <?= Html::error($model, 'pincode', ['class' => 'error help-block']) ?>
                 </div>
                 <?= $form->field($model, 'pincode')->end() ?>
@@ -98,6 +98,30 @@ use app\models\VehicleMaster;
     </div>
 
     <div class="col-md-6">
+        <div class="card ">
+            <div class="card-header">
+                <div class="card-title">
+                    PREFIX
+                </div>
+            </div>
+            <div class="card-body">
+                <?php foreach (C::PREFIX_LIST as $prefix_for => $prefix) { ?>
+                    <?php
+                    $prefixval = $model->getPrefixData();
+                    ?>
+                    <?= $form->field($model, $prefix_for, ['options' => ['class' => 'form-group']])->begin() ?>
+                    <div class="row">
+                        <?= Html::activeLabel($model, 'prefix', ['class' => 'col-lg-6 col-sm-6 col-xs-6 control-label', "label" => C::PREFIX_LIST[$prefix_for]]); ?>
+                        <div class="col-lg-6 col-sm-6 col-xs-6">
+                            <?= Html::activeTextInput($model, 'prefix[' . $prefix_for . ']', ['class' => 'form-control', "value" => !empty($prefixval[$prefix_for]) ? $prefixval[$prefix_for] : ""]) ?>
+                            <?= Html::error($model, 'prefix[' . $prefix_for . ']', ['class' => 'error help-block']) ?>
+                        </div>
+                    </div>
+                    <?= $form->field($model, $prefix_for)->end() ?>
+                <?php } ?>
+            </div>
+        </div>
+
         <div class="card ">
             <div class="card-header">
                 <div class="card-title">
@@ -141,7 +165,7 @@ use app\models\VehicleMaster;
                 <?= $form->field($model, 'gst_in', ['options' => ['class' => 'form-group']])->begin() ?>
                 <?= Html::activeLabel($model, 'gst_in', ['class' => 'col-lg-12 col-sm-12 col-xs-12 control-label']); ?>
                 <div class="col-lg-6 col-sm-6 col-xs-6">
-                    <?= Html::activeTextInput($model, 'gst_in', ['class' => 'form-control',"onkeyup"=>"this.value = this.value.toUpperCase();"]) ?>
+                    <?= Html::activeTextInput($model, 'gst_in', ['class' => 'form-control', "onkeyup" => "this.value = this.value.toUpperCase();"]) ?>
                     <?= Html::error($model, 'gst_in', ['class' => 'error help-block']) ?>
                 </div>
                 <?= $form->field($model, 'gst_in')->end() ?>
@@ -150,7 +174,7 @@ use app\models\VehicleMaster;
                 <?= $form->field($model, 'pan_no', ['options' => ['class' => 'form-group']])->begin() ?>
                 <?= Html::activeLabel($model, 'pan_no', ['class' => 'col-lg-12 col-sm-12 col-xs-12 control-label']); ?>
                 <div class="col-lg-6 col-sm-6 col-xs-6">
-                    <?= Html::activeTextInput($model, 'pan_no', ['class' => 'form-control',"onkeyup"=>"this.value = this.value.toUpperCase();"]) ?>
+                    <?= Html::activeTextInput($model, 'pan_no', ['class' => 'form-control','maxlength'=>10, "onkeyup" => "this.value = this.value.toUpperCase();"]) ?>
                     <?= Html::error($model, 'pan_no', ['class' => 'error help-block']) ?>
                 </div>
                 <?= $form->field($model, 'pan_no')->end() ?>
@@ -189,7 +213,7 @@ use app\models\VehicleMaster;
                             TAX Bank Details
                         </div>
                         <?= $form->field($model, 'banks[1][name]', ['options' => ['class' => 'form-group']])->begin() ?>
-                        <?= Html::activeLabel($model, 'banks[1][name]', ['class' => 'col-lg-12 col-sm-12 col-xs-12 control-label',"label"=>"Account Name"]); ?>
+                        <?= Html::activeLabel($model, 'banks[1][name]', ['class' => 'col-lg-12 col-sm-12 col-xs-12 control-label', "label" => "Account Name"]); ?>
                         <div class="col-lg-12 col-sm-12 col-xs-12">
                             <?= Html::activeTextInput($model, 'banks[1][name]', ['class' => 'form-control']) ?>
                             <?= Html::error($model, 'banks[1][name]', ['class' => 'error help-block']) ?>
@@ -197,7 +221,7 @@ use app\models\VehicleMaster;
                         <?= $form->field($model, 'banks[1][name]')->end() ?>
 
                         <?= $form->field($model, 'banks[1][account_number]', ['options' => ['class' => 'form-group']])->begin() ?>
-                        <?= Html::activeLabel($model, 'banks[1][account_number]', ['class' => 'col-lg-12 col-sm-12 col-xs-12 control-label',"label"=>"Account Number"]); ?>
+                        <?= Html::activeLabel($model, 'banks[1][account_number]', ['class' => 'col-lg-12 col-sm-12 col-xs-12 control-label', "label" => "Account Number"]); ?>
                         <div class="col-lg-12 col-sm-12 col-xs-12">
                             <?= Html::activeTextInput($model, 'banks[1][account_number]', ['class' => 'form-control']) ?>
                             <?= Html::error($model, 'banks[1][account_number]', ['class' => 'error help-block']) ?>
@@ -205,7 +229,7 @@ use app\models\VehicleMaster;
                         <?= $form->field($model, 'banks[1][account_number]')->end() ?>
 
                         <?= $form->field($model, 'banks[1][bank_name]', ['options' => ['class' => 'form-group']])->begin() ?>
-                        <?= Html::activeLabel($model, 'banks[1][bank_name]', ['class' => 'col-lg-12 col-sm-12 col-xs-12 control-label',"label"=>"Bank Name"]); ?>
+                        <?= Html::activeLabel($model, 'banks[1][bank_name]', ['class' => 'col-lg-12 col-sm-12 col-xs-12 control-label', "label" => "Bank Name"]); ?>
                         <div class="col-lg-12 col-sm-12 col-xs-12">
                             <?= Html::activeTextInput($model, 'banks[1][bank_name]', ['class' => 'form-control']) ?>
                             <?= Html::error($model, 'banks[1][bank_name]', ['class' => 'error help-block']) ?>
@@ -213,7 +237,7 @@ use app\models\VehicleMaster;
                         <?= $form->field($model, 'banks[1][bank_name]')->end() ?>
 
                         <?= $form->field($model, 'banks[1][ifsc_code]', ['options' => ['class' => 'form-group']])->begin() ?>
-                        <?= Html::activeLabel($model, 'banks[1][ifsc_code]', ['class' => 'col-lg-12 col-sm-12 col-xs-12 control-label',"label"=>"IFSC Code"]); ?>
+                        <?= Html::activeLabel($model, 'banks[1][ifsc_code]', ['class' => 'col-lg-12 col-sm-12 col-xs-12 control-label', "label" => "IFSC Code"]); ?>
                         <div class="col-lg-12 col-sm-12 col-xs-12">
                             <?= Html::activeTextInput($model, 'banks[1][ifsc_code]', ['class' => 'form-control']) ?>
                             <?= Html::error($model, 'banks[1][ifsc_code]', ['class' => 'error help-block']) ?>
@@ -226,7 +250,7 @@ use app\models\VehicleMaster;
                             NON TAX Bank Details
                         </div>
                         <?= $form->field($model, 'banks[0][name]', ['options' => ['class' => 'form-group']])->begin() ?>
-                        <?= Html::activeLabel($model, 'banks[0][name]', ['class' => 'col-lg-12 col-sm-12 col-xs-12 control-label',"label"=>"Account Name"]); ?>
+                        <?= Html::activeLabel($model, 'banks[0][name]', ['class' => 'col-lg-12 col-sm-12 col-xs-12 control-label', "label" => "Account Name"]); ?>
                         <div class="col-lg-12 col-sm-12 col-xs-12">
                             <?= Html::activeTextInput($model, 'banks[0][name]', ['class' => 'form-control']) ?>
                             <?= Html::error($model, 'banks[0][name]', ['class' => 'error help-block']) ?>
@@ -234,7 +258,7 @@ use app\models\VehicleMaster;
                         <?= $form->field($model, 'banks[0][name]')->end() ?>
 
                         <?= $form->field($model, 'banks[0][account_number]', ['options' => ['class' => 'form-group']])->begin() ?>
-                        <?= Html::activeLabel($model, 'banks[0][account_number]', ['class' => 'col-lg-12 col-sm-12 col-xs-12 control-label',"label"=>"Account Number"]); ?>
+                        <?= Html::activeLabel($model, 'banks[0][account_number]', ['class' => 'col-lg-12 col-sm-12 col-xs-12 control-label', "label" => "Account Number"]); ?>
                         <div class="col-lg-12 col-sm-12 col-xs-12">
                             <?= Html::activeTextInput($model, 'banks[0][account_number]', ['class' => 'form-control']) ?>
                             <?= Html::error($model, 'banks[0][account_number]', ['class' => 'error help-block']) ?>
@@ -242,7 +266,7 @@ use app\models\VehicleMaster;
                         <?= $form->field($model, 'banks[0][account_number]')->end() ?>
 
                         <?= $form->field($model, 'banks[0][bank_name]', ['options' => ['class' => 'form-group']])->begin() ?>
-                        <?= Html::activeLabel($model, 'banks[0][bank_name]', ['class' => 'col-lg-12 col-sm-12 col-xs-12 control-label',"label"=>"Bank Name"]); ?>
+                        <?= Html::activeLabel($model, 'banks[0][bank_name]', ['class' => 'col-lg-12 col-sm-12 col-xs-12 control-label', "label" => "Bank Name"]); ?>
                         <div class="col-lg-12 col-sm-12 col-xs-12">
                             <?= Html::activeTextInput($model, 'banks[0][bank_name]', ['class' => 'form-control']) ?>
                             <?= Html::error($model, 'banks[0][bank_name]', ['class' => 'error help-block']) ?>
@@ -250,7 +274,7 @@ use app\models\VehicleMaster;
                         <?= $form->field($model, 'banks[0][bank_name]')->end() ?>
 
                         <?= $form->field($model, 'banks[0][ifsc_code]', ['options' => ['class' => 'form-group']])->begin() ?>
-                        <?= Html::activeLabel($model, 'banks[0][ifsc_code]', ['class' => 'col-lg-12 col-sm-12 col-xs-12 control-label',"label"=>"IFSC Code"]); ?>
+                        <?= Html::activeLabel($model, 'banks[0][ifsc_code]', ['class' => 'col-lg-12 col-sm-12 col-xs-12 control-label', "label" => "IFSC Code"]); ?>
                         <div class="col-lg-12 col-sm-12 col-xs-12">
                             <?= Html::activeTextInput($model, 'banks[0][ifsc_code]', ['class' => 'form-control']) ?>
                             <?= Html::error($model, 'banks[0][ifsc_code]', ['class' => 'error help-block']) ?>
@@ -265,7 +289,7 @@ use app\models\VehicleMaster;
 
 
 
- 
+
     <div class="card-footer mg-t-auto mg-d-10">
         <div class="row">
             <div class="col-lg-6 col-sm-6 col-xs-6 col-sm-offset-3">
