@@ -58,6 +58,12 @@ $i = 0;
                                 <?= Html::error($model, 'items[0][challan_date]', ['class' => 'error help-block']) ?>
                                 <?= $form->field($model, 'items[0][challan_date]')->end() ?>
                             </td>
+                            <td>
+                                <?= $form->field($model, 'items[0][challan_no]', ['options' => ['class' => 'form-group']])->begin() ?>
+                                <?= Html::activeTextInput($model, 'items[0][challan_no]', ['class' => 'form-control', 'id' => 'challanform_items_0_challan_no']) ?>
+                                <?= Html::error($model, 'items[0][challan_no]', ['class' => 'error help-block']) ?>
+                                <?= $form->field($model, 'items[0][challan_no]')->end() ?>
+                            </td>
                             <?php if ($model->client_type == C::CLIENT_TYPE_CUSTOMER) { ?>
                                 <td>
                                     <?= $form->field($model, 'items[0][site_address]', ['options' => ['class' => 'form-group']])->begin() ?>
@@ -90,13 +96,6 @@ $i = 0;
                                 <?= Html::error($model, 'items[0][vehicle_id]', ['class' => 'error help-block']) ?>
                                 <?= $form->field($model, 'items[0][vehicle_id]')->end() ?>
                             </td>
-                            <td>
-                                <?= $form->field($model, 'items[0][challan_no]', ['options' => ['class' => 'form-group']])->begin() ?>
-                                <?= Html::activeTextInput($model, 'items[0][challan_no]', ['class' => 'form-control', 'id' => 'challanform_items_0_challan_no']) ?>
-                                <?= Html::error($model, 'items[0][challan_no]', ['class' => 'error help-block']) ?>
-                                <?= $form->field($model, 'items[0][challan_no]')->end() ?>
-                            </td>
-
                             <td>
                                 <?= $form->field($model, 'items[0][plan_start_time]', ['options' => ['class' => 'form-group']])->begin() ?>
                                 <?= Html::activeTextInput($model, 'items[0][plan_start_time]', ['class' => 'form-control timepick caldiff', "id" => "challanform_items_0_plan_start_time", "rel" => "challanform_items_0"]) ?>
