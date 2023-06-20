@@ -10,11 +10,13 @@ use app\components\Constants as C;
  *
  * @property int $id
  * @property int $client_id
+ * @property int $client_type
  * @property string $challan_date
  * @property string|null $site_address
  * @property string|null $operator_id
  * @property string|null $helper_id
  * @property int $plan_id
+ * @property int $plan_type
  * @property int $vehicle_id
  * @property string $challan_no
  * @property string|null $plan_start_time
@@ -65,8 +67,8 @@ class Challan extends \app\models\BaseModel
     public function scenarios()
     {
         return [
-            self::SCENARIO_CREATE => ['client_id', 'challan_date', 'site_address', 'operator_id', 'helper_id', 'plan_id', 'vehicle_id', 'challan_no', 'plan_start_time', 'plan_end_time', 'day_wise', 'plan_measure', 'plan_trip', 'from_destination', 'to_destination', 'amount', 'break_time', 'up_time', 'down_time', 'plan_extra_hours', 'plan_shift_type', 'challan_image', 'invoice_id', 'is_processed', 'status', 'extra', 'tax', 'total', 'base_amount', 'payment_status', 'amount_paid'],
-            self::SCENARIO_UPDATE => ['client_id', 'challan_date', 'site_address', 'operator_id', 'helper_id', 'plan_id', 'vehicle_id', 'challan_no', 'plan_start_time', 'plan_end_time', 'day_wise', 'plan_measure', 'plan_trip', 'from_destination', 'to_destination', 'amount', 'break_time', 'up_time', 'down_time', 'plan_extra_hours', 'plan_shift_type', 'challan_image', 'invoice_id', 'is_processed', 'status', 'extra', 'tax', 'total', 'base_amount', 'payment_status', 'amount_paid']
+            self::SCENARIO_CREATE => ['client_id', 'challan_date', 'site_address', 'operator_id', 'helper_id', 'plan_id', 'vehicle_id', 'challan_no', 'plan_start_time', 'plan_end_time', 'day_wise', 'plan_measure', 'plan_trip', 'from_destination', 'to_destination', 'amount', 'break_time', 'up_time', 'down_time', 'plan_extra_hours', 'plan_shift_type', 'challan_image', 'invoice_id', 'is_processed', 'status', 'extra', 'tax', 'total', 'base_amount', 'payment_status', 'amount_paid','plan_type'],
+            self::SCENARIO_UPDATE => ['client_id', 'challan_date', 'site_address', 'operator_id', 'helper_id', 'plan_id', 'vehicle_id', 'challan_no', 'plan_start_time', 'plan_end_time', 'day_wise', 'plan_measure', 'plan_trip', 'from_destination', 'to_destination', 'amount', 'break_time', 'up_time', 'down_time', 'plan_extra_hours', 'plan_shift_type', 'challan_image', 'invoice_id', 'is_processed', 'status', 'extra', 'tax', 'total', 'base_amount', 'payment_status', 'amount_paid','plan_type']
         ];
     }
 
@@ -77,7 +79,7 @@ class Challan extends \app\models\BaseModel
     {
         return [
             [['client_id', 'challan_date', 'plan_id', 'vehicle_id', 'challan_no'], 'required'],
-            [['client_id', 'plan_id', 'vehicle_id', 'day_wise', 'break_time', 'up_time', 'down_time', 'plan_extra_hours', 'plan_shift_type', 'invoice_id', 'is_processed', 'status', 'created_by', 'updated_by', 'operator_id', 'helper_id'], 'integer'],
+            [['client_id', 'plan_id', 'vehicle_id', 'day_wise', 'break_time', 'up_time', 'down_time', 'plan_extra_hours', 'plan_shift_type', 'invoice_id', 'is_processed', 'status', 'created_by', 'updated_by', 'operator_id', 'helper_id','plan_type'], 'integer'],
             [['challan_date', 'plan_start_time', 'plan_end_time', 'challan_image', 'created_at', 'updated_on'], 'safe'],
             [['amount', 'extra', 'tax', 'total', 'base_amount', 'payment_status', 'amount_paid'], 'number'],
             [['site_address', 'challan_no', 'plan_measure', 'plan_trip', 'from_destination', 'to_destination'], 'string', 'max' => 255],
@@ -100,6 +102,7 @@ class Challan extends \app\models\BaseModel
             'operator_id' => 'Operator',
             'helper_id' => 'Helper',
             'plan_id' => 'Plan',
+            'plan_type' => 'Plan type',
             'vehicle_id' => 'Vehicle',
             'challan_no' => 'Challan No',
             'plan_start_time' => 'Plan Start Time',

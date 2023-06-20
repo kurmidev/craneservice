@@ -14,7 +14,7 @@ use app\models\VehicleMaster;
 use yii\web\View;
 
 ?>
-<?php $form = ActiveForm::begin(['id' => 'form-challan', 'options' => ['enctype' => 'multipart/form-data', 'class' => 'form-bordered', ]]); ?>
+<?php $form = ActiveForm::begin(['id' => 'form-challan', 'options' => ['enctype' => 'multipart/form-data', 'class' => 'form-bordered',]]); ?>
 <div class="row">
     <div class="col-lg-12 col-sm-12 col-xs-12">
         <div class="card">
@@ -219,12 +219,13 @@ $("#to_destination").hide();
 $("#plan_extra_hours").hide();
 ';
 
-if($plan_type_mapping[$model->plan_id]==C::PACKAGE_WISE_CHALLAN){
-    $js.='$("#plan_shift_type").hide();
+if (!empty($model->plan_id)) {
+    if ($plan_type_mapping[$model->plan_id] == C::PACKAGE_WISE_CHALLAN) {
+        $js .= '$("#plan_shift_type").hide();
     $("#plan_extra_hours").hide();';
-}else if($plan_type_mapping[$model->plan_id]==C::PACKAGE_WISE_DAY){
+    } else if ($plan_type_mapping[$model->plan_id] == C::PACKAGE_WISE_DAY) {
 
-  $js.=' $("#break_time").show();
+        $js .= ' $("#break_time").show();
     $("#up_time").show();
     $("#plan_start_time").hide();
     $("#plan_end_time").hide();
@@ -235,8 +236,8 @@ if($plan_type_mapping[$model->plan_id]==C::PACKAGE_WISE_CHALLAN){
     $("#to_destination").hide();
     $("#plan_extra_hours").hide();
     $("#day_wise").show();';
-}else if($plan_type_mapping[$model->plan_id]==C::PACKAGE_WISE_TRIP){
-    $js.='
+    } else if ($plan_type_mapping[$model->plan_id] == C::PACKAGE_WISE_TRIP) {
+        $js .= '
     $("#break_time").show();
     $("#up_time").show();
     $("#plan_trip").show();
@@ -246,15 +247,14 @@ if($plan_type_mapping[$model->plan_id]==C::PACKAGE_WISE_CHALLAN){
     $("#plan_end_time").hide();
     $("#from_destination").hide();
     $("#plan_extra_hours").hide();';
-
-}else if($plan_type_mapping[$model->plan_id]==C::PACKAGE_WISE_DESTINATION){
-    $js.='
+    } else if ($plan_type_mapping[$model->plan_id] == C::PACKAGE_WISE_DESTINATION) {
+        $js .= '
     $("#from_destination").show();
     $("#to_destination").show();
     $("#plan_start_time").hide();
     $("#plan_end_time").hide();';
-}else if($plan_type_mapping[$model->plan_id]==C::PACKAGE_WISE_MONTH){
-    $js.='$("#break_time").show();
+    } else if ($plan_type_mapping[$model->plan_id] == C::PACKAGE_WISE_MONTH) {
+        $js .= '$("#break_time").show();
     $("#up_time").show();
     $("#plan_start_time").show();
     $("#plan_end_time").show();
@@ -264,8 +264,8 @@ if($plan_type_mapping[$model->plan_id]==C::PACKAGE_WISE_CHALLAN){
     $("#plan_measure").hide();
     $("#to_destination").hide();
     $("#plan_extra_hours").hide();';
-}else if($plan_type_mapping[$model->plan_id]==C::PACKAGE_WISE_SHIFT){
-    $js.='$("#plan_start_time").show();
+    } else if ($plan_type_mapping[$model->plan_id] == C::PACKAGE_WISE_SHIFT) {
+        $js .= '$("#plan_start_time").show();
     $("#plan_end_time").show();
     $("#plan_shift_type").show();
     $("#break_time").hide();
@@ -277,9 +277,9 @@ if($plan_type_mapping[$model->plan_id]==C::PACKAGE_WISE_CHALLAN){
     $("#plan_measure").hide();
     $("#to_destination").hide();
     $("#plan_extra_hours").show();';
+    }
 }
-
-$js.='
+$js .= '
 $(".caldiff").change(function(){
     var starttime = $("#challanform-plan_start_time").val();
     var endtime = $("#challanform-plan_end_time").val();
