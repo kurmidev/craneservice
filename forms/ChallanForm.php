@@ -4,131 +4,66 @@ namespace app\forms;
 
 use app\models\BaseForm;
 use app\models\Challan;
+use app\components\Constants as C;
 use app\models\ClientMaster;
+use app\models\ClientPlanMapping;
+use app\models\EmployeeMaster;
 use app\models\PlanMaster;
 use app\models\VehicleMaster;
-use yii\base\DynamicModel;
-use app\components\Constants as C;
 use app\components\ConstFunc as F;
-use yii\helpers\ArrayHelper;
 
 class ChallanForm extends BaseForm
 {
 
     public $id;
-    public $client_id;
+    public $challan_no;
     public $challan_date;
-    public $items;
+    public $site_address;
+    public $helper_id;
+    public $operator_id;
+    public $plan_id;
+    public $vehicle_id;
+    public $plan_start_time;
+    public $day_wise;
+    public $plan_trip;
+    public $from_destination;
+    public $plan_end_time;
+    public $plan_measure;
+    public $to_destination;
+    public $amount;
+    public $break_time;
+    public $up_time;
+    public $plan_extra_hours;
+    public $down_time;
+    public $plan_shift_type;
     public $client_type;
+    public $client_id;
+    public $plan;
+    public $client;
+    public $customprice;
 
 
     public function scenarios()
     {
         return [
-            Challan::SCENARIO_CREATE => ["items", "client_type", "client_id"],
-            Challan::SCENARIO_UPDATE => ["id", "items", "client_type", "client_id"],
+            Challan::SCENARIO_CREATE => ["challan_no", "challan_date", "site_address", "helper_id", "operator_id", "plan_id", "vehicle_id", "plan_start_time", "day_wise", "plan_trip", "from_destination", "plan_end_time", "plan_measure", "to_destination", "amount", "break_time", "up_time", "plan_extra_hours", "down_time", "plan_shift_type"],
+            Challan::SCENARIO_UPDATE => ["challan_no", "challan_date", "site_address", "helper_id", "operator_id", "plan_id", "vehicle_id", "plan_start_time", "day_wise", "plan_trip", "from_destination", "plan_end_time", "plan_measure", "to_destination", "amount", "break_time", "up_time", "plan_extra_hours", "down_time", "plan_shift_type"]
         ];
     }
 
     public function rules()
     {
-
-        $valid = (new DynamicModel(['plan_id', 'vehicle_id', 'challan_no', 'plan_start_time', 'day_wise', 'plan_trip', 'from_destination', 'plan_end_time', 'plan_measure', 'to_destination', 'amount', 'break_time', 'up_time', 'remark', 'operator_id', 'helper_id', 'site_address', 'challan_date']))
-            ->addRule(['plan_id', 'vehicle_id', 'challan_date'], 'required')
-            ->addRule(['challan_no', 'from_destination', 'to_destination', 'remark'], "string")
-            ->addRule(['plan_id', 'vehicle_id', 'plan_measure', 'break_time', 'up_time', 'plan_trip', 'operator_id', 'helper_id', 'site_address'], 'integer')
-            ->addRule(['amount', 'extra', 'tax', 'total', 'base_amount', 'payment_status', 'amount_paid'], 'number')
-            ->addRule(['plan_start_time', 'day_wise', 'from_destination', 'plan_end_time', 'to_destination', 'remark'], 'safe');
-
         return [
-            [["challan_date", 'client_id'], 'required'],
-            [["items"], 'safe'],
-            [['items'], 'ValidateMulti', 'params' => ['isMulti' => TRUE, 'ValidationModel' => $valid, 'allowEmpty' => true]],
+            [["challan_no", "challan_date", "plan_id", "vehicle_id", 'client_id', "client_type"], "required"],
+            [["from_destination", "to_destination", "challan_no",], "string"],
+            [["break_time", "up_time", "down_time", "plan_trip",  "plan_measure", "site_address", "helper_id", "operator_id", "plan_id", "vehicle_id"], 'integer'],
+            [['amount'], 'double'],
+            ['plan_id', 'exist', 'targetClass' => PlanMaster::class, 'targetAttribute' => ['plan_id' => 'id']],
+            ['vehicle_id', 'exist', 'targetClass' => VehicleMaster::class, 'targetAttribute' => ['vehicle_id' => 'id']],
+            ['helper_id', 'exist', 'targetClass' => EmployeeMaster::class, 'targetAttribute' => ['helper_id' => 'id']],
+            ['operator_id', 'exist', 'targetClass' => EmployeeMaster::class, 'targetAttribute' => ['operator_id' => 'id']],
+            ['client_id', 'exist', 'targetClass' => ClientMaster::class, 'targetAttribute' => ['client_id' => 'id']],
         ];
-    }
-
-    public function save()
-    {
-        if (!$this->hasErrors()) {
-            if (!empty($this->id)) {
-                return $this->update($this->id);
-            } else {
-                return $this->create();
-            }
-        }
-        return false;
-    }
-
-    public function create()
-    {
-        $is_valid = true;
-
-        if (!empty($this->items)) {
-
-            foreach ($this->items as $item) {
-                $plan_id = !empty($item['plan_id']) ? $item['plan_id'] : null;
-                if (!empty($plan_id)) {
-                    $plan = PlanMaster::findOne(['id' => $plan_id]);
-                    $model = new Challan(['scenario' => Challan::SCENARIO_CREATE]);
-                    $model->client_id = $this->client_id;
-                    $model->client_type = $this->client_type;
-                    $model->challan_date = !empty($item['challan_date']) ? $item['challan_date'] : null;
-                    $model->site_address = !empty($item['site_address']) ? $item['site_address'] : null;
-                    $model->operator_id =  !empty($item['operator_id']) ? $item['operator_id'] : null;
-                    $model->helper_id =  !empty($item['helper_id']) ? $item['helper_id'] : null;
-                    $model->plan_id = $plan_id;
-                    $model->vehicle_id = !empty($item['vehicle_id']) ? $item['vehicle_id'] : null;
-                    $model->challan_no = !empty($item['challan_no']) ? $item['challan_no'] : null;
-                    $model->plan_start_time = !empty($item['plan_start_time']) ? $item['plan_start_time'] : null;
-                    $model->plan_end_time = !empty($item['plan_end_time']) ? $item['plan_end_time'] : null;
-                    $model->day_wise = !empty($item['day_wise']) ? $item['day_wise'] : null;
-                    $model->plan_measure = !empty($item['plan_measure']) ? $item['plan_measure'] : null;
-                    $model->plan_trip = !empty($item['plan_trip']) ? $item['plan_trip'] : null;
-                    $model->from_destination = !empty($item['from_destination']) ? $item['from_destination'] : null;
-                    $model->to_destination = !empty($item['to_destination']) ? $item['to_destination'] : null;
-                    $model->break_time = !empty($item['break_time']) ? $item['break_time'] : null;
-                    $model->up_time = !empty($item['up_time']) ? $item['up_time'] : null;
-                    $model->down_time = !empty($item['down_time']) ? $item['down_time'] : null;
-                    $model->plan_extra_hours = !empty($item['plan_extra_hours']) && $item['plan_extra_hours'] != 'NaN' ? $item['plan_extra_hours'] : null;
-                    $model->plan_shift_type = !empty($item['plan_shift_type']) ? $item['plan_shift_type'] : null;
-                    $model->challan_image = !empty($item['challan_image']) ? $item['challan_image'] : null;
-                    $model->invoice_id = null;
-                    $model->is_processed = C::STATUS_INACTIVE;
-                    $model->status = C::STATUS_ACTIVE;
-                    $model->base_amount = (!empty($item['amount']) ? $item['amount'] : $plan->price);
-                    $model->amount = (!empty($item['amount']) ? $item['amount'] : $plan->price);
-                    $model->extra = 0;
-                    if ($plan->type == C::PACKAGE_WISE_SHIFT) {
-                        $totalHrs =  date("H", strtotime($model->plan_end_time) - strtotime($model->plan_start_time));
-                        if ($item['plan_shift_type'] == C::PACKAGE_SHIFT_TYPE_HOURS) {
-                            $perhrs = (!empty($item['amount']) ? $item['amount'] : $plan->price) / $plan->shift_hrs;
-                            $model->extra =  ($totalHrs - $plan->shift_hrs) * $perhrs;
-                        } else {
-                            $model->extra = ($totalHrs < $plan->shift_hrs) ? 0 : ((($totalHrs - $plan->shift_hrs) > 4 ? (!empty($item['amount']) ? $item['amount'] : $plan->price) : ((!empty($item['amount']) ? $item['amount'] : $plan->price) / 2)));
-                        }
-                    } else if ($plan->type == C::PACKAGE_WISE_TRIP) {
-                        $model->amount = (!empty($item['amount']) ? $item['amount'] : $plan->price) * $item['plan_trip'] * $item['plan_measure'];
-                    } else if ($plan->type == C::PACKAGE_WISE_CHALLAN) {
-                        $totalMinutes = (strtotime($model->plan_end_time) - strtotime($model->plan_start_time)) / 60;
-                        $model->amount =  ((!empty($item['amount']) ? $item['amount'] : $plan->price) / 60) * $totalMinutes;
-                    } else if ($plan->type == C::PACKAGE_WISE_DESTINATION) {
-                    } else if ($plan->type == C::PACKAGE_WISE_MONTH) {
-                        //do nothings
-                    } else if ($plan->type == C::PACKAGE_WISE_DAY) {
-                        //do nothings
-                    }
-                    $totalAmount = $model->amount + $model->extra;
-                    $model->tax = F::calculateTax($totalAmount, $plan->tax_slot);
-                    $model->total = $totalAmount + $model->tax;
-                    if ($model->validate() && $model->save()) {
-                        $is_valid = $is_valid &&  true;
-                    } else {
-                        $is_valid = $is_valid && false;
-                    }
-                }
-            }
-        }
-        return $is_valid;
     }
 
     /**
@@ -177,76 +112,142 @@ class ChallanForm extends BaseForm
     }
 
 
-    public function update($id)
+    public function beforeValidate()
     {
-        $is_valid = true;
-        if (!empty($this->items)) {
-            foreach ($this->items as $item) {
-                $plan_id = !empty($item['plan_id']) ? $item['plan_id'] : null;
-                if (!empty($plan_id)) {
-                    $plan = PlanMaster::findOne(['id' => $plan_id]);
-                    $model = Challan::findOne(['id' => $this->id]);
-                    if ($model instanceof Challan) {
-                        $model->scenario = Challan::SCENARIO_UPDATE;
-                        $model->challan_date = !empty($item['challan_date']) ? $item['challan_date'] : null;
-                        $model->site_address = !empty($item['site_address']) ? $item['site_address'] : null;
-                        $model->operator_id =  !empty($item['operator_id']) ? $item['operator_id'] : null;
-                        $model->helper_id =  !empty($item['helper_id']) ? $item['helper_id'] : null;
-                        $model->plan_id = $plan_id;
-                        $model->vehicle_id = !empty($item['vehicle_id']) ? $item['vehicle_id'] : null;
-                        $model->challan_no = !empty($item['challan_no']) ? $item['challan_no'] : null;
-                        $model->plan_start_time = !empty($item['plan_start_time']) ? $item['plan_start_time'] : null;
-                        $model->plan_end_time = !empty($item['plan_end_time']) ? $item['plan_end_time'] : null;
-                        $model->day_wise = !empty($item['day_wise']) ? $item['day_wise'] : null;
-                        $model->plan_measure = !empty($item['plan_measure']) ? $item['plan_measure'] : null;
-                        $model->plan_trip = !empty($item['plan_trip']) ? $item['plan_trip'] : null;
-                        $model->from_destination = !empty($item['from_destination']) ? $item['from_destination'] : null;
-                        $model->to_destination = !empty($item['to_destination']) ? $item['to_destination'] : null;
-                        $model->break_time = !empty($item['break_time']) ? $item['break_time'] : null;
-                        $model->up_time = !empty($item['up_time']) ? $item['up_time'] : null;
-                        $model->down_time = !empty($item['down_time']) ? $item['down_time'] : null;
-                        $model->plan_extra_hours = !empty($item['plan_extra_hours']) && $item['plan_extra_hours'] != 'NaN' ? $item['plan_extra_hours'] : null;
-                        $model->plan_shift_type = !empty($item['plan_shift_type']) ? $item['plan_shift_type'] : null;
-                        $model->challan_image = !empty($item['challan_image']) ? $item['challan_image'] : null;
-                        $model->invoice_id = null;
-                        $model->is_processed = C::STATUS_INACTIVE;
-                        $model->status = C::STATUS_ACTIVE;
-                        $model->base_amount = (!empty($item['amount']) ? $item['amount'] : $plan->price);
-                        $model->amount = (!empty($item['amount']) ? $item['amount'] : $plan->price);
-                        $model->extra = 0;
-                        if ($plan->type == C::PACKAGE_WISE_SHIFT) {
-                            $totalHrs =  date("H", strtotime($model->plan_end_time) - strtotime($model->plan_start_time));
-                            if ($item['plan_shift_type'] == C::PACKAGE_SHIFT_TYPE_HOURS) {
-                                $perhrs = (!empty($item['amount']) ? $item['amount'] : $plan->price) / $plan->shift_hrs;
-                                $model->extra =  ($totalHrs - $plan->shift_hrs) * $perhrs;
-                            } else {
-                                $model->extra = ($totalHrs < $plan->shift_hrs) ? 0 : ((($totalHrs - $plan->shift_hrs) > 4 ? (!empty($item['amount']) ? $item['amount'] : $plan->price) : ((!empty($item['amount']) ? $item['amount'] : $plan->price) / 2)));
-                            }
-                        } else if ($plan->type == C::PACKAGE_WISE_TRIP) {
-                            $model->amount = (!empty($item['amount']) ? $item['amount'] : $plan->price) * $item['plan_trip'] * $item['plan_measure'];
-                        } else if ($plan->type == C::PACKAGE_WISE_CHALLAN) {
-                            $totalMinutes = (strtotime($model->plan_end_time) - strtotime($model->plan_start_time)) / 60;
-                            $model->amount =  ((!empty($item['amount']) ? $item['amount'] : $plan->price) / 60) * $totalMinutes;
-                        } else if ($plan->type == C::PACKAGE_WISE_DESTINATION) {
-                        } else if ($plan->type == C::PACKAGE_WISE_MONTH) {
-                            //do nothings
-                        } else if ($plan->type == C::PACKAGE_WISE_DAY) {
-                            //do nothings
-                        }
-                        $totalAmount = $model->amount + $model->extra;
-                        $model->tax = F::calculateTax($totalAmount, $plan->tax_slot);
-                        $model->total = $totalAmount + $model->tax;
-                        if ($model->validate() && $model->save()) {
-                            $is_valid = $is_valid &&  true;
-                        } else {
-                            $is_valid = $is_valid && false;
-                        }
-                    } else {
-                        $is_valid = $is_valid && false;
-                    }
+        $client = ClientMaster::findOne(['id' => $this->client_id]);
+        if ($client instanceof ClientMaster) {
+            $this->client = $client;
+        }
+
+        if (!empty($this->plan_id)) {
+            $plan = PlanMaster::findOne(['id' => $this->plan_id]);
+            if ($plan instanceof PlanMaster) {
+                $this->plan = $plan;
+            }
+        }
+        if (!empty($this->plan_id)) {
+            $plan = ClientPlanMapping::findOne(['plan_id' => $this->plan_id, 'client_id' => $this->client_id]);
+            if ($plan instanceof ClientPlanMapping) {
+                $this->customprice = $plan;
+            }
+        }
+
+        if ($this->plan instanceof PlanMaster) {
+            if ($this->plan->type == C::PACKAGE_WISE_TRIP) {
+                if (empty($this->plan_trip)) {
+                    $this->addError('plan_trip', "Plan Trip cannot be empty");
+                }
+                if (empty($this->plan_measure)) {
+                    $this->addError('plan_measure', "Plan Measure cannot be empty");
+                }
+            }
+
+            if ($this->plan->type == C::PACKAGE_WISE_DAY) {
+                if (empty($this->day_wise)) {
+                    $this->addError('day_wise', "Day wise cannot be empty");
+                }
+            }
+
+            if (in_array($this->plan->type, [C::PACKAGE_WISE_CHALLAN, C::PACKAGE_WISE_SHIFT, C::PACKAGE_WISE_MONTH])) {
+                if (empty($this->plan_start_time)) {
+                    $this->addError('plan_start_time', "Plan Start Time cannot be empty");
+                }
+
+                if (empty($this->plan_end_time)) {
+                    $this->addError('plan_end_time', "Plan End Time cannot be empty");
+                }
+            }
+
+            if ($this->plan->type == C::PACKAGE_WISE_MONTH) {
+                if (empty($this->from_destination)) {
+                    $this->addError('from_destination', "From Desstination cannot be empty");
+                }
+
+                if (empty($this->to_destination)) {
+                    $this->addError('to_destination', "To destination cannot be empty");
                 }
             }
         }
-        return $is_valid;
+
+        return parent::beforeValidate();
+    }
+
+    public function afterValidate()
+    {
+        parent::afterValidate();
+    }
+
+    public function save()
+    {  
+        if (!$this->hasErrors() && ($this->plan instanceof PlanMaster) && ($this->client instanceof ClientMaster)) {
+            $model = new Challan(['scenario' => Challan::SCENARIO_CREATE]);
+            if (!empty($this->id)) {
+                $model = Challan::findOne(['id' => $this->id]);
+                $model->scenario = Challan::SCENARIO_UPDATE;
+            }
+            $model->client_id = $this->client->id;
+            $model->client_type = $this->client->client_type;
+            $model->challan_date = $this->challan_date;
+            $model->site_address = $this->site_address;
+            $model->operator_id = $this->operator_id;
+            $model->helper_id =  $this->helper_id;
+            $model->plan_id = $this->plan->id;
+            $model->plan_type = $this->plan->type;
+            $model->vehicle_id = $this->vehicle_id;
+            $model->challan_no = $this->challan_no;
+            $model->plan_start_time = $this->plan_start_time;
+            $model->plan_end_time = $this->plan_end_time;
+            $model->day_wise = $this->day_wise;
+            $model->plan_measure = $this->plan_measure;
+            $model->plan_trip = $this->plan_trip;
+            $model->from_destination = $this->from_destination;
+            $model->to_destination = $this->to_destination;
+            $model->break_time = $this->break_time;
+            $model->up_time = $this->up_time;
+            $model->down_time = $this->down_time;
+            $model->plan_extra_hours = $this->plan_extra_hours;
+            $model->plan_shift_type = $this->plan_shift_type;
+            $model->invoice_id = null;
+            $model->is_processed = C::STATUS_ACTIVE;
+            $model->status = C::STATUS_PENDING;
+            $model->base_amount = !empty($this->amount) ? $this->amount : (!empty($this->customprice) ? $this->customprice->custome_price : $this->plan->price);
+            $model->amount = $model->base_amount;
+            $model->extra = 0;
+            list($model->extra, $model->amount)  = self::calculateChallanAmount($model);
+            $totalAmount = $model->extra + $model->amount;
+            $model->tax = F::calculateTax($totalAmount, $this->plan->tax_slot);
+            if ($model->validate() && $model->save()) {
+                return true;
+            }else{
+               $this->addErrors($model->errors);
+            }
+        }
+        return false;
+    }
+
+
+    public static function calculateChallanAmount(Challan $challan)
+    {
+        $extra = $amount = 0;
+        $plan = PlanMaster::findOne(['id' => $challan->plan_id]);
+        switch ($challan->plan_type) {
+            case C::PACKAGE_WISE_SHIFT:
+                $totalHrs =  date("H", strtotime($challan->plan_end_time) - strtotime($challan->plan_start_time));
+                if ($challan->plan_shift_type == C::PACKAGE_SHIFT_TYPE_HOURS) {
+                    $perhrs = $challan->base_amount / $plan->shift_hrs;
+                    $extra =  ($totalHrs - $plan->shift_hrs) * $perhrs;
+                } else {
+                    $extra = ($totalHrs < $plan->shift_hrs) ? 0 : ((($totalHrs - $plan->shift_hrs) > 4 ? $challan->base_amount : ($base_amount / 2)));
+                }
+                $amount = $challan->base_amount + $extra;
+                break;
+            case C::PACKAGE_WISE_TRIP:
+                $amount = $challan->base_amount *  $challan->plan_trip *  $challan->plan_measure;
+                break;
+            default:
+                $amount = $base_amount;
+                break;
+        }
+        return [$extra, $amount];
     }
 }

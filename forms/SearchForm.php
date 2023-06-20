@@ -95,8 +95,6 @@ class SearchForm extends BaseForm
                 $urlData[$search] = $model->receipt_no;
                 $urlData['id'] = $model->client_id;
             }
-            print_r($model->attributes);
-            exit;
             return ["url" => $urlData, "status" => true];
         } else {
             return ["url" => $this->current_page, "status" => false];

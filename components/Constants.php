@@ -10,6 +10,8 @@ class Constants
 
     const STATUS_DELETED = -1;
 
+    const STATUS_PENDING = -2;
+
     const Admin = 1;
 
     const DOCUMENT_FOR_COMPANY = 1;

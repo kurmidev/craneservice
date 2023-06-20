@@ -30,7 +30,10 @@ use app\models\PaymentsDetailsSearch;
 use app\models\PaymentSearch;
 use app\models\QuotationMaster;
 use app\models\QuotationMasterSearch;
+use yii\base\Response;
 use yii\helpers\ArrayHelper;
+use yii\web\Response as WebResponse;
+use yii\widgets\ActiveForm;
 
 /**
  * ClientController implements the CRUD actions for ClientMaster model.
@@ -300,13 +303,14 @@ class ClientController extends BaseController
         $model->client_id = $id;
         $model->client_type = $this->clientType;
         $client = ClientMaster::findOne(['id' => $id]);
-        if ($this->request->isPost) {
+
+         if ($this->request->isPost) {
             $model->client_type = ($client instanceof ClientMaster) ? $client->client_type : 0;
-            if ($model->load($this->request->post()) && $model->save()) {
+            if ($model->load($this->request->post()) && $model->validate() && $model->save()) {
                 $title = $this->clientType == C::CLIENT_TYPE_CUSTOMER ? "Customer" : "Vendor";
-                $redirectUrl = $this->clientType == C::CLIENT_TYPE_CUSTOMER ? "customer/view-customer" : "vendor/view-vendor";
-                \Yii::$app->getSession()->setFlash('s', "Challan has been added successfully.");
-                return $this->redirect([$redirectUrl, "pg" => "pending-challan", "id" => $id]);
+                $redirectUrl = $this->clientType == C::CLIENT_TYPE_CUSTOMER ? "customer/add-challan" : "vendor/add-challan";
+                \Yii::$app->getSession()->setFlash('s', "Challan {$model->challan_no} has been added successfully.");
+                return $this->redirect([$redirectUrl,"id" => $id]);
             }
         }
 
@@ -330,17 +334,17 @@ class ClientController extends BaseController
             \Yii::$app->getSession()->setFlash('e', "Record not found!");
             return $this->redirect([$redirectUrl]);
         }
-        $item = [$challan->attributes];
+        
         $model = new ChallanForm(['scenario' => ClientMaster::SCENARIO_CREATE]);
-        $model->items = $item;
-        $model->client_id = $challan->client_id;
-        $model->client_type = $challan->client_type;
-        $model->id = $challan->id;
+        $model->load($challan->attributes,'');
+        
         if ($this->request->isPost) {
-            $model->client_type = $this->clientType;
             $model->scenario = Challan::SCENARIO_UPDATE;
             $model->load($this->request->post());
-            if ($model->load($this->request->post()) && $model->save()) {
+            $model->id=$challan->id;
+            $model->client_id= $challan->client_id;
+            $model->client_type = $challan->client_type;
+            if ($model->validate() && $model->save()) {
                 $title = $this->clientType == C::CLIENT_TYPE_CUSTOMER ? "Customer" : "Vendor";
                 $redirectUrl = $this->clientType == C::CLIENT_TYPE_CUSTOMER ? "customer/view-customer" : "vendor/view-vendor";
                 \Yii::$app->getSession()->setFlash('s', "Challan {$challan->challan_no} has been updated successfully.");
@@ -348,7 +352,7 @@ class ClientController extends BaseController
             }
         }
 
-        return $this->render('@app/views/challan/challan-edit-form', [
+        return $this->render('@app/views/challan/challan-form', [
             'model' => $model,
             'challan' => $challan,
             "title" => $this->title
