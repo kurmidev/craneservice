@@ -303,9 +303,10 @@ class ClientController extends BaseController
         $model->client_id = $id;
         $model->client_type = $this->clientType;
         $client = ClientMaster::findOne(['id' => $id]);
-
+        
          if ($this->request->isPost) {
             $model->client_type = ($client instanceof ClientMaster) ? $client->client_type : 0;
+            $model->client_id = ($client instanceof ClientMaster) ? $client->id : 0;
             if ($model->load($this->request->post()) && $model->validate() && $model->save()) {
                 $title = $this->clientType == C::CLIENT_TYPE_CUSTOMER ? "Customer" : "Vendor";
                 $redirectUrl = $this->clientType == C::CLIENT_TYPE_CUSTOMER ? "customer/add-challan" : "vendor/add-challan";
@@ -821,4 +822,6 @@ class ClientController extends BaseController
             "is_edit" => true
         ]);
     }
+
+    
 }
