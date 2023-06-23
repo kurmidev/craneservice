@@ -138,7 +138,7 @@ use app\models\VehicleMaster;
                     <?= Html::activeLabel($model, 'name', ['class' => 'col-lg-12 col-sm-12 col-xs-12 control-label', "label" => $label]); ?>
                     <div class="row">
                         <div class="col-lg-6 col-sm-6 col-xs-6">
-                            <?= Html::activeTextInput($model, 'kyc_details[' . $key . '][value]', ['class' => 'form-control', "value" => !empty($doc['other_details']) ? $doc['other_details'] : ""]) ?>
+                            <?= Html::activeTextInput($model, 'kyc_details[' . $key . '][value]', ['class' => 'form-control', "onkeyup" => "this.value = this.value.toUpperCase();", "value" => !empty($doc['other_details']) ? $doc['other_details'] : ""]) ?>
                             <?= Html::error($model, 'kyc_details[' . $key . '][value]', ['class' => 'error help-block']) ?>
                         </div>
                         <div class="col-lg-6 col-sm-6 col-xs-6">

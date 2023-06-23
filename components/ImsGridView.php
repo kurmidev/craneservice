@@ -22,14 +22,14 @@ class ImsGridView extends GridView
     public function renderPager()
     {
         $pagination = $this->dataProvider->getPagination();
-        $this->noFooter = (!empty($pagination->pageSize) ? $pagination->pageSize : $pagination->defaultPageSize) < $pagination->totalCount ? TRUE : FALSE;
+        $this->noFooter = empty($pagination) ? FALSE : ((!empty($pagination->pageSize) ? $pagination->pageSize : $pagination->defaultPageSize) < $pagination->totalCount ? TRUE : FALSE);
         if ($pagination === false || $this->dataProvider->getCount() <= 0 || !$this->noFooter) {
             return '';
         }
 
         /* @var $class LinkPager */
         $pager = $this->pager;
-        $class = ArrayHelper::remove($pager, 'class', ImsGridPagination::className());
+        $class = ArrayHelper::remove($pager, 'class', ImsGridPagination::class);
         $pager['pagination'] = $pagination;
         $pager['view'] = $this->getView();
         return Html::tag(

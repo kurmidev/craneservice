@@ -95,7 +95,7 @@ class ClientController extends BaseController
             $invoiceDataProvider->query->active()->andWhere(["client_id" => $model->id]);
             $invoiceDataProvider->pagination->pageSize = 10;
             $invoiceAmount = InvoiceMaster::find()->where(['client_id' => $model->id, 'payment_id' => 0])->active()->sum("total");
-            
+
             $paymentSearchModel = new PaymentSearch();
             $paymentDataProvider = $paymentSearchModel->search($this->request->queryParams);
             $paymentDataProvider->query->andWhere(["client_id" => $model->id])->active();
@@ -121,10 +121,10 @@ class ClientController extends BaseController
             $logDataProvider = $logSearchModel->search($this->request->queryParams);
             $logDataProvider->query->andWhere(["client_id" => $model->id]);
             $logDataProvider->pagination->pageSize = 10;
-            $pendingChallanAmount = Challan::find()->active()->andWhere(['client_id'=>$model->id,'invoice_id'=>0])->sum("amount");
-            $totalChallanAmount = Challan::find()->active()->andWhere(['client_id'=>$model->id,'client_type'=>$model->client_type])->sum("amount");
-            $totalinvoiceAmount = InvoiceMaster::find()->active()->andWhere(['client_id'=>$model->id,'client_type'=>$model->client_type])->sum("total-payment");
-            $paymentAmount = Payments::find()->active()->andWhere(['client_id'=>$model->id,'client_type'=>$model->client_type])->sum("amount_paid");
+            $pendingChallanAmount = Challan::find()->active()->andWhere(['client_id' => $model->id, 'invoice_id' => 0])->sum("amount");
+            $totalChallanAmount = Challan::find()->active()->andWhere(['client_id' => $model->id, 'client_type' => $model->client_type])->sum("amount");
+            $totalinvoiceAmount = InvoiceMaster::find()->active()->andWhere(['client_id' => $model->id, 'client_type' => $model->client_type])->sum("total-payment");
+            $paymentAmount = Payments::find()->active()->andWhere(['client_id' => $model->id, 'client_type' => $model->client_type])->sum("amount_paid");
             return $this->render('@app/views/client/view', [
                 'model' => $model,
                 "title" => $this->title,
@@ -165,9 +165,9 @@ class ClientController extends BaseController
                 "quoteEditUrl" => $this->clientType == C::CLIENT_TYPE_CUSTOMER ?  "customer/edit-quotation" : "vendor/edit-quotation",
                 "quotePrint" => $this->clientType == C::CLIENT_TYPE_CUSTOMER ? "customer/print-quotation" : "vendor/print-quotation",
                 'pendingChallanAmount' => $pendingChallanAmount,
-                'totalChallanAmount'=>$totalChallanAmount,
-                'totalinvoiceAmount'=> $totalinvoiceAmount,
-                'paymentAmount'=> $paymentAmount
+                'totalChallanAmount' => $totalChallanAmount,
+                'totalinvoiceAmount' => $totalinvoiceAmount,
+                'paymentAmount' => $paymentAmount
             ]);
         }
 
@@ -303,21 +303,28 @@ class ClientController extends BaseController
         $model->client_id = $id;
         $model->client_type = $this->clientType;
         $client = ClientMaster::findOne(['id' => $id]);
-        
-         if ($this->request->isPost) {
+
+        if ($this->request->isPost) {
             $model->client_type = ($client instanceof ClientMaster) ? $client->client_type : 0;
             $model->client_id = ($client instanceof ClientMaster) ? $client->id : 0;
             if ($model->load($this->request->post()) && $model->validate() && $model->save()) {
                 $title = $this->clientType == C::CLIENT_TYPE_CUSTOMER ? "Customer" : "Vendor";
                 $redirectUrl = $this->clientType == C::CLIENT_TYPE_CUSTOMER ? "customer/add-challan" : "vendor/add-challan";
                 \Yii::$app->getSession()->setFlash('s', "Challan {$model->challan_no} has been added successfully.");
-                return $this->redirect([$redirectUrl,"id" => $id]);
+                return $this->redirect([$redirectUrl, "id" => $id]);
             }
         }
 
+        $searchModel = new ChallanSearch();
+        $dataProvider = $searchModel->search($this->request->queryParams);
+        $dataProvider->query->active()->andWhere(["client_id" => $id,'status'=>C::STATUS_PENDING]);
+            
         return $this->render('@app/views/challan/challan-form', [
             'model' => $model,
-            "title" => $this->title
+            "title" => $this->title,
+            'dataProvider'=>$dataProvider,
+            'searchModel'=>$searchModel,
+            "base_controller" =>  $this->clientType == C::CLIENT_TYPE_CUSTOMER ? "customer" : "vendor",
         ]);
     }
 
@@ -335,15 +342,15 @@ class ClientController extends BaseController
             \Yii::$app->getSession()->setFlash('e', "Record not found!");
             return $this->redirect([$redirectUrl]);
         }
-        
+
         $model = new ChallanForm(['scenario' => ClientMaster::SCENARIO_CREATE]);
-        $model->load($challan->attributes,'');
-        
+        $model->load($challan->attributes, '');
+
         if ($this->request->isPost) {
             $model->scenario = Challan::SCENARIO_UPDATE;
             $model->load($this->request->post());
-            $model->id=$challan->id;
-            $model->client_id= $challan->client_id;
+            $model->id = $challan->id;
+            $model->client_id = $challan->client_id;
             $model->client_type = $challan->client_type;
             if ($model->validate() && $model->save()) {
                 $title = $this->clientType == C::CLIENT_TYPE_CUSTOMER ? "Customer" : "Vendor";
@@ -783,7 +790,7 @@ class ClientController extends BaseController
             "searchModel" => $searchModel,
             "model" => $model
         ]);
-        return $content;
+
         return F::printPdf($content, $filename);
     }
 
@@ -823,5 +830,47 @@ class ClientController extends BaseController
         ]);
     }
 
-    
+    public function actionExportData($type, $id)
+    {
+        $this->layout =false;
+        $client = ClientMaster::findOne(['id'=>$id]);
+        
+        $filename = $title  = $dataProvider = null;
+        switch ($type) {
+            case "challan":
+            case "pending-challan":
+                $title = "Challan List";
+                $searchModel = new ChallanSearch();
+                $dataProvider = $searchModel->search($this->request->queryParams);
+                $dataProvider->query->active()->andWhere(["client_id" => $id]);
+                if ($type == "pending-challan") {
+                    $title = "Pending Challan List";
+                    $dataProvider->query->andWhere(["invoice_id" => null]);
+                }
+                break;
+            case "invoice":
+                $title = "Invoice List";
+                $invoiceSearchModel = new InvoiceMasterSearch();
+                $dataProvider = $invoiceSearchModel->search($this->request->queryParams);
+                $dataProvider->query->active()->andWhere(["client_id" => $id]);
+                break;
+            case "payments":
+                $title = "Payment List";
+                $paymentSearchModel = new PaymentSearch();
+                $dataProvider = $paymentSearchModel->search($this->request->queryParams);
+                $dataProvider->query->andWhere(["client_id" => $id])->active();
+                break;
+        }
+        $dataProvider->sort = false;
+        $dataProvider->pagination = false;
+        $content = $this->render('@app/views/client/export-data', [
+            "dataProvider" => $dataProvider,
+            "model" => $client,
+            "title" => $title,
+            "pg"=> $type
+        ]);
+
+        return F::printPdf($content, $filename);
+
+    }
 }

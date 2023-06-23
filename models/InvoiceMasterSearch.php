@@ -7,6 +7,7 @@ use yii\data\ActiveDataProvider;
 use app\models\InvoiceMaster;
 use app\components\Constants as C;
 use yii\helpers\ArrayHelper;
+use yii\helpers\Html;
 /**
  * InvoiceMasterSearch represents the model behind the search form of `app\models\InvoiceMaster`.
  */
@@ -124,7 +125,13 @@ class InvoiceMasterSearch extends InvoiceMaster
         return [
             ['class' => 'yii\grid\SerialColumn'],
             'invoice_date',
-            'invoice_no',
+            [
+                "attribute" => "invoice_no",
+                "content" => function ($model) {
+                    $base_controller  = $model->client_type==C::CLIENT_TYPE_CUSTOMER?"customer":"vendor"; 
+                    return  Html::a($model->invoice_no, \Yii::$app->urlManager->createUrl(["{$base_controller}/print-invoice", 'id' => $model->id]), ['title' => 'Print ' . $model->invoice_no,]);
+                },
+            ],
             'client.company_name',
             'client.mobile_no',
             'client.phone_no',

@@ -30,9 +30,10 @@ class ConstFunc
             'content' => $content,  
             // format content from your own css file if needed or use the
             // enhanced bootstrap css built by Krajee for mPDF formatting 
-            'cssFile' => '@webroot/css/print.css',
+            'cssFile' => '@vendor/kartik-v/yii2-mpdf/src/assets/kv-mpdf-bootstrap.min.css',
             // any css to be embedded if required
-            'cssInline' => '.kv-heading-1{font-size:18px}', 
+            'cssInline' => 'body{font-size:10px;} .kv-heading-1{font-size:18px} .page-break{ page-break-after:always; } li { list-style:none; }', 
+            // any css to be embedded if required
              // set mPDF properties on the fly
             'options' => ['title' => $filename],
              // call mPDF methods on the fly

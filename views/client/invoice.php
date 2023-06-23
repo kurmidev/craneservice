@@ -11,6 +11,7 @@ use app\components\ConstFunc as F;
 use app\models\PlanAttributes;
 use app\models\PlanMaster;
 
+$pg = Yii::$app->request->get('pg');
 ?>
 <div class="card">
     <div class="card-header">
@@ -20,6 +21,7 @@ use app\models\PlanMaster;
         <div class="card-tools">
             <?= Html::a(Html::tag('span', '', ['class' => 'fa fa-plus']), \Yii::$app->urlManager->createUrl(["{$base_controller}/add-invoice", "id" => $model->id]), ['title' => 'Add Invoice', 'class' => 'btn btn-primary btn-sm']) ?>
             <?= Html::a(Html::tag('span', '', ['class' => 'fa fa-cash-register']), \Yii::$app->urlManager->createUrl(["{$base_controller}/pay-invoice", "id" => $model->id]), ['title' => 'Pay Invoice', 'class' => 'btn btn-primary btn-sm']) ?>
+            <?= Html::a(Html::tag('span', '', ['class' => 'fa fa-download']), \Yii::$app->urlManager->createUrl(["{$base_controller}/export-data",'type'=>"invoice",'pg'=>$pg,'id' => $model->id]), ['title' => 'Export', 'class' => 'btn btn-primary btn-sm']) ?>
         </div>
     </div>
     <div class="card-body p-0 table-responsive">
@@ -34,7 +36,13 @@ use app\models\PlanMaster;
                         return Html::a($model->invoice_no, \Yii::$app->urlManager->createUrl(["{$base_controller}/print-invoice", 'id' => $model->id]), ['title' => 'Print ' . $model->invoice_no,"target"=>"_blank"]);
                     }
                 ],
-                'invoice_date:date',
+                [
+                    "attribute" => "invoice_date",
+                    "content" => function ($model) {
+                        return $model->invoice_date;
+                    },
+                    'filter' => Html::textInput('InvoiceMasterSearch[invoice_date_start]', '', ['class' => 'form-control cal']) . '-' . Html::textInput('InvoiceMasterSearch[invoice_date_end]', '', ['class' => 'form-control cal'])
+                ],
                 [
                     'attribute' => 'invoice_type', 'label' => 'Invoice Type',
                     'content' => function ($model) {

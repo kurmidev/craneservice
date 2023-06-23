@@ -54,47 +54,69 @@ class ReportController extends BaseReportController
 
     public function actionVehicleSummary()
     {
+        if ($this->is_pdf) {
+            $this->layout = false;
+        }
         $searchModel = new VehicleMasterSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
         $dataProvider->query->setAlias("a");
         $dataProvider->query->leftJoin("challan c", "c.vehicle_id=a.id and c.status=" . C::STATUS_ACTIVE)
             ->leftJoin("expense_master e", "e.vehicle_id=a.id  and e.status=" . C::STATUS_ACTIVE)
             ->andWhere(['a.status' => C::STATUS_ACTIVE])
-            ->select(['vehicle_no', "sales_amount" => "sum(c.total)", "expenses" => "sum(e.total)","profit_loss"=>"sum(c.total-e.total)"])
+            ->select(['vehicle_no', "sales_amount" => "sum(c.total)", "expenses" => "sum(e.total)", "profit_loss" => "sum(c.total-e.total)"])
             ->groupBy(['vehicle_no'])
             ->orderBy(['sales_amount' => SORT_DESC]);
 
-        $dataProvider->pagination->pageSize = 20;
-        return $this->render('@app/views/reports/index', [
+        if ($this->is_pdf) {
+            $dataProvider->sort = false;
+            $dataProvider->pagination = false;
+        } else {
+            $dataProvider->pagination->pageSize = 20;
+        }
+        $content = $this->render('@app/views/reports/index', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
             "columns" => $searchModel->displayColumn('summary'),
             "title" => "Vehicle Summary",
-            "search" => $searchModel->advanceSearch('summary')
+            "search" => $searchModel->advanceSearch('summary'),
+            "is_pdf" => $this->is_pdf
         ]);
+        return $this->setReportRender($content, "Vehicle Summary");
+
     }
 
-    public function actionPackageSummary(){
+    public function actionPackageSummary()
+    {
+        if ($this->is_pdf) {
+            $this->layout = false;
+        }
         $searchModel = new PlanMasterSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
         $dataProvider->query->setAlias("a");
         $dataProvider->query->leftJoin("challan c", "c.plan_id=a.id and c.status=" . C::STATUS_ACTIVE)
-        ->leftJoin("invoice_master e", "e.id=c.invoice_id")
-        ->select([
-            "a.name","total_challan"=>"sum(case when c.id is not null then 1 else 0 end )",
-            "challan_amount"=>"sum(case when c.id is not null then c.total else 0 end )",
-            "total_invoice"=>"sum(case when e.id is not null then 1 else 0 end )",
-            "invoice_amount"=>"sum(case when e.id is not null then e.total else 0 end )",
-        ])->groupBy(['a.name']);
+            ->leftJoin("invoice_master e", "e.id=c.invoice_id")
+            ->select([
+                "a.name", "total_challan" => "sum(case when c.id is not null then 1 else 0 end )",
+                "challan_amount" => "sum(case when c.id is not null then c.total else 0 end )",
+                "total_invoice" => "sum(case when e.id is not null then 1 else 0 end )",
+                "invoice_amount" => "sum(case when e.id is not null then e.total else 0 end )",
+            ])->groupBy(['a.name']);
 
-        $dataProvider->pagination->pageSize = 20;
-        return $this->render('@app/views/reports/index', [
+        if ($this->is_pdf) {
+            $dataProvider->sort = false;
+            $dataProvider->pagination = false;
+        } else {
+            $dataProvider->pagination->pageSize = 20;
+        }
+        $content = $this->render('@app/views/reports/index', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
             "columns" => $searchModel->displayColumn('summary'),
             "title" => "Package Summary",
-            "search" => $searchModel->advanceSearch('summary')
+            "search" => $searchModel->advanceSearch('summary'),
+            "is_pdf" => $this->is_pdf
         ]);
+        return $this->setReportRender($content, "Package Summary");
 
     }
 }

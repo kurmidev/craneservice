@@ -6,13 +6,17 @@ use yii\helpers\Url;
 use yii\helpers\ArrayHelper;
 use app\components\Constants as C;
 
+$pg = Yii::$app->request->get('pg');
 
 ?>
 <div class="card">
     <div class="card-header">
         <h3 class="card-title">
-            <?= !empty($amount) ? ("Total :" . CURRENCY_SYMBOL ." ". $amount) : "" ?>
+            <?= !empty($amount) ? ("Total :" . CURRENCY_SYMBOL . " " . $amount) : "" ?>
         </h3>
+        <div class="card-tools">
+            <?= Html::a(Html::tag('span', '', ['class' => 'fa fa-download']), \Yii::$app->urlManager->createUrl(["{$base_controller}/export-data", 'type' => "payments", 'pg' => $pg, 'id' => $model->id]), ['title' => 'Export', 'class' => 'btn btn-primary btn-sm']) ?>
+        </div>
     </div>
     <div class="card-body p-0 table-responsive">
         <?= ImsGridView::widget([
@@ -20,7 +24,13 @@ use app\components\Constants as C;
             'filterModel' => $searchModel,
             'columns' => [
                 ['class' => 'yii\grid\SerialColumn'],
-                'payment_date',
+                [
+                    "attribute" => "payment_date",
+                    "content" => function ($model) {
+                        return $model->payment_date;
+                    },
+                    'filter' => Html::textInput('PaymentSearch[payment_date_start]', '', ['class' => 'form-control cal']) . '-' . Html::textInput('PaymentSearch[payment_date_end]', '', ['class' => 'form-control cal'])
+                ],
                 [
                     "attribute" => 'receipt_no', 'label' => "Receipt No",
                     'content' => function ($model) use ($base_controller) {

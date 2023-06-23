@@ -132,6 +132,14 @@ class InvoiceMaster extends \app\models\BaseModel
         if(!empty($insert) && empty($this->invoice_no)){
             $type = $this->invoice_type==C::INVOICE_TYPE_GST?"INVOICE_GST":"INVOICE_PERFORMA";
             $prefix = $this->invoice_type==C::INVOICE_TYPE_GST?"IN/".F::getFY($this->invoice_date) :"PR";
+
+            $client = ClientMaster::findOne(['id'=>$this->client_id]);
+            if($client instanceof ClientMaster){
+                $p = $client->company->prefixData;
+                if(!empty($p)){
+                    $prefix = $p[$this->invoice_type];
+                }
+            }
             $this->invoice_no = $this->generateSequence($prefix,$type);
         }
         return true;

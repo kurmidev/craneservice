@@ -12,6 +12,7 @@ use app\models\EmployeeMaster;
 use app\models\PlanMaster;
 use app\models\VehicleMaster;
 use yii\web\View;
+use app\components\ImsGridView;
 
 ?>
 <?php $form = ActiveForm::begin(['id' => 'form-challan', 'options' => ['enctype' => 'multipart/form-data', 'class' => 'form-bordered',]]); ?>
@@ -74,7 +75,9 @@ use yii\web\View;
                     <div class="col-lg-4 col-sm-4 col-xs-4">
                         <?= $form->field($model, 'plan_id', ['options' => ['class' => 'form-group']])->begin() ?>
                         <?= Html::activeLabel($model, 'plan_id', ['class' => 'col-lg-12 col-sm-12 col-xs-12 control-label']); ?>
-                        <?= Html::activeDropDownList($model, 'plan_id', ArrayHelper::map(PlanMaster::find()->active()->all(), 'id', 'name'), ['class' => 'form-control challan_options', 'prompt' => "Select option"]) ?>
+                        <?= Html::activeDropDownList($model, 'plan_id', ArrayHelper::map(PlanMaster::find()->active()->all(), 'id', function($p){ 
+                                return $p->name.(!empty($p->shift_hrs)?" (".$p->shift_hrs."hr)":"");
+                                }), ['class' => 'form-control challan_options', 'prompt' => "Select option"]) ?>
                         <?= Html::error($model, 'plan_id', ['class' => 'error help-block']) ?>
                         <?= $form->field($model, 'plan_id')->end() ?>
                     </div>
@@ -181,6 +184,64 @@ use yii\web\View;
 
 <?php ActiveForm::end(); ?>
 
+<?php $form = ActiveForm::begin(['id' => 'inactive-form-challan', 'options' => ['enctype' => 'multipart/form-data', 'class' => 'form-bordered']]); ?>
+<?= ImsGridView::widget([
+    'dataProvider' => $dataProvider,
+    'columns' => [
+        ['class' => 'yii\grid\SerialColumn'],
+        [
+            "attribute" => "challan_date",
+            "content" => function ($model) {
+                return $model->challan_date;
+            },
+        ],
+        [
+            "attribute" => "challan_no", "label" => "Challan No",
+            "content" => function ($model) use ($base_controller) {
+                return  Html::a($model->challan_no, \Yii::$app->urlManager->createUrl(["{$base_controller}/print-challan", 'id' => $model->id]), ['title' => 'Print ' . $model->challan_no,]);
+            },
+        ],
+        [
+            'attribute' => 'plan_id', 'label' => 'Plan',
+            'content' => function ($model) {
+                return !empty($model->plan) ? $model->plan->name : "";
+            },
+            'filter' => ArrayHelper::map(PlanMaster::find()->active()->all(), 'id', 'name'),
+        ],
+        [
+            'attribute' => 'id', 'label' => 'D/C No',
+            'content' => function ($model) {
+                return $model->id;
+            },
+        ],
+        [
+            "attribute" => "", "label" => "Total Hours/Qty",
+            'content' => function ($model) {
+                return $model->plan->type == C::PACKAGE_WISE_TRIP ? $model->plan_trip : date('H:i', mktime(0, (strtotime($model->plan_end_time) - strtotime($model->plan_start_time)) / 60));
+            }
+        ],
+        "plan_start_time",
+        "plan_end_time",
+        "break_time",
+        "up_time",
+        "down_time",
+        [
+            'attribute' => 'base_amount', 'label' => 'Rate',
+            'content' => function ($model) {
+                return $model->base_amount;
+            },
+        ],
+        "amount",
+        [
+            "label" => "Action",
+            "content" => function ($data) {
+                return  Html::a(Html::tag('span', '', ['class' => 'fa fa-trash']), \Yii::$app->urlManager->createUrl(["client/delete-challan-ajax", 'id' => $data['id']]), ['title' => 'Delete ' . $data['challan_no'], 'class' => 'btn btn-primary-alt']);
+            }
+        ]
+    ],
+]); ?>
+
+<?php ActiveForm::end(); ?>
 
 <?php
 

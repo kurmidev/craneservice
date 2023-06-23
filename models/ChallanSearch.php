@@ -7,6 +7,7 @@ use yii\data\ActiveDataProvider;
 use app\models\Challan;
 use yii\helpers\ArrayHelper;
 use app\components\Constants as C;
+use yii\helpers\Html;
 /**
  * ChallanSearch represents the model behind the search form of `app\models\Challan`.
  */
@@ -133,7 +134,13 @@ class ChallanSearch extends Challan
         return [
             ['class' => 'yii\grid\SerialColumn'],
             'challan_date',
-            'challan_no',
+            [
+                "attribute" => "challan_no", "label" => "Challan No",
+                "content" => function ($model) {
+                    $base_controller  = $model->client_type==C::CLIENT_TYPE_CUSTOMER?"customer":"vendor"; 
+                    return  Html::a($model->challan_no, \Yii::$app->urlManager->createUrl(["{$base_controller}/print-challan", 'id' => $model->id]), ['title' => 'Print ' . $model->challan_no,]);
+                },
+            ],
             'client.company_name',
             'client.mobile_no',
             'client.phone_no',

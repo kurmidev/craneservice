@@ -11,10 +11,10 @@ $(function () {
     $('.timepick').daterangepicker({
         singleDatePicker: true,
         timePicker: true,
-        timePicker24Hour: true,
+        timePicker24Hour: false,
         timePickerIncrement: 1,
         locale: {
-            format: 'HH:mm'
+            format: 'hh:mm A'
         }
     }).on('show.daterangepicker', function (ev, picker) {
         picker.container.find(".calendar-table").hide();
@@ -24,10 +24,10 @@ $(function () {
         $(this).daterangepicker({
             singleDatePicker: true,
             timePicker: true,
-            timePicker24Hour: true,
+            timePicker24Hour: false,
             timePickerIncrement: 1,
             locale: {
-                format: 'HH:mm'
+                format: 'hh:mm A'
             }
         }).on('show.daterangepicker', function (ev, picker) {
             picker.container.find(".calendar-table").hide();

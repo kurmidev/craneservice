@@ -90,10 +90,60 @@ li {
 }
 
 
-#page1-div p {margin: 0; padding: 0;}	
-.ft10{font-size:29px;font-family:Helvetica;color:#c5433b;}
-.ft11{font-size:11px;font-family:Helvetica;color:#000000;}
-.ft12{font-size:11px;font-family:Helvetica;color:#000000;}
-.ft13{font-size:12px;font-family:Helvetica;color:#000000;}
-.ft14{font-size:12px;font-family:Helvetica;color:#000000;}
-.ft15{font-size:16px;font-family:Helvetica;color:#000000;}
+#page1-div p {
+    margin: 0;
+    padding: 0;
+}
+
+.ft10 {
+    font-size: 29px;
+    font-family: Helvetica;
+    color: #c5433b;
+}
+
+.ft11 {
+    font-size: 11px;
+    font-family: Helvetica;
+    color: #000000;
+}
+
+.ft12 {
+    font-size: 11px;
+    font-family: Helvetica;
+    color: #000000;
+}
+
+.ft13 {
+    font-size: 12px;
+    font-family: Helvetica;
+    color: #000000;
+}
+
+.ft14 {
+    font-size: 12px;
+    font-family: Helvetica;
+    color: #000000;
+}
+
+.ft15 {
+    font-size: 16px;
+    font-family: Helvetica;
+    color: #000000;
+}
+
+
+table {
+    border-collapse: collapse;
+}
+
+table th {
+    border: 1px solid #000;
+    width: 100%;
+}
+
+
+
+table td {
+    border: 1px solid #000;
+    width: 100%;
+}

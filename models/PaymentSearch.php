@@ -7,7 +7,7 @@ use yii\data\ActiveDataProvider;
 use app\models\Payments;
 use yii\helpers\ArrayHelper;
 use app\components\Constants as C;
-
+use yii\helpers\Html;
 /**
  * PaymentSearch represents the model behind the search form of `app\models\Payments`.
  */
@@ -110,7 +110,20 @@ class PaymentSearch extends Payments
         return [
             ['class' => 'yii\grid\SerialColumn'],
             'payment_date',
-            'receipt_no',
+            [
+                "attribute" => "receipt_no",
+                "content" => function ($model) {
+                    $base_controller  = $model->client_type==C::CLIENT_TYPE_CUSTOMER?"customer":"vendor"; 
+                    return  Html::a($model->receipt_no, \Yii::$app->urlManager->createUrl(["{$base_controller}/print-receipt", 'id' => $model->id]), ['title' => 'Print ' . $model->receipt_no,]);
+                },
+            ],
+            [
+                "attribute" => "client.company_name",
+                "content" => function ($model) {
+                    $base_controller  = $model->client_type==C::CLIENT_TYPE_CUSTOMER?"customer/view-customer":"vendor/view-vendor"; 
+                    return  Html::a($model->client->company_name, \Yii::$app->urlManager->createUrl(["{$base_controller}", 'id' => $model->client_id]), ['title' => 'View ' . $model->client->company_name,]);
+                },
+            ],
             'client.company_name',
             'client.mobile_no',
             'client.phone_no',

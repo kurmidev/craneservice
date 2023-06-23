@@ -23,7 +23,7 @@ class SearchForm extends BaseForm
         self::SEARCH_TYPE_PAYMENT => "Payments",
         self::SEARCH_TYPE_CHALLAN => "Challan",
         self::SEARCH_TYPE_INVOICE => "Invoice",
-        self::SEARCH_TYPE_CLIENT => "Customer/Vendor"
+     //   self::SEARCH_TYPE_CLIENT => "Customer/Vendor"
     ];
 
     public $search_type;
@@ -59,10 +59,10 @@ class SearchForm extends BaseForm
                 $pg = "pending-invoice";
                 $search = "InvoiceMasterSearch[invoice_no]";
                 break;
-            case self::SEARCH_TYPE_CLIENT:
-                $query = ClientMaster::find()->active()->andWhere(['like', 'invoice_no', "%{$this->search_value}%", false]);
-                $pg = "";
-                break;
+            // case self::SEARCH_TYPE_CLIENT:
+            //     $query = ClientMaster::find()->active()->andWhere(['like', 'name', "%{$this->search_value}%", false]);
+            //     $pg = "";
+            //     break;
             case self::SEARCH_TYPE_PAYMENT:
                 $query = Payments::find()->active()->andWhere(['like', 'receipt_no', "%{$this->search_value}%", false]);
                 $pg = "payment";

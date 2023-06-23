@@ -1,0 +1,331 @@
+<?php
+
+use yii\widgets\ActiveForm;
+use yii\helpers\Html;
+use yii\helpers\ArrayHelper;
+use app\components\Constants as C;
+use app\models\City;
+use app\models\ClientPlanMapping;
+use app\models\ClientSite;
+use app\models\CompanyMaster;
+use app\models\EmployeeMaster;
+use app\models\PlanMaster;
+use app\models\VehicleMaster;
+use yii\web\View;
+
+$i = 0;
+?>
+<?php $form = ActiveForm::begin(['id' => 'form-client', 'options' => ['enctype' => 'multipart/form-data', 'class' => 'form-bordered', 'enableAjaxValidation' => true]]); ?>
+
+<div class="row">
+    <div class="col-lg-12 col-sm-12 col-xs-12">
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">
+                    Add Challan
+                </h3>
+                <div class="card-tools">
+                        <?= Html::a(Html::tag('span', '', ['class' => 'fa fa-plus']), "#", ['title' => 'Add More', 'class' => 'btn btn-primary btn-sm', "onclick" => "addmoretablerowdetails()"]) ?>
+                    </div>
+            </div>
+            <div class="card-body">
+                <table class="table table-bordered" id="clonetable">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <?php if ($model->client_type == C::CLIENT_TYPE_CUSTOMER) { ?>
+                                <th>Site Address</th>
+                                <th>Helper</th>
+                                <th>Operator</th>
+                            <?php } ?>
+                            <th>Particulars</th>
+                            <th>Vehicle</th>
+                            <th>Challan No.</th>
+                            <th>Start Time</th>
+                            <th>End Time</th>
+                            <th>Amount</th>
+                            <th>Break Time</th>
+                            <th>Up Time</th>
+                            <th>Down Time</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr id="ids">
+                            <td>
+                                <?= $form->field($model, 'items[0][challan_date]', ['options' => ['class' => 'form-group']])->begin() ?>
+                                <?= Html::activeTextInput($model, 'items[0][challan_date]', ['class' => 'form-control cal', 'id' => "challanform_items_0_challan_date"]) ?>
+                                <?= Html::error($model, 'items[0][challan_date]', ['class' => 'error help-block']) ?>
+                                <?= $form->field($model, 'items[0][challan_date]')->end() ?>
+                            </td>
+                            <td>
+                                <?= $form->field($model, 'items[0][challan_no]', ['options' => ['class' => 'form-group']])->begin() ?>
+                                <?= Html::activeTextInput($model, 'items[0][challan_no]', ['class' => 'form-control', 'id' => 'challanform_items_0_challan_no']) ?>
+                                <?= Html::error($model, 'items[0][challan_no]', ['class' => 'error help-block']) ?>
+                                <?= $form->field($model, 'items[0][challan_no]')->end() ?>
+                            </td>
+                            <?php if ($model->client_type == C::CLIENT_TYPE_CUSTOMER) { ?>
+                                <td>
+                                    <?= $form->field($model, 'items[0][site_address]', ['options' => ['class' => 'form-group']])->begin() ?>
+                                    <?= Html::activeDropDownList($model, 'items[0][site_address]',  ArrayHelper::map(ClientSite::find()->where(['client_id' => $model->client_id])->active()->all(), 'id', 'address'), ['class' => 'form-control', 'id' => "challanform_items_0_site_address", 'prompt' => "Select option"]) ?>
+                                    <?= Html::error($model, 'items[0][site_address]', ['class' => 'error help-block']) ?>
+                                    <?= $form->field($model, 'items[0][site_address]')->end() ?>
+                                </td>
+                                <td>
+                                    <?= $form->field($model, 'items[0][helper_id]', ['options' => ['class' => 'form-group']])->begin() ?>
+                                    <?= Html::activeDropDownList($model, 'items[0][helper_id]', ArrayHelper::map(EmployeeMaster::find()->active()->all(), 'id', 'name'), ['class' => 'form-control', 'id' => "challanform_items_0_helper_id", 'prompt' => "Select option"]) ?>
+                                    <?= Html::error($model, 'items[0][helper_id]', ['class' => 'error help-block']) ?>
+                                    <?= $form->field($model, 'items[0][helper_id]')->end() ?>
+                                </td>
+                                <td>
+                                    <?= $form->field($model, 'items[0][operator_id]', ['options' => ['class' => 'form-group']])->begin() ?>
+                                    <?= Html::activeDropDownList($model, 'items[0][operator_id]',  ArrayHelper::map(EmployeeMaster::find()->active()->all(), 'id', 'name'), ['class' => 'form-control challan_options', 'id' => "challanform_items_0_operator_id", 'prompt' => "Select option"]) ?>
+                                    <?= Html::error($model, 'items[0][operator_id]', ['class' => 'error help-block']) ?>
+                                    <?= $form->field($model, 'items[0][operator_id]')->end() ?>
+                                </td>
+                            <?php } ?>
+                            <td>
+                                <?= $form->field($model, 'items[0][plan_id]', ['options' => ['class' => 'form-group']])->begin() ?>
+                                <?= Html::activeDropDownList($model, 'items[0][plan_id]', ArrayHelper::map(PlanMaster::find()->active()->all(), 'id', 'name'), ['class' => 'form-control challan_options', 'id' => "challanform_items_0_plan_id", 'prompt' => "Select option", "rel" => "challanform_items_0"]) ?>
+                                <?= Html::error($model, 'items[0][plan_id]', ['class' => 'error help-block']) ?>
+                                <?= $form->field($model, 'items[0][plan_id]')->end() ?>
+                            </td>
+                            <td>
+                                <?= $form->field($model, 'items[0][vehicle_id]', ['options' => ['class' => 'form-group']])->begin() ?>
+                                <?= Html::activeDropDownList($model, 'items[0][vehicle_id]', ArrayHelper::map(VehicleMaster::find()->active()->all(), 'id', 'name'), ['class' => 'form-control', 'id' => 'challanform_items_0_vehicle_id', 'prompt' => "Select option"]) ?>
+                                <?= Html::error($model, 'items[0][vehicle_id]', ['class' => 'error help-block']) ?>
+                                <?= $form->field($model, 'items[0][vehicle_id]')->end() ?>
+                            </td>
+                            <td>
+                                <?= $form->field($model, 'items[0][plan_start_time]', ['options' => ['class' => 'form-group']])->begin() ?>
+                                <?= Html::activeTextInput($model, 'items[0][plan_start_time]', ['class' => 'form-control timepick caldiff', "id" => "challanform_items_0_plan_start_time", "rel" => "challanform_items_0"]) ?>
+                                <?= Html::error($model, 'items[0][plan_start_time]', ['class' => 'error help-block']) ?>
+                                <?= $form->field($model, 'items[0][plan_start_time]')->end() ?>
+
+                                <?= $form->field($model, 'items[0][day_wise]', ['options' => ['class' => 'form-group']])->begin() ?>
+                                <?= Html::activeDropDownList($model, 'items[0][day_wise]', C::DAYWISE_LABEL, ['class' => 'form-control hide', 'prompt' => "Select option", "id" => 'challanform_items_0_day_wise']) ?>
+                                <?= Html::error($model, 'items[0][day_wise]', ['class' => 'error help-block']) ?>
+                                <?= $form->field($model, 'items[0][day_wise]')->end() ?>
+
+                                <?= $form->field($model, 'items[0][plan_trip]', ['options' => ['class' => 'form-group']])->begin() ?>
+                                <?= Html::activeTextInput($model, 'items[0][plan_trip]', ['class' => 'form-control hide', "id" => "challanform_items_0_plan_trip", "placeholder" => "Trip/Quantity"]) ?>
+                                <?= Html::error($model, 'items[0][plan_trip]', ['class' => 'error help-block']) ?>
+                                <?= $form->field($model, 'items[0][plan_trip]')->end() ?>
+
+                                <?= $form->field($model, 'items[0][from_destination]', ['options' => ['class' => 'form-group']])->begin() ?>
+                                <?= Html::activeTextInput($model, 'items[0][from_destination]', ['class' => 'form-control hide', "id" => "challanform_items_0_from_destination", "placeholder" => "From Destination"]) ?>
+                                <?= Html::error($model, 'items[0][from_destination]', ['class' => 'error help-block']) ?>
+                                <?= $form->field($model, 'items[0][from_destination]')->end() ?>
+
+                            </td>
+
+                            <td>
+                                <?= $form->field($model, 'items[0][plan_end_time]', ['options' => ['class' => 'form-group']])->begin() ?>
+                                <?= Html::activeTextInput($model, 'items[0][plan_end_time]', ['class' => 'form-control timepick caldiff', 'id' => "challanform_items_0_plan_end_time", "rel" => "challanform_items_0"]) ?>
+                                <?= Html::error($model, 'items[0][plan_end_time]', ['class' => 'error help-block']) ?>
+                                <?= $form->field($model, 'items[0][plan_end_time]')->end() ?>
+
+                                <?= $form->field($model, 'items[0][plan_measure]', ['options' => ['class' => 'form-group']])->begin() ?>
+                                <?= Html::activeTextInput($model, 'items[0][plan_measure]', ['class' => 'form-control hide', "id" => "challanform_items_0_plan_measure", "placeholder" => 'Brass/Litre']) ?>
+                                <?= Html::error($model, 'items[0][plan_measure]', ['class' => 'error help-block']) ?>
+                                <?= $form->field($model, 'items[0][plan_measure]')->end() ?>
+
+                                <?= $form->field($model, 'items[0][to_destination]', ['options' => ['class' => 'form-group']])->begin() ?>
+                                <?= Html::activeTextInput($model, 'items[0][to_destination]', ['class' => 'form-control hide', 'id' => "challanform_items_0_to_destination", "placeholder" => "To Destination"]) ?>
+                                <?= Html::error($model, 'items[0][to_destination]', ['class' => 'error help-block']) ?>
+                                <?= $form->field($model, 'items[0][to_destination]')->end() ?>
+
+                            </td>
+
+                            <td>
+                                <?= $form->field($model, 'items[0][amount]', ['options' => ['class' => 'form-group']])->begin() ?>
+                                <?= Html::activeTextInput($model, 'items[0][amount]', ['class' => 'form-control', 'id' => 'challanform_items_0_amount']) ?>
+                                <?= Html::error($model, 'items[0][amount]', ['class' => 'error help-block']) ?>
+                                <?= $form->field($model, 'items[0][amount]')->end() ?>
+                            </td>
+                            <td>
+                                <?= $form->field($model, 'items[0][break_time]', ['options' => ['class' => 'form-group']])->begin() ?>
+                                <?= Html::activeDropDownList($model, 'items[0][break_time]', C::getTimeList(), ['class' => 'form-control', 'prompt' => "Select option", "id" => "challanform_items_0_break_time"]) ?>
+                                <?= Html::error($model, 'items[0][break_time]', ['class' => 'error help-block']) ?>
+                                <?= $form->field($model, 'items[0][break_time]')->end() ?>
+                                <span id="challanform_items_0_break_time_span"></span>
+                            </td>
+
+                            <td>
+                                <?= $form->field($model, 'items[0][up_time]', ['options' => ['class' => 'form-group']])->begin() ?>
+                                <?= Html::activeDropDownList($model, 'items[0][up_time]', C::getTimeList(), ['class' => 'form-control', 'prompt' => "Select option", "id" => "challanform_items_0_up_time"]) ?>
+                                <?= Html::error($model, 'items[0][up_time]', ['class' => 'error help-block']) ?>
+                                <?= $form->field($model, 'items[0][up_time]')->end() ?>
+
+                                <?= $form->field($model, 'items[0][plan_extra_hours]', ['options' => ['class' => 'form-group']])->begin() ?>
+                                <?= Html::activeTextInput($model, 'items[0][plan_extra_hours]', ['class' => 'form-control', "id" => "challanform_items_0_plan_extra_hours", "placeholder" => "Extra Hours"]) ?>
+                                <?= Html::error($model, 'items[0][plan_extra_hours]', ['class' => 'error help-block']) ?>
+                                <?= $form->field($model, 'items[0][plan_extra_hours]')->end() ?>
+                            </td>
+                            <td>
+                                <?= $form->field($model, 'items[0][down_time]', ['options' => ['class' => 'form-group']])->begin() ?>
+                                <?= Html::activeDropDownList($model, 'items[0][down_time]', C::getTimeList(), ['class' => 'form-control', 'prompt' => "Select option", "id" => "challanform_items_0_down_time"]) ?>
+                                <?= Html::error($model, 'items[0][down_time]', ['class' => 'error help-block']) ?>
+                                <?= $form->field($model, 'items[0][down_time]')->end() ?>
+
+                                <?= $form->field($model, 'items[0][plan_shift_type]', ['options' => ['class' => 'form-group']])->begin() ?>
+                                <?= Html::activeDropDownList($model, 'items[0][plan_shift_type]', C::PACKAGE_SHIFT_TYPE, ['class' => 'form-control', "id" => "challanform_items_0_plan_shift_type"]) ?>
+                                <?= Html::error($model, 'items[0][plan_shift_type]', ['class' => 'error help-block']) ?>
+                                <?= $form->field($model, 'items[0][plan_shift_type]')->end() ?>
+
+                            </td>
+
+                            <td>
+                                <button type="button" class="btn btn-danger">
+                                    <span class="fa fa-minus" onclick="<?= $i > 0 ? "$(this).closest('tr').remove();" : "" ?>"></span>
+                                </button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="card-footer mg-t-auto mg-d-10">
+                <div class="row">
+                    <div class="col-lg-12 col-sm-12 col-xs-12 col-sm-offset-3">
+                        <?= Html::submitButton(empty($model->id) ? 'Create' : 'Update', ['class' => 'btn btn-secondary']) ?>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<?php ActiveForm::end(); ?>
+
+
+<?php
+
+$plans = PlanMaster::find()->active()->asArray()->all();
+$customPlan = ClientPlanMapping::find()->where(["client_id" => $model->client_id])->indexBy('plan_id')->asArray()->all();
+
+$plan_amount_mapping = $plan_type_mapping = $plan_shift_mapping = [];
+foreach ($plans as $plan) {
+    $plan_type_mapping[$plan["id"]] = $plan['type'];
+    $plan_amount_mapping[$plan["id"]] =  !empty($customPlan[$plan["id"]]) ? $customPlan[$plan["id"]]["custom_price"] : $plan['price'];
+    if ($plan['type'] == C::PACKAGE_WISE_SHIFT) {
+        $plan_shift_mapping[$plan["id"]] = $plan['shift_hrs'];
+    }
+}
+
+$js = '
+    var plan_type_mapping = ' . json_encode($plan_type_mapping) . ';
+    var plan_amount_mapping = ' . json_encode($plan_amount_mapping) . ';
+    var plan_shift_mapping = ' . json_encode($plan_shift_mapping) . ';
+    
+';
+
+$this->registerJs($js, View::POS_HEAD);
+
+$js = '
+$("#challanform_items_0_day_wise").hide();
+$("#challanform_items_0_plan_trip").hide();
+$("#challanform_items_0_from_destination").hide();
+$("#challanform_items_0_plan_shift_type").hide();
+
+$("#challanform_items_0_plan_measure").hide();
+$("#challanform_items_0_to_destination").hide();
+$("#challanform_items_0_plan_extra_hours").hide();
+
+$(".caldiff").change(function(){
+    var rel = $(this).attr("rel");
+    var starttime = $("#"+rel+"_plan_start_time").val();
+    var endtime = $("#"+rel+"_plan_end_time").val();
+    var planid = $("#"+rel+"_plan_id").val();
+    if(starttime!=="00:00" && endtime!=="00:00"){
+        startArr = starttime.split(":");
+        endArr = endtime.split(":");
+        diff = endArr[0]-startArr[0];
+        $("#"+rel+"_break_time_span").html(diff+"hrs");
+        extrahours = plan_shift_mapping[planid];
+        extra = diff - extrahours;
+        if(!isNaN(extra)){
+            $("#"+rel+"_plan_extra_hours").val(extra);
+        }
+    }
+});
+
+$("body").on("change", ".challan_options",function () {
+    var rel = $(this).attr("rel");
+    var value = $(this).val();
+    var type =  plan_type_mapping[value];
+    var amount = plan_amount_mapping[value];
+    
+    $("#"+rel+"_day_wise").hide();
+    $("#"+rel+"_plan_trip").hide();
+    $("#"+rel+"_from_destination").hide();
+    $("#"+rel+"_plan_shift_type").hide();
+    $("#"+rel+"_plan_measure").hide();
+    $("#"+rel+"_to_destination").hide();
+    $("#"+rel+"_plan_extra_hours").hide();
+    
+    switch (type) {
+        case "1":
+            $("#"+rel+"_plan_shift_type").hide();
+            $("#"+rel+"_plan_extra_hours").hide();
+            break;
+        case "2":
+            $("#"+rel+"_break_time").show();
+            $("#"+rel+"_up_time").show();
+            $("#"+rel+"_plan_start_time").hide();
+            $("#"+rel+"_plan_end_time").hide();
+            $("#"+rel+"_day_wise").hide();
+            $("#"+rel+"_plan_trip").hide();
+            $("#"+rel+"_from_destination").hide();
+            $("#"+rel+"_plan_measure").hide();
+            $("#"+rel+"_to_destination").hide();
+            $("#"+rel+"_plan_extra_hours").hide();
+            $("#"+rel+"_day_wise").show();
+            break;
+        case "3":
+            $("#"+rel+"_break_time").show();
+            $("#"+rel+"_up_time").show();
+            $("#"+rel+"_plan_trip").show();
+            $("#"+rel+"_plan_measure").show();
+            $("#"+rel+"_plan_start_time").hide();
+            $("#"+rel+"_day_wise").hide();
+            $("#"+rel+"_plan_end_time").hide();
+            $("#"+rel+"_from_destination").hide();
+            $("#"+rel+"_plan_extra_hours").hide();
+            break;
+        case "4":
+            $("#"+rel+"_from_destination").show();
+            $("#"+rel+"_to_destination").show();
+            $("#"+rel+"_plan_start_time").hide();
+            $("#"+rel+"_plan_end_time").hide();
+            break;
+        case "5":
+            $("#"+rel+"_break_time").show();
+            $("#"+rel+"_up_time").show();
+            $("#"+rel+"_plan_start_time").show();
+            $("#"+rel+"_plan_end_time").show();
+            $("#"+rel+"_day_wise").hide();
+            $("#"+rel+"_plan_trip").hide();
+            $("#"+rel+"_from_destination").hide();
+            $("#"+rel+"_plan_measure").hide();
+            $("#"+rel+"_to_destination").hide();
+            $("#"+rel+"_plan_extra_hours").hide();
+            break;
+        case "6":
+            $("#"+rel+"_plan_start_time").show();
+            $("#"+rel+"_plan_end_time").show();
+            $("#"+rel+"_plan_shift_type").show();
+            $("#"+rel+"_break_time").hide();
+            $("#"+rel+"_up_time").hide();
+            $("#"+rel+"_down_time").hide();
+            $("#"+rel+"_day_wise").hide();
+            $("#"+rel+"_plan_trip").hide();
+            $("#"+rel+"_from_destination").hide();
+            $("#"+rel+"_plan_measure").hide();
+            $("#"+rel+"_to_destination").hide();
+            $("#"+rel+"_plan_extra_hours").show();
+            break;
+    }
+    $("#"+rel+"_amount").val(amount);
+});
+';
+
+$this->registerJs($js, View::POS_READY);

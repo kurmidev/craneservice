@@ -208,8 +208,8 @@ class ChallanForm extends BaseForm
             $model->plan_extra_hours = $this->plan_extra_hours;
             $model->plan_shift_type = $this->plan_shift_type;
             $model->invoice_id = null;
-            $model->is_processed = C::STATUS_ACTIVE;
-            $model->status = C::STATUS_PENDING;
+            $model->is_processed = C::STATUS_INACTIVE;
+            $model->status = C::STATUS_ACTIVE;
             $model->base_amount = !empty($this->amount) ? $this->amount : (!empty($this->customprice) ? $this->customprice->custome_price : $this->plan->price);
             $model->amount = $model->base_amount;
             $model->extra = 0;
@@ -237,7 +237,7 @@ class ChallanForm extends BaseForm
                     $perhrs = $challan->base_amount / $plan->shift_hrs;
                     $extra =  ($totalHrs - $plan->shift_hrs) * $perhrs;
                 } else {
-                    $extra = ($totalHrs < $plan->shift_hrs) ? 0 : ((($totalHrs - $plan->shift_hrs) > 4 ? $challan->base_amount : ($base_amount / 2)));
+                    $extra = ($totalHrs < $plan->shift_hrs) ? 0 : ((($totalHrs - $plan->shift_hrs) > 4 ? $challan->base_amount : ($challan->base_amount  / 2)));
                 }
                 $amount = $challan->base_amount + $extra;
                 break;
@@ -245,7 +245,7 @@ class ChallanForm extends BaseForm
                 $amount = $challan->base_amount *  $challan->plan_trip *  $challan->plan_measure;
                 break;
             default:
-                $amount = $base_amount;
+                $amount = $challan->base_amount;
                 break;
         }
         return [$extra, $amount];

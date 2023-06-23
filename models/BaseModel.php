@@ -139,7 +139,7 @@ class BaseModel extends ActiveRecord
                 $auditTrails->action_taken = !empty($this->status) ? $this->status : 1;
                 $auditTrails->created_by = \Yii::$app->user->getId();
                 $auditTrails->created_at = date("Y-m-d H:i:s");
-                $auditTrails->remark = $this->getAuditMessage($this->_oldData,$this->_newData,$this->_changedata);
+                $auditTrails->remark = $this->getAuditMessage($this->_oldData, $this->_newData, $this->_changedata);
                 if ($auditTrails->validate() && $auditTrails->save()) {
                     //       return true;
                 }
@@ -159,12 +159,21 @@ class BaseModel extends ActiveRecord
     {
         $str = "";
         if (!empty($changeAttr)) {
-            foreach($oldAttr as $key=>$value){
-                if(!empty($oldAttr[$key]) && !empty($newAttr[$key])){
-                    $str.= $key.":".$oldAttr[$key]." to ". $newAttr[$key]; 
+            foreach ($oldAttr as $key => $value) {
+                if (!empty($oldAttr[$key]) && !empty($newAttr[$key])) {
+                    $str .= $key . ":" . $oldAttr[$key] . " to " . $newAttr[$key];
                 }
             }
         }
         return $str;
+    }
+
+    public static function getTotal($provider, $fieldName)
+    {
+        $total = 0;
+        foreach ($provider as $item) {
+            $total += $item[$fieldName];
+        }
+        return $total;
     }
 }
