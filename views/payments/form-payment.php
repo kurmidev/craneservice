@@ -9,7 +9,7 @@ use app\models\Challan;
 use app\models\InvoiceMaster;
 
 
-$pendingInvoiceList = InvoiceMaster::find()->where(['client_id' => $client->id, 'client_type' => $client->client_type])->andWhere('total>ifnull(payment.0)')->active()->asArray()->all()
+$pendingInvoiceList = InvoiceMaster::find()->where(['client_id' => $client->id, 'client_type' => $client->client_type])->andWhere('total>ifnull(payment,0)')->active()->asArray()->all()
 ?>
 
 <div class="row">
