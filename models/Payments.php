@@ -178,7 +178,9 @@ class Payments extends \app\models\BaseModel
             foreach ($invoiceObj as $invoice) {
                 if ($invoice->total > $invoice->payment) {
                     $invoice->scenario = InvoiceMaster::SCENARIO_UPDATE;
-                    $invoice->payment += !empty($this->challans[$invoice->id]['amount_paid']) ? (float) $this->challans[$invoice->id]['amount_paid'] : 0;
+                    $total_payment = !empty($this->challans[$invoice->id]['amount_paid']) ? (float) $this->challans[$invoice->id]['amount_paid'] : 0;
+                    $total_payment += !empty($this->challans[$invoice->id]['deduction_amount']) ? (float) $this->challans[$invoice->id]['deduction_amount'] : 0;
+                    $invoice->payment += $total_payment;
                     $invoice->payment_id = $this->id;
                     if ($invoice->validate() && $invoice->save()) {
                         

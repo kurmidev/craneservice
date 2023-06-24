@@ -64,8 +64,7 @@ class Constants
     const PACKAGE_SHIFT_TYPE_SHIFT = 1;
     const PACKAGE_SHIFT_TYPE_HOURS = 2;
 
-    const INVOICE_TYPE_PERFORMA = 1;
-    const INVOICE_TYPE_GST = 2;
+    
     const CLIENT_IS_LABEL = [
         self::CLIENT_IS_COMPANY => "Company",
         self::CLIENT_IS_INDIVIDUAL => "Individual"
@@ -90,6 +89,11 @@ class Constants
         self::PACKAGE_SHIFT_TYPE_SHIFT => "Shift",
         self::PACKAGE_SHIFT_TYPE_HOURS => "Hour"
     ];
+
+    const INVOICE_TYPE_PERFORMA = 1;
+    const INVOICE_TYPE_GST = 2;
+    const PREFIX_GST = self::INVOICE_TYPE_GST;
+    const PREFIX_PERFORMA = self::INVOICE_TYPE_PERFORMA;
 
     const INVOICE_TYPE_LIST = [
         self::INVOICE_TYPE_GST => "GST",
@@ -157,9 +161,7 @@ class Constants
     const PAYMENT_IR_RESPECTIVE_INVOICE = 1;
     const PAYMENT_INVOICEWISE = 2;
 
-    const PREFIX_GST = 1;
-    const PREFIX_PERFORMA = 2;
-
+   
     const PREFIX_LIST = [
         self::PREFIX_GST => "GST",
         self::PREFIX_PERFORMA => "PERFORMA"
