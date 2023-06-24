@@ -9,7 +9,7 @@ use app\models\Challan;
 use app\models\InvoiceMaster;
 
 
-$pendingInvoiceList = InvoiceMaster::find()->where(['client_id' => $client->id, 'client_type' => $client->client_type])->andWhere('total>payment')->active()->asArray()->all()
+$pendingInvoiceList = InvoiceMaster::find()->where(['client_id' => $client->id, 'client_type' => $client->client_type])->andWhere('total>ifnull(payment.0)')->active()->asArray()->all()
 ?>
 
 <div class="row">
@@ -71,7 +71,7 @@ $pendingInvoiceList = InvoiceMaster::find()->where(['client_id' => $client->id, 
                 <?php if (PAYMENT_METHOD == C::PAYMENT_INVOICEWISE) { ?>
                     <div class="card">
                         <div class="card-header">
-                            <h4 class="card-title">Pending Challan List</h4>
+                            <h4 class="card-title">Make Payment</h4>
                         </div>
                         <div class="card-body">
                             <table class="table table-bordered table-responsive">

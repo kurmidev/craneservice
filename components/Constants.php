@@ -64,7 +64,7 @@ class Constants
     const PACKAGE_SHIFT_TYPE_SHIFT = 1;
     const PACKAGE_SHIFT_TYPE_HOURS = 2;
 
-    
+
     const CLIENT_IS_LABEL = [
         self::CLIENT_IS_COMPANY => "Company",
         self::CLIENT_IS_INDIVIDUAL => "Individual"
@@ -111,29 +111,47 @@ class Constants
     const PAYMENT_MODE_ONLINE = 3;
     const PAYMENT_MODE_CREDIT = 4;
     const PAYMENT_MODE_OTHER = 5;
+    const PAYMENT_MODE_DD = 6;
+    const PAYMENT_MODE_ONLINE_TRANSFER = 7;
+    const PAYMENT_MODE_DEBIT_CARD = 8;
+    const PAYMENT_MODE_PAYTM = 9;
+    const PAYMENT_MODE_GPAY = 10;
+    const PAYMENT_MODE_BANK_DEPOSIT = 11;
+    const PAYMENT_MODE_PAYMENT_GATEWAY = 12;
+    const PAYMENT_MODE_RECHARGE_COUPON = 13;
+
 
     const PAYMENT_STATUS_NOT_PAID = 0;
     const PAYMENT_STATUS_HALF_PAID = 1;
     const PAYMENT_STAUS_FULLY_PAID = 2;
     const QUOTATION_TYPE_MAIN = 1;
     const QUOTATION_TYPE_ADDONS = 2;
-    const PAYMENT_MODE_LIST= [
+    const PAYMENT_MODE_LIST = [
         self::PAYMENT_MODE_CASH => "CASH",
         self::PAYMENT_MODE_CHEQUE => "Cheque",
-        self::PAYMENT_MODE_OTHER => "Other"
+        self::PAYMENT_MODE_CREDIT => "Credit Card",
+        self::PAYMENT_MODE_OTHER => "Other",
+        self::PAYMENT_MODE_DD => "DD",
+        self::PAYMENT_MODE_ONLINE_TRANSFER => "Online Transfer",
+        self::PAYMENT_MODE_DEBIT_CARD => "Debit Card",
+        self::PAYMENT_MODE_PAYTM => "Paytm",
+        self::PAYMENT_MODE_GPAY => "GPAY",
+        self::PAYMENT_MODE_BANK_DEPOSIT => "Bank Deposit",
+        self::PAYMENT_MODE_PAYMENT_GATEWAY => "Payment Gateway",
+        self::PAYMENT_MODE_RECHARGE_COUPON => "Recharge Coupon"
     ];
 
     const EXPENSE_TYPE_WITH_INVENTORY = 1;
     const EXPENSE_TYPE_WITHOUT_INVENTORY = 2;
 
     const EXPENSE_TYPE_LIST = [
-        self::EXPENSE_TYPE_WITH_INVENTORY=>"With Inventory",
-        self::EXPENSE_TYPE_WITHOUT_INVENTORY=>"Without Inventory"
+        self::EXPENSE_TYPE_WITH_INVENTORY => "With Inventory",
+        self::EXPENSE_TYPE_WITHOUT_INVENTORY => "Without Inventory"
     ];
 
     const EXPENSE_TYPE_NORMAL = 1;
     const EXPENSE_TYPE_STAFF = 2;
-    const CHALLAN_PAID =1;
+    const CHALLAN_PAID = 1;
     const CHALLAN_UNPAID = 2;
 
     const CHALLAN_STATUS = [
@@ -144,7 +162,7 @@ class Constants
     const INVOICE_PENDING = 1;
     const INVOICE_PAID = 2;
     const INVOICE_CANCEL = -1;
-    
+
     const INVOICE_STATUS = [
         self::INVOICE_PENDING => "Pending",
         self::INVOICE_PAID => "Paid",
@@ -161,7 +179,7 @@ class Constants
     const PAYMENT_IR_RESPECTIVE_INVOICE = 1;
     const PAYMENT_INVOICEWISE = 2;
 
-   
+
     const PREFIX_LIST = [
         self::PREFIX_GST => "GST",
         self::PREFIX_PERFORMA => "PERFORMA"
@@ -171,7 +189,7 @@ class Constants
     {
         $resp = [];
         for ($i = 1; $i < 180; $i++) {
-            $resp[$i] = ($i<60)? "{$i} minutes": round(($i/60),0).":".($i%60)." hrs" ;
+            $resp[$i] = ($i < 60) ? "{$i} minutes" : round(($i / 60), 0) . ":" . ($i % 60) . " hrs";
         }
         return $resp;
     }
