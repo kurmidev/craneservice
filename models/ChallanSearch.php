@@ -145,7 +145,7 @@ class ChallanSearch extends Challan
                 "attribute" => "client_id", "label" => "Company Name",
                 "content" => function ($model) {
                     $base_controller  = $model->client_type==C::CLIENT_TYPE_CUSTOMER?"customer/view-customer":"vendor/view-vendor"; 
-                    return  Html::a($model->client->company_name, \Yii::$app->urlManager->createUrl(["{$base_controller}", 'id' => $model->id]), ['title' => 'View ' . $model->client->company_name,]);
+                    return  Html::a($model->client->company_name, \Yii::$app->urlManager->createUrl(["{$base_controller}", 'id' => $model->client_id]), ['title' => 'View ' . $model->client->company_name,]);
                 },
             ],
             'client.mobile_no',
