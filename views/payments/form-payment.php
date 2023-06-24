@@ -148,7 +148,6 @@ $("#payment_modes").on("change",function(){
 
 $(".calculate").on("change",function(){
 id = $("#"+this.id).attr("rel");
-alert(id);
 var balance_amount = $("#balance_amount_"+id).val() || 0;
 var deduction_amount = $("#deduction_amount_"+id).val() || 0;
 var tds_amount = $("#tds_amount_"+id).val() || 0;
