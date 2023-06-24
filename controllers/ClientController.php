@@ -295,18 +295,29 @@ class ClientController extends BaseController
     /**
      * Creates a new ClientMaster model.
      * If creation is successful, the browser will be redirected to the 'view' page.
-     * @return string|\yii\web\Response
+     * 
      */
-    public function actionAddChallan($id)
+    public function actionAddChallan($id = null)
     {
         $model = new ChallanForm(['scenario' => ClientMaster::SCENARIO_CREATE]);
-        $model->client_id = $id;
-        $model->client_type = $this->clientType;
+
         $client = ClientMaster::findOne(['id' => $id]);
+        $model->client_type = ($client instanceof ClientMaster) ? $client->client_type : $this->clientType;
+        $model->client_id = ($client instanceof ClientMaster) ? $client->id : 0;
+
+        if ($this->request->isAjax) {
+            Yii::$app->response->format = WebResponse::FORMAT_JSON;
+            if ($model->load($this->request->post()) && $model->validate() && $model->save()) {
+                return [
+                    'status' => true,
+                    'data' => $this->processChallanData($model->id)
+                ];
+            } else {
+                return ['error' => $model->errors];
+            }
+        }
 
         if ($this->request->isPost) {
-            $model->client_type = ($client instanceof ClientMaster) ? $client->client_type : 0;
-            $model->client_id = ($client instanceof ClientMaster) ? $client->id : 0;
             if ($model->load($this->request->post()) && $model->validate() && $model->save()) {
                 $title = $this->clientType == C::CLIENT_TYPE_CUSTOMER ? "Customer" : "Vendor";
                 $redirectUrl = $this->clientType == C::CLIENT_TYPE_CUSTOMER ? "customer/add-challan" : "vendor/add-challan";
@@ -315,15 +326,34 @@ class ClientController extends BaseController
             }
         }
 
-        $searchModel = new ChallanSearch();
-        $dataProvider = $searchModel->search($this->request->queryParams);
-        $dataProvider->query->active()->andWhere(["client_id" => $id,'status'=>C::STATUS_PENDING]);
-            
+
         return $this->render('@app/views/challan/challan-form', [
             'model' => $model,
             "title" => $this->title,
-            'dataProvider'=>$dataProvider,
-            'searchModel'=>$searchModel,
+            "base_controller" =>  $this->clientType == C::CLIENT_TYPE_CUSTOMER ? "customer" : "vendor",
+        ]);
+    }
+    public function actionAddChallanOld($id = null)
+    {
+        $model = new ChallanForm(['scenario' => ClientMaster::SCENARIO_CREATE]);
+
+        $client = ClientMaster::findOne(['id' => $id]);
+        $model->client_type = ($client instanceof ClientMaster) ? $client->client_type : $this->clientType;
+        $model->client_id = ($client instanceof ClientMaster) ? $client->id : 0;
+
+        if ($this->request->isPost) {
+            if ($model->load($this->request->post()) && $model->validate() && $model->save()) {
+                $title = $this->clientType == C::CLIENT_TYPE_CUSTOMER ? "Customer" : "Vendor";
+                $redirectUrl = $this->clientType == C::CLIENT_TYPE_CUSTOMER ? "customer/add-challan" : "vendor/add-challan";
+                \Yii::$app->getSession()->setFlash('s', "Challan {$model->challan_no} has been added successfully.");
+                return $this->redirect([$redirectUrl, "id" => $id]);
+            }
+        }
+
+
+        return $this->render('@app/views/challan/challan-form', [
+            'model' => $model,
+            "title" => $this->title,
             "base_controller" =>  $this->clientType == C::CLIENT_TYPE_CUSTOMER ? "customer" : "vendor",
         ]);
     }
@@ -391,14 +421,13 @@ class ClientController extends BaseController
         return $this->redirect([$redirectUrl]);
     }
 
-    public function actionAddInvoice($id)
+    public function actionAddInvoice($id = null)
     {
         $model = new InvoiceForm(['scenario' => InvoiceMaster::SCENARIO_CREATE]);
-        $model->client_id = $id;
+        $model->client_id = !empty($id) ? $id : null;
         $model->client_type = $this->clientType;
         $client = ClientMaster::findOne(['id' => $id]);
         if ($this->request->isPost) {
-            $model->client_id = $id;
             $model->client_type = $this->clientType;
             if ($model->load($this->request->post()) && $model->save()) {
                 $title = $this->clientType == C::CLIENT_TYPE_CUSTOMER ? "Customer" : "Vendor";
@@ -434,7 +463,7 @@ class ClientController extends BaseController
         return F::printPdf($content, $filename);
     }
 
-    public function actionPayInvoice($id)
+    public function actionPayInvoice($id = null)
     {
         $client = ClientMaster::findOne(['id' => $id]);
         if (!$client instanceof ClientMaster) {
@@ -832,9 +861,9 @@ class ClientController extends BaseController
 
     public function actionExportData($type, $id)
     {
-        $this->layout =false;
-        $client = ClientMaster::findOne(['id'=>$id]);
-        
+        $this->layout = false;
+        $client = ClientMaster::findOne(['id' => $id]);
+
         $filename = $title  = $dataProvider = null;
         switch ($type) {
             case "challan":
@@ -867,10 +896,68 @@ class ClientController extends BaseController
             "dataProvider" => $dataProvider,
             "model" => $client,
             "title" => $title,
-            "pg"=> $type
+            "pg" => $type
         ]);
 
         return F::printPdf($content, $filename);
+    }
 
+    public function processChallanData($id)
+    {
+        $model = Challan::findOne(['id' => $id]);
+        if ($model instanceof Challan) {
+            $deleteUrl = Yii::$app->urlManager->createUrl(['client/delete-pending-challan', 'id' => $model->id]);
+            return '<tr id="cha-' . $model->id . '"><td>' . $model->challan_date . '</td>'
+                . '<td>' . $model->challan_no . '</td>'
+                . '<td>' . $model->client->address . '</td>'
+                . '<td>' . (!empty($model->helper) ? $model->helper->name : "") . '</td>'
+                . '<td>' . (!empty($model->operator) ? $model->operator->name : "") . '</td>'
+                . '<td>' . (!empty($model->vehicle) ? $model->vehicle->vehicle_no : "") . '</td>'
+                . '<td>' . $model->plan->name . '</td>'
+                . '<td>' . $model->plan_start_time . '</td>'
+                . '<td>' . $model->plan_end_time . '</td>'
+                . '<td>' . $model->break_time . '</td>'
+                . '<td>' . $model->up_time . '</td>'
+                . '<td>' . $model->down_time . '</td>'
+                . '<td>' . $model->base_amount . '</td>'
+                . '<td> 
+                <input type="hidden" name="challan[' . $model->id . ']" value="' . $model->id . '">
+                <span class="fa fa-minus del-challan" url="' . $deleteUrl . '" rel="cha-' . $model->id . '"></span></td>
+            </tr>';
+        }
+        return '';
+    }
+
+    public function actionDeletePendingChallan($id)
+    {
+        return Challan::deleteAll(['id' => $id, 'status' => C::STATUS_PENDING]);
+    }
+
+
+    public function actionAddMultipleChallan()
+    {
+        if ($this->request->isPost) {
+            $request = Yii::$app->request->post();
+            
+            $challans = Challan::find()->where(['add_group_id' => $request['ChallanForm']['add_group_id'], 'status' => C::STATUS_PENDING]);
+            if(!empty($request['challan'])){
+                $challans->andWhere(['id'=>$request['challan']]);
+            }
+            $response = [];
+            $client_id = $client_type = null;
+            foreach ($challans->all() as $challan) {
+                $challan->scenario = Challan::SCENARIO_UPDATE;
+                $challan->status = C::STATUS_ACTIVE;
+                if ($challan->validate() && $challan->save()) {
+                    $response[] = $challan->challan_no;
+                    $client_type = $challan->client_type;
+                    $client_id = $challan->client_id;
+                }
+            }
+            $redirectUrl = $client_type == C::CLIENT_TYPE_CUSTOMER ? "customer/view-customer" : "vendor/view-vendor";
+            $challanlist = implode(',', $response);
+            Yii::$app->getSession()->setFlash('s', "Challan {$challanlist} has been added successfully.");
+            return $this->redirect([$redirectUrl, "pg" => "pending-challan", "id" => $client_id]);
+        }
     }
 }

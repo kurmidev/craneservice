@@ -41,13 +41,14 @@ class ChallanForm extends BaseForm
     public $plan;
     public $client;
     public $customprice;
+    public $add_group_id;
 
 
     public function scenarios()
     {
         return [
-            Challan::SCENARIO_CREATE => ["challan_no", "challan_date", "site_address", "helper_id", "operator_id", "plan_id", "vehicle_id", "plan_start_time", "day_wise", "plan_trip", "from_destination", "plan_end_time", "plan_measure", "to_destination", "amount", "break_time", "up_time", "plan_extra_hours", "down_time", "plan_shift_type"],
-            Challan::SCENARIO_UPDATE => ["challan_no", "challan_date", "site_address", "helper_id", "operator_id", "plan_id", "vehicle_id", "plan_start_time", "day_wise", "plan_trip", "from_destination", "plan_end_time", "plan_measure", "to_destination", "amount", "break_time", "up_time", "plan_extra_hours", "down_time", "plan_shift_type"]
+            Challan::SCENARIO_CREATE => ["challan_no", "challan_date", "site_address", "helper_id", "operator_id", "plan_id", "vehicle_id", "plan_start_time", "day_wise", "plan_trip", "from_destination", "plan_end_time", "plan_measure", "to_destination", "amount", "break_time", "up_time", "plan_extra_hours", "down_time", "plan_shift_type",'add_group_id'],
+            Challan::SCENARIO_UPDATE => ["challan_no", "challan_date", "site_address", "helper_id", "operator_id", "plan_id", "vehicle_id", "plan_start_time", "day_wise", "plan_trip", "from_destination", "plan_end_time", "plan_measure", "to_destination", "amount", "break_time", "up_time", "plan_extra_hours", "down_time", "plan_shift_type",'add_group_id']
         ];
     }
 
@@ -55,7 +56,7 @@ class ChallanForm extends BaseForm
     {
         return [
             [["challan_no", "challan_date", "plan_id", "vehicle_id", 'client_id', "client_type"], "required"],
-            [["from_destination", "to_destination", "challan_no",], "string"],
+            [["from_destination", "to_destination", "challan_no",'add_group_id'], "string"],
             [["break_time", "up_time", "down_time", "plan_trip",  "plan_measure", "site_address", "helper_id", "operator_id", "plan_id", "vehicle_id"], 'integer'],
             [['amount'], 'double'],
             ['plan_id', 'exist', 'targetClass' => PlanMaster::class, 'targetAttribute' => ['plan_id' => 'id']],
@@ -108,6 +109,7 @@ class ChallanForm extends BaseForm
             'updated_on' => 'Updated On',
             'created_by' => 'Created By',
             'updated_by' => 'Updated By',
+            'add_group_id'=> 'Add Group Id'
         ];
     }
 
@@ -158,7 +160,7 @@ class ChallanForm extends BaseForm
                 }
             }
 
-            if ($this->plan->type == C::PACKAGE_WISE_MONTH) {
+            if ($this->plan->type == C::PACKAGE_WISE_DESTINATION) {
                 if (empty($this->from_destination)) {
                     $this->addError('from_destination', "From Desstination cannot be empty");
                 }
@@ -195,8 +197,8 @@ class ChallanForm extends BaseForm
             $model->plan_type = $this->plan->type;
             $model->vehicle_id = $this->vehicle_id;
             $model->challan_no = $this->challan_no;
-            $model->plan_start_time = $this->plan_start_time;
-            $model->plan_end_time = $this->plan_end_time;
+            $model->plan_start_time = date("H:i", strtotime($this->plan_start_time));
+            $model->plan_end_time = date("H:i", strtotime($this->plan_end_time));
             $model->day_wise = $this->day_wise;
             $model->plan_measure = $this->plan_measure;
             $model->plan_trip = $this->plan_trip;
@@ -209,14 +211,16 @@ class ChallanForm extends BaseForm
             $model->plan_shift_type = $this->plan_shift_type;
             $model->invoice_id = null;
             $model->is_processed = C::STATUS_INACTIVE;
-            $model->status = C::STATUS_ACTIVE;
+            $model->status = C::STATUS_PENDING;
             $model->base_amount = !empty($this->amount) ? $this->amount : (!empty($this->customprice) ? $this->customprice->custome_price : $this->plan->price);
             $model->amount = $model->base_amount;
             $model->extra = 0;
+            $model->add_group_id = $this->add_group_id;
             list($model->extra, $model->amount)  = self::calculateChallanAmount($model);
             $totalAmount = $model->extra + $model->amount;
             $model->tax = F::calculateTax($totalAmount, $this->plan->tax_slot);
             if ($model->validate() && $model->save()) {
+                $this->id = $model->id;
                 return true;
             }else{
                $this->addErrors($model->errors);

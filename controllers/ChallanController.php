@@ -5,6 +5,7 @@ namespace app\controllers;
 use app\models\Challan;
 use app\models\ChallanSearch;
 use app\controllers\BaseController;
+use Yii;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 
@@ -113,4 +114,5 @@ class ChallanController extends BaseController
 
         throw new NotFoundHttpException('The requested page does not exist.');
     }
+
 }

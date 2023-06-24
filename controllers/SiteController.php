@@ -48,7 +48,7 @@ class SiteController extends BaseController
     {
         $model = new Dashboard();
         $model->client_type = C::CLIENT_TYPE_CUSTOMER;
-        return $this->render('index', ['model' => $model]);
+        return $this->render('index', ['model' => $model,'client_type'=>$model->client_type]);
     }
 
     /**
@@ -60,7 +60,7 @@ class SiteController extends BaseController
     {
         $model = new Dashboard();
         $model->client_type = C::CLIENT_TYPE_CUSTOMER;
-        return $this->render('index', ['model' => $model]);
+        return $this->render('index', ['model' => $model,'client_type'=>$model->client_type]);
     }
 
     /**
@@ -72,7 +72,7 @@ class SiteController extends BaseController
     {
         $model = new Dashboard();
         $model->client_type = C::CLIENT_TYPE_VENDOR;
-        return $this->render('index', ['model' => $model]);
+        return $this->render('index', ['model' => $model,'client_type'=>$model->client_type]);
     }
 
     /**

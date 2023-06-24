@@ -3,6 +3,11 @@
 use yii\widgets\ActiveForm;
 use yii\helpers\Html;
 use app\components\Constants as C;
+use app\models\ClientMaster;
+use yii\helpers\ArrayHelper;
+
+$client_id = ClientMaster::find()->active()->andWhere(['client_type'=>$model->client_type])->all();
+$url = $_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI']."&id=";   
 
 ?>
 <?php $form = ActiveForm::begin(['id' => 'form-client', 'options' => ['enctype' => 'multipart/form-data', 'class' => 'form-bordered', 'enableAjaxValidation' => true]]); ?>
@@ -11,10 +16,20 @@ use app\components\Constants as C;
         <div class="card ">
             <div class="card-header">
                 <div class="card-title">
-                    Add Challan
+                    Add Invoice
                 </div>
             </div>
             <div class="card-body">
+            <?php if(empty($model->client_id)){?>  
+                <div class="col-lg-4 col-sm-4 col-xs-4">
+                        <?= $form->field($model, 'client_id', ['options' => ['class' => 'form-group']])->begin() ?>
+                        <?= Html::activeLabel($model, 'client_id', ['class' => 'col-lg-12 col-sm-12 col-xs-12 control-label']); ?>
+                        <?= Html::activeDropDownList($model, 'client_id', ArrayHelper::map($client_id,'id','company_name'), $options = ['class' => 'form-control','prompt'=>"Select options",
+                        "onchange"=>'window.location = "'.$url.'"+$(this).val();']) ?>
+                        <?= Html::error($model, 'client_id', ['class' => 'error help-block']) ?>
+                        <?= $form->field($model, 'client_id')->end() ?>
+                    </div>
+                    <?php } ?>
                 <?= $form->field($model, 'invoice_date', ['options' => ['class' => 'form-group']])->begin() ?>
                 <?= Html::activeLabel($model, 'invoice_date', ['class' => 'col-lg-12 col-sm-12 col-xs-12 control-label']); ?>
                 <div class="col-lg-6 col-sm-6 col-xs-6">
