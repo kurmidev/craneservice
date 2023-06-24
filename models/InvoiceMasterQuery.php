@@ -34,6 +34,6 @@ class InvoiceMasterQuery extends \app\models\BaseQuery
     }
 
     public function active(){
-        return $this->andWhere(['status'=>[C::STATUS_ACTIVE,C::STATUS_INACTIVE]]);
+        return $this->andWhere(['status'=>[C::STATUS_ACTIVE]]);
     }
 }
