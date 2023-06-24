@@ -472,11 +472,13 @@ class ClientController extends BaseController
             return $this->redirect([$redirectUrl]);
         }
         $model = new Payments(['scenario' => Payments::SCENARIO_CREATE]);
-        $model->client_id = $client->id;
-        $model->client_type = $client->type;
-        $model->status = C::STATUS_ACTIVE;
+       
         if ($this->request->isPost) {
-            if ($model->load($this->request->post()) && $model->validate() && $model->save()) {
+            $model->load($this->request->post());
+            $model->client_id = $client->id;
+            $model->client_type = $client->type;
+            $model->status = C::STATUS_ACTIVE;
+            if ($model->validate() && $model->save()) {
                 $title = $this->clientType == C::CLIENT_TYPE_CUSTOMER ? "Customer" : "Vendor";
                 $redirectUrl = $this->clientType == C::CLIENT_TYPE_CUSTOMER ? "customer/view-customer" : "vendor/view-vendor";
                 \Yii::$app->getSession()->setFlash('s', "payment has been added successfully.");
