@@ -11,6 +11,7 @@ $this->title = $title;
 $this->params['breadcrumbs'][] = $this->title;
 $protocol = ((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] != 'off') || $_SERVER['SERVER_PORT'] == 443) ? "https://" : "http://";  
 $CurPageURL = $protocol . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI']."&is_pdf=1";  
+$csvCurPageURL = $protocol . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI']."&is_csv=1";  
 ?>
 
 <?php if(!$is_pdf){?>
@@ -21,7 +22,8 @@ $CurPageURL = $protocol . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI']."&is_p
         <?=!empty($amount)?("Total :". CURRENCY_SYMBOL." ".$amount):"" ?>
         </h3>
         <div class="card-tools">
-            <?= Html::a(Html::tag('span', '', ['class' => 'fa fa-download']),$CurPageURL, ['title' => 'Export', 'class' => 'btn btn-primary btn-sm']) ?>
+            <?= Html::a(Html::tag('span', '', ['class' => 'fa fa-file-pdf']),$CurPageURL, ['title' => 'Export PDF', 'class' => 'btn btn-primary btn-sm']) ?>
+            <?= Html::a(Html::tag('span', '', ['class' => 'fa fa-download']),$csvCurPageURL, ['title' => 'Export CSV', 'class' => 'btn btn-primary btn-sm']) ?>
         </div>
     </div>
 </div>

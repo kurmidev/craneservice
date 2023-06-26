@@ -65,8 +65,12 @@ $pg = Yii::$app->request->get('pg');
                     "label" => "Action",
                     "content" => function ($data) use ($base_controller) {
                         $print = Html::a(Html::tag('span', '', ['class' => 'fa fa-print']), \Yii::$app->urlManager->createUrl(["{$base_controller}/print-receipt", 'id' => $data['id']]), ['title' => 'Print ' . $data['receipt_no'], 'class' => 'btn btn-primary-alt'])
-                            . Html::a(Html::tag('span', '', ['class' => 'fa fa-trash']), \Yii::$app->urlManager->createUrl(["{$base_controller}/delete-payment", 'id' => $data['id']]), ['title' => 'Print ' . $data['receipt_no'], 'class' => 'btn btn-primary-alt']);
-
+                            . Html::button(Html::tag('span', '', ['class' => 'fa fa-trash']), [
+                                "data-url" => \Yii::$app->urlManager->createUrl(["{$base_controller}/delete-payment", 'id' => $data['id']]),
+                                "data-title" => "Delete Payment " . $data['receipt_no'],
+                                "data-body" => "Do you want to delete payments of " . $data['receipt_no'] . "?",
+                                'class' => 'btn btn-primary-alt deletemodal'
+                            ]);
                         return $print;
                     }
                 ]

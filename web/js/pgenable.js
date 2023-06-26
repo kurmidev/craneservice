@@ -41,19 +41,19 @@ $(function () {
     $(".lvl4").hide();
     $("#form-challan").submit(function (e) {
         e.preventDefault();
-       submitChallanForm();
+        submitChallanForm();
     });
-    $("#challan-submit").on('click',function (e) {
+    $("#challan-submit").on('click', function (e) {
         e.preventDefault();
-       submitChallanForm();
+        submitChallanForm();
     });
 
     $('body').on('click', ".del-challan", function () {
         var url = $(this).attr('url');
         var utr_id = $(this).attr('rel');
-        $.get(url, 
+        $.get(url,
             function (data, status) {
-               $('#'+utr_id).remove();
+                $('#' + utr_id).remove();
             }, 'json');
     });
 
@@ -93,6 +93,24 @@ $(function () {
         calculateTotalTime();
     });
 
+
+
+});
+
+$('document').ready(function () {
+    $('.deletemodal').on("click", function (e) {
+        e.preventDefault();
+        var button = $(this) // Button that triggered the modal
+        var url = button.attr('data-url'); // Extract info from data-* attributes
+        var title = button.attr('data-title');
+        var body = button.attr('data-body');
+        console.log('modal data', url, title, body);
+        $('#defaultModal')
+            .find('.modal-header > h3').text(title).end()
+            .find('.modal-body').html(body).end()
+            .find('#modal-delete').attr('url',url).end()
+            .modal('show');
+    });
 });
 
 function validateform(value, plan_type) {
@@ -190,8 +208,8 @@ function addmoretablerowdetails() {
 
 }
 
-function submitChallanForm(){
-    $('#challan-submit').prop('disabled',true);
+function submitChallanForm() {
+    $('#challan-submit').prop('disabled', true);
     $('#challan-submit').html('Adding Please wait....');
     var actionUrl = $("#form-challan").attr("action");
     var inputs = $('#form-challan :input');
@@ -206,9 +224,9 @@ function submitChallanForm(){
     if (is_valid) {
         $.post(actionUrl, $('#form-challan').serialize(),
             function (data, status) {
-               $("#adddata tbody").append(data.data);
-               $('#challan-submit').html('Add More');
-               $('#challan-submit').prop('disabled',false)
+                $("#adddata tbody").append(data.data);
+                $('#challan-submit').html('Add More');
+                $('#challan-submit').prop('disabled', false)
             }, 'json');
     }
 }

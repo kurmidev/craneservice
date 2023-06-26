@@ -54,7 +54,7 @@ class ReportController extends BaseReportController
 
     public function actionVehicleSummary()
     {
-        if ($this->is_pdf) {
+        if ($this->is_pdf || $this->is_csv) {
             $this->layout = false;
         }
         $searchModel = new VehicleMasterSearch();
@@ -79,15 +79,15 @@ class ReportController extends BaseReportController
             "columns" => $searchModel->displayColumn('summary'),
             "title" => "Vehicle Summary",
             "search" => $searchModel->advanceSearch('summary'),
-            "is_pdf" => $this->is_pdf
+            "is_pdf" => $this->is_pdf,
+            "is_csv"=> $this->is_csv
         ]);
-        return $this->setReportRender($content, "Vehicle Summary");
-
+        return $this->setReportRender($content, "Vehicle Summary", $dataProvider, $searchModel->displayColumn('summary'));
     }
 
     public function actionPackageSummary()
     {
-        if ($this->is_pdf) {
+        if ($this->is_pdf || $this->is_csv) {
             $this->layout = false;
         }
         $searchModel = new PlanMasterSearch();
@@ -102,7 +102,7 @@ class ReportController extends BaseReportController
                 "invoice_amount" => "sum(case when e.id is not null then e.total else 0 end )",
             ])->groupBy(['a.name']);
 
-        if ($this->is_pdf) {
+        if ($this->is_pdf || $this->is_csv) {
             $dataProvider->sort = false;
             $dataProvider->pagination = false;
         } else {
@@ -114,9 +114,9 @@ class ReportController extends BaseReportController
             "columns" => $searchModel->displayColumn('summary'),
             "title" => "Package Summary",
             "search" => $searchModel->advanceSearch('summary'),
-            "is_pdf" => $this->is_pdf
+            "is_pdf" => $this->is_pdf,
+            "is_csv" =>  $this->is_csv
         ]);
-        return $this->setReportRender($content, "Package Summary");
-
+        return $this->setReportRender($content, "Package Summary", $dataProvider, $searchModel->displayColumn('summary'));
     }
 }

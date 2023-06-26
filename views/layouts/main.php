@@ -38,6 +38,7 @@ $this->registerLinkTag(['rel' => 'icon', 'type' => 'image/x-icon', 'href' => Yii
             <?= $this->render('title') ?>
             <section class="content">
                 <?= $content ?>
+                <?=$this->render('modal')?>
             </section>
         </div>
         <?= $this->render('footer') ?>
