@@ -22,9 +22,9 @@ $f = new NumberFormatter("en", NumberFormatter::SPELLOUT);
             </tr>
             <tr>
                 <td width="70%" style="padding:10px;">
-                    <b>Amount : </b> <?= $model->amount_paid ?>
+                    <b>Amount : </b> Rs. <?=round( $model->amount_paid,2) ?>
                 </td>
-                <td  style="padding:10px;"><b>Tds :-</b> Rs 0</td>
+                <td  style="padding:10px;"><b>Tds :-</b> Rs <?=$model->totalTds?></td>
             </tr>
             <tr>
                 <td  style="padding:10px;">
@@ -36,33 +36,10 @@ $f = new NumberFormatter("en", NumberFormatter::SPELLOUT);
             </tr>
             <tr>
                 <td  style="padding:10px;">
-                    <b>For Payment Of : </b>Rental Service
+                    
                 </td>
                 <td  style="padding:10px;">
                    <b> Against Bill No. :-</b> <?= $model->invoice_list ?>
-                </td>
-            </tr>
-            <tr>
-                <td></td>
-                <td  style="padding:10px;">
-                    <table style="border-collapse:collapse;" cellspacing="0">
-                        <tr style="height:24pt">
-                            <td style="width:45%;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                                <p class="s6" style="padding-top: 5pt;padding-left: 6pt;text-indent: 0pt;text-align: left;">Account ID</p>
-                            </td>
-                            <td style="width:55%;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                                <p class="s7" style="padding-top: 5pt;padding-left: 6pt;text-indent: 0pt;text-align: left;"></p>
-                            </td>
-                        </tr>
-                        <tr style="height:24pt">
-                            <td style="width:40%;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                                <p class="s6" style="padding-top: 5pt;padding-left: 9pt;text-indent: 0pt;text-align: left;">Balance</p>
-                            </td>
-                            <td style="width:60%;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                                <p class="s7" style="padding-top: 5pt;padding-left: 6pt;text-indent: 0pt;text-align: left;">Rs.  </p>
-                            </td>
-                        </tr>
-                    </table>
                 </td>
             </tr>
             <tr>

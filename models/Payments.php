@@ -327,9 +327,16 @@ class Payments extends \app\models\BaseModel
     public function getInvoice_list()
     {
         if (!empty($this->paymentsDetails)) {       
-            return implode(",", ArrayHelper::getColumn($this->paymentsDetails, 'invoice_id'));
+            return implode(",", ArrayHelper::getColumn($this->paymentsDetails, 'invoice.invoice_no'));
         }
         return "";
+    }
+
+    public function getTotalTds(){
+        if (!empty($this->paymentsDetails)) {       
+            return array_sum(ArrayHelper::getColumn($this->paymentsDetails, 'tds_amount'));
+        }
+        return 0;
     }
 
     public function deletePayment()

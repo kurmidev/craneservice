@@ -476,7 +476,7 @@ class ClientController extends BaseController
         if ($this->request->isPost) {
             $model->load($this->request->post());
             $model->client_id = $client->id;
-            $model->client_type = $client->type;
+            $model->client_type = $client->client_type;
             $model->status = C::STATUS_ACTIVE;
             if ($model->validate() && $model->save()) {
                 $title = $this->clientType == C::CLIENT_TYPE_CUSTOMER ? "Customer" : "Vendor";
