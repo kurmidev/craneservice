@@ -22,6 +22,7 @@ use Yii;
  * @property string|null $address
  * @property int $city_id
  * @property string $pincode
+ * @property string $username
  * @property string $created_at
  * @property int|null $created_by
  * @property string|null $updated_at
@@ -34,6 +35,7 @@ class EmployeeMaster extends \app\models\BaseModel
 {
 
     public $password;
+    public $confirm_password;
     /**
      * {@inheritdoc}
      */
@@ -48,8 +50,8 @@ class EmployeeMaster extends \app\models\BaseModel
     public function scenarios()
     {
         return [
-            self::SCENARIO_CREATE => ['name', 'company_id', 'department_id', 'phone_no', 'city_id', 'pincode', 'status', 'start_time', 'end_time', 'salary', 'overtime_salary', 'address', 'email', 'password', 'mobile_no'],
-            self::SCENARIO_UPDATE => ['name', 'company_id', 'department_id', 'phone_no', 'city_id', 'pincode', 'status', 'start_time', 'end_time', 'salary', 'overtime_salary', 'address', 'email', 'password', 'mobile_no'],
+            self::SCENARIO_CREATE => ['name', 'company_id', 'department_id', 'phone_no', 'city_id', 'pincode', 'status', 'start_time', 'end_time', 'salary', 'overtime_salary', 'address', 'email', 'password', 'mobile_no','username','password'],
+            self::SCENARIO_UPDATE => ['name', 'company_id', 'department_id', 'phone_no', 'city_id', 'pincode', 'status', 'start_time', 'end_time', 'salary', 'overtime_salary', 'address', 'email', 'password', 'mobile_no','username','password'],
         ];
     }
 
@@ -61,7 +63,7 @@ class EmployeeMaster extends \app\models\BaseModel
         return [
             [['name', 'company_id', 'department_id', 'mobile_no', 'city_id', 'pincode'], 'required'],
             [['department_id', 'status', 'city_id', 'created_by', 'updated_by'], 'integer'],
-            [['start_time', 'end_time', 'created_at', 'updated_at', 'password'], 'safe'],
+            [['start_time', 'end_time', 'created_at', 'updated_at', 'password','confirm_password'], 'safe'],
             [['salary', 'overtime_salary'], 'number'],
             [['name'], 'string', 'max' => 150],
             [['email'], 'string', 'max' => 200],
@@ -153,6 +155,14 @@ class EmployeeMaster extends \app\models\BaseModel
         return new EmployeeMasterQuery(get_called_class());
     }
 
+    public function beforeSave($insert){
+        if(!empty($insert)){
+            $this->start_time = date("H:m:s",strtotime($this->start_time));
+            $this->end_time = date("H:m:s",strtotime($this->end_time));
+        }
+        return parent::beforeSave($insert);
+    }
+
     public function afterSave($insert, $changedAttributes)
     {
         if ($insert || in_array('company_id', $changedAttributes)) {
@@ -187,11 +197,11 @@ class EmployeeMaster extends \app\models\BaseModel
 
     public function userCredentials()
     {
-        $model = User::findOne(['username' => $this->mobile_no]);
+        $model = User::findOne(['username' => $this->username]);
         if (!$model instanceof User) {
             $model = new User(['scenario' => User::SCENARIO_CREATE]);
             $model->name = $this->name;
-            $model->username = $this->mobile_no;
+            $model->username = $this->username;
         } else {
             $model->scenario = User::SCENARIO_UPDATE;
         }

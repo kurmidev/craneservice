@@ -18,7 +18,7 @@ class VendorController extends ClientController{
         return $this->actionCreate();
     }
 
-    public function actionEditVendor($id){
+    public function actionEditVendor($id=null){
         return $this->actionUpdate($id);
     }
 

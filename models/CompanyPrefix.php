@@ -11,6 +11,7 @@ use Yii;
  * @property int $company_id
  * @property int $prefix_for
  * @property string $prefix
+ * @property int $post_prefix
  * @property int $status
  * @property string $created_at
  * @property string|null $updated_at
@@ -33,8 +34,8 @@ class CompanyPrefix extends \app\models\BaseModel
     public function rules()
     {
         return [
-            [['company_id', 'prefix_for', 'prefix', 'status'], 'required'],
-            [['company_id', 'prefix_for', 'status', 'created_by', 'updated_by'], 'integer'],
+            [['company_id', 'prefix_for', 'prefix', 'status','post_prefix'], 'required'],
+            [['company_id', 'prefix_for', 'status', 'created_by', 'updated_by','post_prefix'], 'integer'],
             [['created_at', 'updated_at'], 'safe'],
             [['prefix'], 'string', 'max' => 10],
         ];
@@ -43,8 +44,8 @@ class CompanyPrefix extends \app\models\BaseModel
     public function scenarios()
     {
         return [
-            self::SCENARIO_CREATE => ['company_id', 'prefix_for', 'prefix', 'status'],
-            self::SCENARIO_UPDATE => ['company_id', 'prefix_for', 'prefix', 'status']
+            self::SCENARIO_CREATE => ['company_id', 'prefix_for', 'prefix', 'status','post_prefix'],
+            self::SCENARIO_UPDATE => ['company_id', 'prefix_for', 'prefix', 'status','post_prefix']
         ];
     }
 
@@ -58,6 +59,7 @@ class CompanyPrefix extends \app\models\BaseModel
             'company_id' => 'Company ID',
             'prefix_for' => 'Prefix For',
             'prefix' => 'Prefix',
+            'post_prefix'=>'Post Prefix',
             'status' => 'Status',
             'created_at' => 'Created At',
             'updated_at' => 'Updated At',

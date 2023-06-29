@@ -101,20 +101,31 @@ use app\models\VehicleMaster;
         <div class="card ">
             <div class="card-header">
                 <div class="card-title">
-                    PREFIX
+                    Series Detail
                 </div>
             </div>
             <div class="card-body">
+                <div class="row">
+                    <div class="col-lg-4 col-sm-4 col-xs-4"></div>
+                    <div class="col-lg-4 col-sm-4 col-xs-4"><b>Pre Prefix</b><br /><br /></div>
+                    <div class="col-lg-4 col-sm-4 col-xs-4"><b>Post Prefix</b><br /><br /></div>
+                </div>
                 <?php foreach (C::PREFIX_LIST as $prefix_for => $prefix) { ?>
                     <?php
                     $prefixval = $model->getPrefixData();
                     ?>
                     <?= $form->field($model, $prefix_for, ['options' => ['class' => 'form-group']])->begin() ?>
                     <div class="row">
-                        <?= Html::activeLabel($model, 'prefix', ['class' => 'col-lg-6 col-sm-6 col-xs-6 control-label', "label" => C::PREFIX_LIST[$prefix_for]]); ?>
-                        <div class="col-lg-6 col-sm-6 col-xs-6">
-                            <?= Html::activeTextInput($model, 'prefix[' . $prefix_for . ']', ['class' => 'form-control', "value" => !empty($prefixval[$prefix_for]) ? $prefixval[$prefix_for] : ""]) ?>
-                            <?= Html::error($model, 'prefix[' . $prefix_for . ']', ['class' => 'error help-block']) ?>
+                        <div class="col-lg-4 col-sm-4 col-xs-4">
+                            <?= Html::activeLabel($model, 'prefix', ['class' => 'col-lg-6 col-sm-6 col-xs-6 control-label', "label" => C::PREFIX_LIST[$prefix_for]]); ?>
+                        </div>
+                        <div class="col-lg-4 col-sm-4 col-xs-4">
+                            <?= Html::activeTextInput($model, 'prefix[' . $prefix_for . '][prefix]', ['class' => 'form-control', "maxlength" => 4, "value" => !empty($prefixval[$prefix_for]['prefix']) ? $prefixval[$prefix_for]['prefix'] : "", "onkeyup" => "this.value = this.value.toUpperCase();"]) ?>
+                            <?= Html::error($model, 'prefix[' . $prefix_for . '][prefix]', ['class' => 'error help-block']) ?>
+                        </div>
+                        <div class="col-lg-4 col-sm-4 col-xs-4">
+                            <?= Html::activeTextInput($model, 'prefix[' . $prefix_for . '][post_prefix]', ['class' => 'form-control', "value" => !empty($prefixval[$prefix_for]["post_prefix"]) ? $prefixval[$prefix_for]["post_prefix"]: ""]) ?>
+                            <?= Html::error($model, 'prefix[' . $prefix_for . '][post_prefix]', ['class' => 'error help-block']) ?>
                         </div>
                     </div>
                     <?= $form->field($model, $prefix_for)->end() ?>
@@ -138,7 +149,7 @@ use app\models\VehicleMaster;
                     <?= Html::activeLabel($model, 'name', ['class' => 'col-lg-12 col-sm-12 col-xs-12 control-label', "label" => $label]); ?>
                     <div class="row">
                         <div class="col-lg-6 col-sm-6 col-xs-6">
-                            <?= Html::activeTextInput($model, 'kyc_details[' . $key . '][value]', ['class' => 'form-control', "onkeyup" => "this.value = this.value.toUpperCase();", "max-length"=>15,"value" => !empty($doc['other_details']) ? $doc['other_details'] : ""]) ?>
+                            <?= Html::activeTextInput($model, 'kyc_details[' . $key . '][value]', ['class' => 'form-control', "onkeyup" => "this.value = this.value.toUpperCase();", "max-length" => 15, "value" => !empty($doc['other_details']) ? $doc['other_details'] : ""]) ?>
                             <?= Html::error($model, 'kyc_details[' . $key . '][value]', ['class' => 'error help-block']) ?>
                         </div>
                         <div class="col-lg-6 col-sm-6 col-xs-6">
@@ -174,7 +185,7 @@ use app\models\VehicleMaster;
                 <?= $form->field($model, 'pan_no', ['options' => ['class' => 'form-group']])->begin() ?>
                 <?= Html::activeLabel($model, 'pan_no', ['class' => 'col-lg-12 col-sm-12 col-xs-12 control-label']); ?>
                 <div class="col-lg-6 col-sm-6 col-xs-6">
-                    <?= Html::activeTextInput($model, 'pan_no', ['class' => 'form-control','maxlength'=>10, "onkeyup" => "this.value = this.value.toUpperCase();"]) ?>
+                    <?= Html::activeTextInput($model, 'pan_no', ['class' => 'form-control', 'maxlength' => 10, "onkeyup" => "this.value = this.value.toUpperCase();"]) ?>
                     <?= Html::error($model, 'pan_no', ['class' => 'error help-block']) ?>
                 </div>
                 <?= $form->field($model, 'pan_no')->end() ?>
@@ -190,7 +201,7 @@ use app\models\VehicleMaster;
                 <?= $form->field($model, 'state_code', ['options' => ['class' => 'form-group']])->begin() ?>
                 <?= Html::activeLabel($model, 'state_code', ['class' => 'col-lg-12 col-sm-12 col-xs-12 control-label']); ?>
                 <div class="col-lg-6 col-sm-6 col-xs-6">
-                    <?= Html::activeTextInput($model, 'state_code', ['class' => 'form-control']) ?>
+                    <?= Html::activeTextInput($model, 'state_code', ['class' => 'form-control', 'type' => 'number']) ?>
                     <?= Html::error($model, 'state_code', ['class' => 'error help-block']) ?>
                 </div>
                 <?= $form->field($model, 'state_code')->end() ?>

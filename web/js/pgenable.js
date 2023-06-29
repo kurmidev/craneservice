@@ -93,7 +93,7 @@ $(function () {
         calculateTotalTime();
     });
 
-
+    $('.select2').select2();
 
 });
 

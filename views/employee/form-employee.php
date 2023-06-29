@@ -31,7 +31,7 @@ use app\models\Department;
                 <?= $form->field($model, 'company_id', ['options' => ['class' => 'form-group']])->begin() ?>
                 <?= Html::activeLabel($model, 'company_id', ['class' => 'col-lg-12 col-sm-12 col-xs-12 control-label']); ?>
                 <div class="col-lg-12 col-sm-12 col-xs-12">
-                    <?= Html::activeDropDownList($model, 'company_id', ArrayHelper::map(CompanyMaster::find()->active()->all(), 'id', 'name'), ['class' => 'form-control',"prompt"=>"Select one","multiple"=>true]) ?>
+                    <?= Html::activeDropDownList($model, 'company_id', ArrayHelper::map(CompanyMaster::find()->active()->all(), 'id', 'name'), ['class' => 'form-control select2',"multiple"=>true]) ?>
                     <?= Html::error($model, 'company_id', ['class' => 'error help-block']) ?>
                 </div>
                 <?= $form->field($model, 'company_id')->end() ?>
@@ -78,6 +78,40 @@ use app\models\Department;
                 <?= $form->field($model, 'status')->end() ?>
             </div>
         </div>
+        <div class="card card-secondary">
+            <div class="card-header">
+                <div class="card-title">
+                    Credentials
+                </div>
+            </div>
+            <div class="card-body">
+            <?= $form->field($model, 'username', ['options' => ['class' => 'form-group']])->begin() ?>
+                <?= Html::activeLabel($model, 'username', ['class' => 'col-lg-12 col-sm-12 col-xs-12 control-label']); ?>
+                <div class="col-lg-12 col-sm-12 col-xs-12">
+                    <?= Html::activeTextInput($model, 'username', ['class' => 'form-control']) ?>
+                    <?= Html::error($model, 'username', ['class' => 'error help-block']) ?>
+                </div>
+                <?= $form->field($model, 'username')->end() ?>
+
+                <?= $form->field($model, 'password', ['options' => ['class' => 'form-group']])->begin() ?>
+                <?= Html::activeLabel($model, 'password', ['class' => 'col-lg-12 col-sm-12 col-xs-12 control-label']); ?>
+                <div class="col-lg-12 col-sm-12 col-xs-12">
+                    <?= Html::activeTextInput($model, 'password', ['class' => 'form-control']) ?>
+                    <?= Html::error($model, 'password', ['class' => 'error help-block']) ?>
+                </div>
+                <?= $form->field($model, 'password')->end() ?>
+
+                <?= $form->field($model, 'confirm_password', ['options' => ['class' => 'form-group']])->begin() ?>
+                <?= Html::activeLabel($model, 'confirm_password', ['class' => 'col-lg-12 col-sm-12 col-xs-12 control-label']); ?>
+                <div class="col-lg-12 col-sm-12 col-xs-12">
+                    <?= Html::activeTextInput($model, 'confirm_password', ['class' => 'form-control']) ?>
+                    <?= Html::error($model, 'confirm_password', ['class' => 'error help-block']) ?>
+                </div>
+                <?= $form->field($model, 'confirm_password')->end() ?>
+
+            </div>
+        </div>
+
     </div>
     <div class="col-md-6">
         <div class="row">
@@ -108,7 +142,7 @@ use app\models\Department;
                         <?= $form->field($model, 'pincode', ['options' => ['class' => 'form-group']])->begin() ?>
                         <?= Html::activeLabel($model, 'pincode', ['class' => 'col-lg-12 col-sm-12 col-xs-12 control-label']); ?>
                         <div class="col-lg-12 col-sm-12 col-xs-12">
-                            <?= Html::activeTextInput($model, 'pincode', ['class' => 'form-control']) ?>
+                            <?= Html::activeTextInput($model, 'pincode', ['class' => 'form-control','minlength'=>6,'maxlength'=>6]) ?>
                             <?= Html::error($model, 'pincode', ['class' => 'error help-block']) ?>
                         </div>
                         <?= $form->field($model, 'pincode')->end() ?>

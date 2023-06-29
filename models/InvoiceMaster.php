@@ -137,10 +137,14 @@ class InvoiceMaster extends \app\models\BaseModel
             if($client instanceof ClientMaster){
                 $p = $client->company->prefixData;
                 if(!empty($p)){
-                    $prefix = $p[$this->invoice_type];
+                    $preprefix = $p[$this->invoice_type]['prefix'];
+                    $postPrefix = $p[$this->invoice_type]['post_prefix'];
+                    $this->invoice_no = $preprefix . "/" . $postPrefix;
+                    (CompanyPrefix::findOne(['company_id'=>$client->company_id,'prefix_for'=>$this->invoice_type]))->updateCounters(['post_prefix'=>1]);
                 }
+            }else{
+                $this->invoice_no = $this->generateSequence($prefix,$type);
             }
-            $this->invoice_no = $this->generateSequence($prefix,$type);
         }
         return true;
     }

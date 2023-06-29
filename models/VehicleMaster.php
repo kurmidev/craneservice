@@ -17,6 +17,7 @@ use app\components\Constants as C;
  * @property string|null $start_date
  * @property string|null $end_date
  * @property string|null $vehicle_type
+ * @property string $serial_applicable
  * @property int|null $status
  * @property string $created_at
  * @property int|null $created_by
@@ -57,8 +58,8 @@ class VehicleMaster extends \app\models\BaseModel
     public function scenarios()
     {
         return [
-            self::SCENARIO_CREATE => ['name', 'vehicle_no', 'book_no', 'vehicle_type', 'start_date', 'end_date', 'maintenance_data'],
-            self::SCENARIO_UPDATE => ['name', 'vehicle_no', 'book_no', 'vehicle_type', 'start_date', 'end_date', 'maintenance_data'],
+            self::SCENARIO_CREATE => ['name', 'vehicle_no', 'book_no', 'vehicle_type', 'start_date', 'end_date', 'maintenance_data', 'serial_applicable'],
+            self::SCENARIO_UPDATE => ['name', 'vehicle_no', 'book_no', 'vehicle_type', 'start_date', 'end_date', 'maintenance_data', 'serial_applicable'],
         ];
     }
     /**
@@ -72,7 +73,7 @@ class VehicleMaster extends \app\models\BaseModel
 
         return [
             [['start_date', 'end_date', 'created_at', 'updated_at', 'maintenance_data'], 'safe'],
-            [['status', 'created_by', 'updated_by'], 'integer'],
+            [['status', 'created_by', 'updated_by', 'serial_applicable'], 'integer'],
             [['name', 'vehicle_no', 'book_no', 'vehicle_type'], 'string', 'max' => 255],
             [['vehicle_no'], 'unique'],
             [['maintenance_data'], 'ValidateMulti', 'params' => ['isMulti' => TRUE, 'ValidationModel' => $maintenanceValidation, 'allowEmpty' => true]],
@@ -89,10 +90,11 @@ class VehicleMaster extends \app\models\BaseModel
             'name' => 'Name',
             'vehicle_no' => 'Vehicle No',
             'book_no' => 'Book No',
-            'start_date' => 'Start Date',
-            'end_date' => 'End Date',
+            'start_date' => 'Start',
+            'end_date' => 'End',
             'vehicle_type' => 'Vehicle Type',
             'status' => 'Status',
+            'serial_applicable' => 'Serial Applicable',
             'created_at' => 'Created At',
             'created_by' => 'Created By',
             'updated_at' => 'Updated At',

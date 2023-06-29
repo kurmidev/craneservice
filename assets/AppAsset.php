@@ -26,7 +26,8 @@ class AppAsset extends AssetBundle
         "css/font.css",
         "css/daterangetime.css",
         "css/datetime.css",
-        'css/site.css'
+        'css/site.css',
+        'css/select2.min.css',
     ];
     public $js = [
         //"js/jquery.min.js",
@@ -36,6 +37,7 @@ class AppAsset extends AssetBundle
         "js/datepicker.js",
         "js/main.js",
         'js/chart.js',
+        'js/jquery.select2.js',
         "js/pgenable.js"
     ];
     public $depends = [

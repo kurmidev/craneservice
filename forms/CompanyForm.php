@@ -54,9 +54,9 @@ class CompanyForm extends BaseForm
             ->addRule(['value'], 'string')
             ->addRule(['doc'], 'file');
 
-        $prefixValidations = (new DynamicModel(['prefix_for', 'prefix']))
+        $prefixValidations = (new DynamicModel(['prefix_for', 'prefix', 'post_prefix']))
             ->addRule(['prefix'], 'string')
-            ->addRule(['prefix_for'], 'integer');
+            ->addRule(['prefix_for', 'post_prefix'], 'integer');
 
         return [
             [["name", "mobile_no", "billing_address", "city_id", "pincode", "gst_in", "pan_no"], "required"],
@@ -182,10 +182,10 @@ class CompanyForm extends BaseForm
                 $model->status = C::STATUS_ACTIVE;
                 if ($model->validate() && $model->save()) {
                     $is_valid = $is_valid && true;
-                    $this->message.= $bank['account_number']." details added successfully. ";
+                    $this->message .= $bank['account_number'] . " details added successfully. ";
                 } else {
                     $is_valid = $is_valid && false;
-                    $this->message.= $bank['account_number']." details addition failed. ";
+                    $this->message .= $bank['account_number'] . " details addition failed. ";
                 }
             }
         }
@@ -217,37 +217,38 @@ class CompanyForm extends BaseForm
         }
     }
 
-    public function addPrefix($company_id){
-        if(!empty($this->prefix)){
-            
-            foreach($this->prefix as $prefix_for=>$prefixval){
-                $model = CompanyPrefix::findOne(['company_id'=>$company_id,'prefix_for'=>$prefix_for]);
-                if(!$model instanceof CompanyPrefix){
-                    $model = new CompanyPrefix(['scenario'=>CompanyPrefix::SCENARIO_CREATE]);
+    public function addPrefix($company_id)
+    {
+        if (!empty($this->prefix)) {
+            foreach ($this->prefix as $prefix_for => $pref) {
+                $model = CompanyPrefix::findOne(['company_id' => $company_id, 'prefix_for' => $prefix_for]);
+                if (!$model instanceof CompanyPrefix) {
+                    $model = new CompanyPrefix(['scenario' => CompanyPrefix::SCENARIO_CREATE]);
                     $model->company_id  = $company_id;
                     $model->prefix_for = strtoupper($prefix_for);
                     $model->status = C::STATUS_ACTIVE;
-                }else{
+                } else {
                     $model->scenario = CompanyPrefix::SCENARIO_UPDATE;
                 }
-                $model->prefix = $prefixval;
-                if($model->validate() && $model->save()){
-                    $this->message.=" Prefix ".$prefixval." added successfully.";
-                }else{
-                    $this->message.=" Prefix ".$prefixval." addition failed.";
+                $model->prefix = $pref['prefix'];
+                $model->post_prefix = $pref['post_prefix'];
+                if ($model->validate() && $model->save()) {
+                    $this->message .= " Prefix " . $model->prefix . " added successfully.";
+                } else {
+                    $this->message .= " Prefix " . $pref[$prefix_for] . " addition failed.";
                 }
             }
         }
     }
 
-    public function getPrefixData(){
+    public function getPrefixData()
+    {
         $res = [];
-        if(!empty($this->id) && !empty($this->prefix_data)){
-            foreach($this->prefix_data as $prefix_for=>$prefix){
-                $res[$prefix_for] = $prefix; 
+        if (!empty($this->id) && !empty($this->prefix_data)) {
+            foreach ($this->prefix_data as $prefix_for => $prefix) {
+                $res[$prefix_for] = $prefix;
             }
         }
         return $res;
     }
-
 }
