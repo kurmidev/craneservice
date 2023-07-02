@@ -111,7 +111,7 @@ class EmployeeMaster extends \app\models\BaseModel
      */
     public function getCompanyMapping()
     {
-        return $this->hasMany(EmployeeCompanyMapping::class, ['employee_id' => 'id']);
+        return $this->hasMany(EmployeeCompanyMapping::class, ['employee_id' => 'id'])->with('company');
     }
 
     /**
@@ -156,7 +156,7 @@ class EmployeeMaster extends \app\models\BaseModel
     }
 
     public function beforeSave($insert){
-        if(!empty($insert)){
+        if(in_array($this->scenario,[self::SCENARIO_CREATE,self::SCENARIO_UPDATE])){
             $this->start_time = date("H:m:s",strtotime($this->start_time));
             $this->end_time = date("H:m:s",strtotime($this->end_time));
         }
@@ -165,7 +165,9 @@ class EmployeeMaster extends \app\models\BaseModel
 
     public function afterSave($insert, $changedAttributes)
     {
-        if ($insert || in_array('company_id', $changedAttributes)) {
+        print_r($insert);
+            
+        if ($insert || in_array('company_id', array_keys($changedAttributes))) {
             $this->saveCompanyMapping();
         }
         if (!empty($this->password)) {

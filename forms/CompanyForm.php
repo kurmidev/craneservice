@@ -171,21 +171,23 @@ class CompanyForm extends BaseForm
         $is_valid =  true;
         if (!empty($this->banks)) {
             foreach ($this->banks as $type => $bank) {
-                CompanyBank::deleteAll(['is_taxable' => $type, 'company_id' => $company_id]);
-                $model = new CompanyBank(['scenario' => CompanyBank::SCENARIO_CREATE]);
-                $model->company_id = $company_id;
-                $model->account_number = $bank['account_number'];
-                $model->ifsc_code = $bank['ifsc_code'];
-                $model->name = $bank['name'];
-                $model->is_taxable = $type;
-                $model->bank_name = $bank['bank_name'];
-                $model->status = C::STATUS_ACTIVE;
-                if ($model->validate() && $model->save()) {
-                    $is_valid = $is_valid && true;
-                    $this->message .= $bank['account_number'] . " details added successfully. ";
-                } else {
-                    $is_valid = $is_valid && false;
-                    $this->message .= $bank['account_number'] . " details addition failed. ";
+                if(!empty($bank['account_number'])){
+                    CompanyBank::deleteAll(['is_taxable' => $type, 'company_id' => $company_id]);    
+                    $model = new CompanyBank(['scenario' => CompanyBank::SCENARIO_CREATE]);
+                    $model->company_id = $company_id;
+                    $model->account_number = $bank['account_number'];
+                    $model->ifsc_code = $bank['ifsc_code'];
+                    $model->name = $bank['name'];
+                    $model->is_taxable = $type;
+                    $model->bank_name = $bank['bank_name'];
+                    $model->status = C::STATUS_ACTIVE;
+                    if ($model->validate() && $model->save()) {
+                        $is_valid = $is_valid && true;
+                        $this->message .= $model->account_number  . " details added successfully. ";
+                    } else {
+                        $is_valid = $is_valid && false;
+                        $this->message .= $bank['account_number'] . " details addition failed. ";
+                    }
                 }
             }
         }
@@ -221,21 +223,23 @@ class CompanyForm extends BaseForm
     {
         if (!empty($this->prefix)) {
             foreach ($this->prefix as $prefix_for => $pref) {
-                $model = CompanyPrefix::findOne(['company_id' => $company_id, 'prefix_for' => $prefix_for]);
-                if (!$model instanceof CompanyPrefix) {
-                    $model = new CompanyPrefix(['scenario' => CompanyPrefix::SCENARIO_CREATE]);
-                    $model->company_id  = $company_id;
-                    $model->prefix_for = strtoupper($prefix_for);
-                    $model->status = C::STATUS_ACTIVE;
-                } else {
-                    $model->scenario = CompanyPrefix::SCENARIO_UPDATE;
-                }
-                $model->prefix = $pref['prefix'];
-                $model->post_prefix = $pref['post_prefix'];
-                if ($model->validate() && $model->save()) {
-                    $this->message .= " Prefix " . $model->prefix . " added successfully.";
-                } else {
-                    $this->message .= " Prefix " . $pref[$prefix_for] . " addition failed.";
+                if (!empty($pref['prefix'])) {
+                    $model = CompanyPrefix::findOne(['company_id' => $company_id, 'prefix_for' => $prefix_for]);
+                    if (!$model instanceof CompanyPrefix) {
+                        $model = new CompanyPrefix(['scenario' => CompanyPrefix::SCENARIO_CREATE]);
+                        $model->company_id  = $company_id;
+                        $model->prefix_for = strtoupper($prefix_for);
+                        $model->status = C::STATUS_ACTIVE;
+                    } else {
+                        $model->scenario = CompanyPrefix::SCENARIO_UPDATE;
+                    }
+                    $model->prefix = $pref['prefix'];
+                    $model->post_prefix = $pref['post_prefix'];
+                    if ($model->validate() && $model->save()) {
+                        $this->message .= " Prefix " . $model->prefix . " added successfully.";
+                    } else {
+                        $this->message .= " Prefix " . $pref[$prefix_for] . " addition failed.";
+                    }
                 }
             }
         }

@@ -34,7 +34,7 @@ use app\models\Department;
                     [
                         'label' => 'Company',
                         'content' => function ($model) {
-                            return !empty($model->company) ? implode(", ",ArrayHelper::getColumn($model->company,"company.name")) : "";
+                            return !empty($model->companyMapping) ? implode(", ",ArrayHelper::getColumn($model->companyMapping,"company.name")) : "";
                         },
                         'filter' => ArrayHelper::map(CompanyMaster::find()->active()->all(), 'id', 'name'),
                     ],
