@@ -2,11 +2,35 @@
 
 namespace app\controllers;
 
+use Yii;
 use yii\web\Controller;
 use yii\filters\AccessControl;
+use app\components\ConstFunc as F;
 
 class BaseController extends Controller
 {
+
+    public $is_pdf = false;
+    public $is_csv = false;
+
+    public function init()
+    {
+        parent::init();
+        $this->is_pdf = Yii::$app->request->get('is_pdf');
+        $this->is_csv = Yii::$app->request->get('is_csv');
+    }
+
+
+    public function setReportRender($content = null, $filename, $dataProvider = null, $gridColumns = null)
+    {
+        if ($this->is_pdf) {
+            return  F::printPdf($content, $filename);
+        } else if ($this->is_csv) {
+            return F::printCsv($dataProvider, $gridColumns, $filename);
+        }
+        return $content;
+    }
+
     public function behaviors()
     {
         return [

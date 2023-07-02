@@ -6,31 +6,14 @@ use Yii;
 use app\models\ChallanSearch;
 use app\models\InvoiceMasterSearch;
 use app\models\PaymentSearch;
-use app\components\ConstFunc as F;
 
 class BaseReportController extends BaseController
 {
 
 
-    public $is_pdf = false;
-    public $is_csv = false;
+   
 
-    public function init()
-    {
-        parent::init();
-        $this->is_pdf = Yii::$app->request->get('is_pdf');
-        $this->is_csv = Yii::$app->request->get('is_csv');
-    }
-
-    public function setReportRender($content = null, $filename, $dataProvider = null, $gridColumns = null)
-    {
-        if ($this->is_pdf) {
-            return  F::printPdf($content, $filename);
-        } else if ($this->is_csv) {
-            return F::printCsv($dataProvider, $gridColumns, $filename);
-        }
-        return $content;
-    }
+   
 
     public function _challan($client_type)
     {

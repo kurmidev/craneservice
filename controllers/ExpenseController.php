@@ -90,12 +90,12 @@ class ExpenseController extends BaseController
     {
         $searchModel = new ExpenseMasterSearch();
         $dataProvider = $searchModel->search($this->request->queryParams);
-        $dataProvider->query->andWhere(['expense_type'=> C::EXPENSE_TYPE_NORMAL]);
+        $dataProvider->query->andWhere(['expense_type' => C::EXPENSE_TYPE_NORMAL]);
 
         return $this->render('index', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
-            "type"=> C::EXPENSE_TYPE_NORMAL
+            "type" => C::EXPENSE_TYPE_NORMAL
         ]);
     }
 
@@ -112,7 +112,7 @@ class ExpenseController extends BaseController
             if ($model->load($this->request->post()) && $model->validate() && $model->save()) {
                 Yii::$app->getSession()->setFlash('s', "Expense has been added successfully.");
                 return $this->redirect(['expense/index']);
-            } 
+            }
         }
         return $this->render('@app/views/expense/form-expense', [
             'model' => $model,
@@ -128,12 +128,12 @@ class ExpenseController extends BaseController
      */
     public function actionEditExpenses($id)
     {
-        $expense = ExpenseMaster::findOne(['id' => $id,'expense_type'=>C::EXPENSE_TYPE_NORMAL]);
+        $expense = ExpenseMaster::findOne(['id' => $id, 'expense_type' => C::EXPENSE_TYPE_NORMAL]);
         if (!$expense instanceof ExpenseMaster) {
             Yii::$app->getSession()->setFlash('e', "Record not found!");
             return $this->redirect(["expense/index"]);
         }
-        $model = new ExpenseForm(['scenario'=>ExpenseMaster::SCENARIO_UPDATE]);
+        $model = new ExpenseForm(['scenario' => ExpenseMaster::SCENARIO_UPDATE]);
         $model->id = $expense->id;
         $model->expense_type = $expense->id;
         if ($this->request->isPost) {
@@ -141,12 +141,12 @@ class ExpenseController extends BaseController
                 Yii::$app->getSession()->setFlash('s', "Expense been updated successfully.");
                 return $this->redirect(["expense/index"]);
             }
-        }else if(empty($model->errors)) {
-            $model->load($expense->attributes,'');
+        } else if (empty($model->errors)) {
+            $model->load($expense->attributes, '');
         }
         return $this->render('@app/views/expense/form-expense', [
             'model' => $model,
-            'expense'=> $expense
+            'expense' => $expense
         ]);
     }
 
@@ -159,12 +159,12 @@ class ExpenseController extends BaseController
     {
         $searchModel = new ExpenseMasterSearch();
         $dataProvider = $searchModel->search($this->request->queryParams);
-        $dataProvider->query->andWhere(['expense_type'=> C::EXPENSE_TYPE_STAFF]);
+        $dataProvider->query->andWhere(['expense_type' => C::EXPENSE_TYPE_STAFF]);
 
         return $this->render('index', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
-            "type"=> C::EXPENSE_TYPE_STAFF
+            "type" => C::EXPENSE_TYPE_STAFF
         ]);
     }
 
@@ -181,7 +181,7 @@ class ExpenseController extends BaseController
             if ($model->load($this->request->post()) && $model->validate() && $model->save()) {
                 Yii::$app->getSession()->setFlash('s', "Expense has been added successfully.");
                 return $this->redirect(['expense/staff-expenses']);
-            } 
+            }
         }
         return $this->render('@app/views/expense/form-expense', [
             'model' => $model,
@@ -197,12 +197,12 @@ class ExpenseController extends BaseController
      */
     public function actionEditStaffexpenses($id)
     {
-        $expense = ExpenseMaster::findOne(['id' => $id,'expense_type'=>C::EXPENSE_TYPE_STAFF]);
+        $expense = ExpenseMaster::findOne(['id' => $id, 'expense_type' => C::EXPENSE_TYPE_STAFF]);
         if (!$expense instanceof ExpenseMaster) {
             Yii::$app->getSession()->setFlash('e', "Record not found!");
             return $this->redirect(["expense/index"]);
         }
-        $model = new ExpenseForm(['scenario'=>ExpenseMaster::SCENARIO_UPDATE]);
+        $model = new ExpenseForm(['scenario' => ExpenseMaster::SCENARIO_UPDATE]);
         $model->id = $expense->id;
         $model->expense_type = $expense->id;
         if ($this->request->isPost) {
@@ -210,16 +210,17 @@ class ExpenseController extends BaseController
                 Yii::$app->getSession()->setFlash('s', "Expense been updated successfully.");
                 return $this->redirect(["expense/staff-expenses"]);
             }
-        }else if(empty($model->errors)) {
-            $model->load($expense->attributes,'');
+        } else if (empty($model->errors)) {
+            $model->load($expense->attributes, '');
         }
         return $this->render('@app/views/expense/form-expense', [
             'model' => $model,
-            'expense'=> $expense
+            'expense' => $expense
         ]);
     }
 
-    public function actionPrintExpense($id){
+    public function actionPrintExpense($id)
+    {
         $this->layout = false;
         $model = ExpenseMaster::findOne(['id' => $id]);
         $filename = "voucher_{$model->voucher_no}.pdf";
@@ -232,6 +233,33 @@ class ExpenseController extends BaseController
 
     public function actionVehicleExpenses()
     {
+
+        $searchModel = new ExpenseMasterSearch();
+        $dataProvider = $searchModel->search($this->request->queryParams);
+        $dataProvider->query->setAlias("a");
+        $dataProvider->query->joinWith(['vehicle'])->andWhere(['a.status' => C::STATUS_ACTIVE])
+            ->andWhere(['not', ['a.vehicle_id' => null]])
+            ->select(['a.vehicle_id', "count" => 'count(a.id)', 'total' => 'sum(a.total)'])
+            ->groupBy(['a.vehicle_id']);
+
+        if ($this->is_pdf) {
+            $dataProvider->sort = false;
+            $dataProvider->pagination = false;
+        } else {
+            $dataProvider->pagination->pageSize = 20;
+        }
+
+        $content = $this->render('@app/views/reports/index', [
+            'searchModel' => $searchModel,
+            'dataProvider' => $dataProvider,
+            "columns" => $searchModel->displayColumn('vehicle_expense'),
+            "title" => "Vehicle Wise Expenses",
+            "search" => $searchModel->advanceSearch(),
+            "is_pdf" => $this->is_pdf,
+            "is_csv" =>  $this->is_csv
+        ]);
+
+        return $this->setReportRender($content, "Invoice List", $dataProvider, $searchModel->displayColumn());
     }
 
     /**

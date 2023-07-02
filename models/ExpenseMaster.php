@@ -41,6 +41,7 @@ use Yii;
  */
 class ExpenseMaster extends \app\models\BaseModel
 {
+    public $count;
     /**
      * {@inheritdoc}
      */
@@ -171,6 +172,10 @@ class ExpenseMaster extends \app\models\BaseModel
     public static function find()
     {
         return new ExpenseMasterQuery(get_called_class());
+    }
+
+    public function getVehicle(){
+        return $this->hasOne(VehicleMaster::class,['id'=>'vehicle_id']);
     }
 
     public function beforeSave($insert){
