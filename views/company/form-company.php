@@ -120,7 +120,7 @@ use app\models\VehicleMaster;
                             <?= Html::activeLabel($model, 'prefix', ['class' => 'col-lg-6 col-sm-6 col-xs-6 control-label', "label" => C::PREFIX_LIST[$prefix_for]]); ?>
                         </div>
                         <div class="col-lg-4 col-sm-4 col-xs-4">
-                            <?= Html::activeTextInput($model, 'prefix[' . $prefix_for . '][prefix]', ['class' => 'form-control', "maxlength" => 4, "value" => !empty($prefixval[$prefix_for]['prefix']) ? $prefixval[$prefix_for]['prefix'] : "", "onkeyup" => "this.value = this.value.toUpperCase();"]) ?>
+                            <?= Html::activeTextInput($model, 'prefix[' . $prefix_for . '][prefix]', ['class' => 'form-control', "maxlength" => 6, "value" => !empty($prefixval[$prefix_for]['prefix']) ? $prefixval[$prefix_for]['prefix'] : "", "onkeyup" => "this.value = this.value.toUpperCase();"]) ?>
                             <?= Html::error($model, 'prefix[' . $prefix_for . '][prefix]', ['class' => 'error help-block']) ?>
                         </div>
                         <div class="col-lg-4 col-sm-4 col-xs-4">

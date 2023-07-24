@@ -1,14 +1,41 @@
 $(function () {
 
-    $('.cal').daterangepicker({
+    /*$('.cal').daterangepicker({
         singleDatePicker: true,
         locale: {
             format: "yyyy-MM-DD"
         }
+    });*/
+
+    jQuery('.cal').datetimepicker({
+        i18n:{
+         de:{
+          months:[
+           'Januar','Februar','March','April',
+           'May','June','July','August',
+           'September','October','November','December',
+          ],
+          dayOfWeek:[
+           "Su", "Mo", "Tu", "We",
+           "Th", "Fr", "Sa.",
+          ]
+         }
+        },
+        timepicker:false,
+        format:'Y-m-d'
+       });
+
+       jQuery('.timepick').datetimepicker({
+        datepicker:false,
+        formatTime:'h:m a',
+        format:'h:m',
+        onChangeDateTime:function(dp,$input){
+           
+            // alert($input.val())
+          }
     });
 
-
-    $('.timepick').daterangepicker({
+    /*$('.timepick').daterangepicker({
         singleDatePicker: true,
         timePicker: true,
         timePicker24Hour: false,
@@ -18,10 +45,17 @@ $(function () {
         }
     }).on('show.daterangepicker', function (ev, picker) {
         picker.container.find(".calendar-table").hide();
-    });
+    });*/
 
     $('body').on('focus', ".timepick", function () {
-        $(this).daterangepicker({
+
+        $(this).datetimepicker({
+            datepicker:false,
+            formatTime:'h:m a',
+            format:'h:m'
+        });
+
+       /* $(this).daterangepicker({
             singleDatePicker: true,
             timePicker: true,
             timePicker24Hour: false,
@@ -31,7 +65,7 @@ $(function () {
             }
         }).on('show.daterangepicker', function (ev, picker) {
             picker.container.find(".calendar-table").hide();
-        });
+        });*/
     });
 
     $(".searchd").hide();

@@ -186,7 +186,7 @@ use app\models\Department;
                         <?= $form->field($model, 'overtime_salary', ['options' => ['class' => 'form-group']])->begin() ?>
                         <?= Html::activeLabel($model, 'overtime_salary', ['class' => 'col-lg-12 col-sm-12 col-xs-12 control-label']); ?>
                         <div class="col-lg-12 col-sm-12 col-xs-12">
-                            <?= Html::activeTextInput($model, 'overtime_salary', ['class' => 'form-control']) ?>
+                            <?= Html::activeTextInput($model, 'overtime_salary', ['class' => 'form-control','placeholder'=>"Per Hour"]) ?>
                             <?= Html::error($model, 'overtime_salary', ['class' => 'error help-block']) ?>
                         </div>
                         <?= $form->field($model, 'overtime_salary')->end() ?>

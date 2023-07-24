@@ -33,11 +33,11 @@ class AppAsset extends AssetBundle
         //"js/jquery.min.js",
         "js/moment.js",
         //"js/bootstrap.js"
-        "js/datetime.js",
-        "js/datepicker.js",
+        //"js/datepicker.js",
         "js/main.js",
         'js/chart.js',
         'js/jquery.select2.js',
+        "js/datetime.js",
         "js/pgenable.js"
     ];
     public $depends = [
