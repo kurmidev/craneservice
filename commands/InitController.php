@@ -1313,7 +1313,7 @@ class InitController extends Controller
         return false;
     }
 
-    public function departmentnData()
+    public function departmentData()
     {
         $data = [
             'Accounts',
