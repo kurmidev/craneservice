@@ -138,7 +138,7 @@ class BaseModel extends ActiveRecord
                 $auditTrails->new_value = json_encode($this->_newData);
                 $auditTrails->primary_id = $this->id;
                 $auditTrails->action_taken = !empty($this->status) ? $this->status : 1;
-                $auditTrails->created_by = \Yii::$app->user->getId();
+                $auditTrails->created_by = !empty(\Yii::$app->user) ?\Yii::$app->user->getId():0;
                 $auditTrails->created_at = date("Y-m-d H:i:s");
                 $auditTrails->remark = $this->getAuditMessage($this->_oldData, $this->_newData, $this->_changedata);
                 if ($auditTrails->validate() && $auditTrails->save()) {
