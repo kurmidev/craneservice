@@ -1243,13 +1243,14 @@ class InitController extends Controller
         if (!empty($this->stateMapping)) {
             $this->addCity($this->cityStateList, $this->stateMapping);
         }
-
-        $this->addAdminUser();
-
         //insert designation data
         $this->departmentData();
 
         $this->actionAddCategory();
+
+        $this->addAdminUser();
+
+        
     }
 
     public function addCity($stateList, $stateMapping)
