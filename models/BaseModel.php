@@ -8,6 +8,7 @@ use yii\behaviors\BlameableBehavior;
 use yii\behaviors\TimestampBehavior;
 use yii\db\BaseActiveRecord;
 use yii\db\Expression;
+use app\models\User;
 use app\components\Constants as C;
 
 class BaseModel extends ActiveRecord
