@@ -87,7 +87,7 @@ if (!empty($model->client_id)) {
                     <div class="col-lg-4 col-sm-4 col-xs-4">
                         <?= $form->field($model, 'vehicle_id', ['options' => ['class' => 'form-group']])->begin() ?>
                         <?= Html::activeLabel($model, 'vehicle_id', ['class' => 'col-lg-12 col-sm-12 col-xs-12 control-label']); ?>
-                        <?= Html::activeDropDownList($model, 'vehicle_id', ArrayHelper::map(VehicleMaster::find()->active()->all(), 'id', 'name'), ['class' => 'form-control', 'id' => 'challanform_items_0_vehicle_id', 'prompt' => "Select option"]) ?>
+                        <?= Html::activeDropDownList($model, 'vehicle_id', ArrayHelper::map(VehicleMaster::find()->active()->all(), 'id', 'vehicle_no'), ['class' => 'form-control', 'id' => 'challanform_items_0_vehicle_id', 'prompt' => "Select option"]) ?>
                         <?= Html::error($model, 'vehicle_id', ['class' => 'error help-block', 'id' => 'error_vehicle_id']) ?>
                         <?= $form->field($model, 'vehicle_id')->end() ?>
                     </div>

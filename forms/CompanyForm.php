@@ -234,7 +234,11 @@ class CompanyForm extends BaseForm
                         $model->scenario = CompanyPrefix::SCENARIO_UPDATE;
                     }
                     $model->prefix = $pref['prefix'];
-                    $model->post_prefix = $pref['post_prefix'];
+                    if(!empty($pref['post_prefix']) && is_numeric($pref['post_prefix'])){
+                        $model->post_prefix =  $pref['post_prefix'];
+                    }else{
+                        $model->post_prefix = !empty($model->post_prefix) && is_numeric($model->post_prefix)?$model->post_prefix:1;
+                    }
                     if ($model->validate() && $model->save()) {
                         $this->message .= " Prefix " . $model->prefix . " added successfully.";
                     } else {
