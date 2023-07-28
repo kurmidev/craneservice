@@ -161,7 +161,7 @@ use app\models\Department;
                         <?= $form->field($model, 'start_time', ['options' => ['class' => 'form-group']])->begin() ?>
                         <?= Html::activeLabel($model, 'start_time', ['class' => 'col-lg-12 col-sm-12 col-xs-12 control-label']); ?>
                         <div class="col-lg-12 col-sm-12 col-xs-12">
-                            <?= Html::activeTextInput($model, 'start_time', ['class' => 'form-control timepick', "readonly" => true]) ?>
+                            <?= Html::activeTextInput($model, 'start_time', ['class' => 'form-control timepick']) ?>
                             <?= Html::error($model, 'start_time', ['class' => 'error help-block']) ?>
                         </div>
                         <?= $form->field($model, 'start_time')->end() ?>
@@ -170,7 +170,7 @@ use app\models\Department;
                         <?= $form->field($model, 'end_time', ['options' => ['class' => 'form-group']])->begin() ?>
                         <?= Html::activeLabel($model, 'end_time', ['class' => 'col-lg-12 col-sm-12 col-xs-12 control-label']); ?>
                         <div class="col-lg-12 col-sm-12 col-xs-12">
-                            <?= Html::activeTextInput($model, 'end_time', ['class' => 'form-control timepick', "readonly" => true]) ?>
+                            <?= Html::activeTextInput($model, 'end_time', ['class' => 'form-control timepick']) ?>
                             <?= Html::error($model, 'end_time', ['class' => 'error help-block']) ?>
                         </div>
                         <?= $form->field($model, 'end_time')->end() ?>
