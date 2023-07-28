@@ -238,7 +238,7 @@ class CompanyForm extends BaseForm
                     if ($model->validate() && $model->save()) {
                         $this->message .= " Prefix " . $model->prefix . " added successfully.";
                     } else {
-                        $this->message .= " Prefix " . $pref[$prefix_for] . " addition failed.";
+                        $this->message .= " Prefix " . $pref['prefix'] . " addition failed.";
                     }
                 }
             }
