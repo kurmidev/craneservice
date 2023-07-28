@@ -134,7 +134,7 @@ use app\components\Constants as C;
                                         <td style="border:1px solid #000; border-collapse: collapse;padding:5px;"><?= $model->plan->name ?></td>
                                         <td style="border:1px solid #000; border-collapse: collapse;padding:5px;"><?= $model->vehicle->name ?></td>
                                         <td style="border:1px solid #000; border-collapse: collapse;padding:5px;"><?= !empty(C::DAYWISE_LABEL[$model->day_wise]) ? C::DAYWISE_LABEL[$model->day_wise] : "" ?></td>
-                                        <td style="border:1px solid #000; border-collapse: collapse;padding:5px;"><?= round($model->total, 2) ?></td>
+                                        <td style="border:1px solid #000; border-collapse: collapse;padding:5px;"><?= round($model->amount, 2) ?></td>
                                         <td style="border:1px solid #000; border-collapse: collapse;padding:5px;"></td>
                                     <?php break;
                                     case C::PACKAGE_WISE_TRIP: ?>
@@ -142,14 +142,14 @@ use app\components\Constants as C;
                                         <td style="border:1px solid #000; border-collapse: collapse;padding:5px;"><?= $model->vehicle->name ?></td>
                                         <td style="border:1px solid #000; border-collapse: collapse;padding:5px;"><?= $model->plan_trip ?></td>
                                         <td style="border:1px solid #000; border-collapse: collapse;padding:5px;"><?= $model->plan_measure ?></td>
-                                        <td style="border:1px solid #000; border-collapse: collapse;padding:5px;"><?= round($model->total, 2) ?></td>
+                                        <td style="border:1px solid #000; border-collapse: collapse;padding:5px;"><?= round($model->amount, 2) ?></td>
                                         <td style="border:1px solid #000; border-collapse: collapse;padding:5px;"></td>
                                     <?php break;
                                     case C::PACKAGE_WISE_DESTINATION: ?>
                                         <td style="border:1px solid #000; border-collapse: collapse;padding:5px;"><?= $model->plan->name ?></td>
                                         <td style="border:1px solid #000; border-collapse: collapse;padding:5px;"><?= $model->from_destination ?></td>
                                         <td style="border:1px solid #000; border-collapse: collapse;padding:5px;"><?= $model->to_destination ?></td>
-                                        <td style="border:1px solid #000; border-collapse: collapse;padding:5px;"><?= round($model->total, 2) ?></td>
+                                        <td style="border:1px solid #000; border-collapse: collapse;padding:5px;"><?= round($model->amount, 2) ?></td>
                                         <td style="border:1px solid #000; border-collapse: collapse;padding:5px;"></td>
                                     <?php
                                         break;

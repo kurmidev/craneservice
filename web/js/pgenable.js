@@ -8,40 +8,40 @@ $(function () {
     });*/
 
     jQuery('.cal').datetimepicker({
-        i18n:{
-         de:{
-          months:[
-           'Januar','Februar','March','April',
-           'May','June','July','August',
-           'September','October','November','December',
-          ],
-          dayOfWeek:[
-           "Su", "Mo", "Tu", "We",
-           "Th", "Fr", "Sa.",
-          ]
-         }
+        i18n: {
+            de: {
+                months: [
+                    'Januar', 'Februar', 'March', 'April',
+                    'May', 'June', 'July', 'August',
+                    'September', 'October', 'November', 'December',
+                ],
+                dayOfWeek: [
+                    "Su", "Mo", "Tu", "We",
+                    "Th", "Fr", "Sa.",
+                ]
+            }
         },
-        timepicker:false,
-        format:'Y-m-d'
-       });
+        timepicker: false,
+        format: 'Y-m-d'
+    });
 
-       $('.timepick').timepicker({
+    $('.timepick').timepicker({
         template: false,
         showInputs: false,
         minuteStep: 5
-        });
+    });
 
-    
 
-       /*jQuery('.timepick').datetimepicker({
-        datepicker:false,
-        formatTime:'h:m',
-        format:'h:m',
-        onChangeDateTime:function(dp,$input){
-           
-            // alert($input.val())
-          }
-    });*/
+
+    /*jQuery('.timepick').datetimepicker({
+     datepicker:false,
+     formatTime:'h:m',
+     format:'h:m',
+     onChangeDateTime:function(dp,$input){
+        
+         // alert($input.val())
+       }
+ });*/
 
     /*$('.timepick').daterangepicker({
         singleDatePicker: true,
@@ -69,17 +69,17 @@ $(function () {
             minuteStep: 5
         });
 
-       /* $(this).daterangepicker({
-            singleDatePicker: true,
-            timePicker: true,
-            timePicker24Hour: false,
-            timePickerIncrement: 1,
-            locale: {
-                format: 'hh:mm A'
-            }
-        }).on('show.daterangepicker', function (ev, picker) {
-            picker.container.find(".calendar-table").hide();
-        });*/
+        /* $(this).daterangepicker({
+             singleDatePicker: true,
+             timePicker: true,
+             timePicker24Hour: false,
+             timePickerIncrement: 1,
+             locale: {
+                 format: 'hh:mm A'
+             }
+         }).on('show.daterangepicker', function (ev, picker) {
+             picker.container.find(".calendar-table").hide();
+         });*/
     });
 
     $(".searchd").hide();
@@ -156,7 +156,7 @@ $('document').ready(function () {
         $('#defaultModal')
             .find('.modal-header > h3').text(title).end()
             .find('.modal-body').html(body).end()
-            .find('#modal-delete').attr('url',url).end()
+            .find('#modal-delete').attr('url', url).end()
             .modal('show');
     });
 });
@@ -272,6 +272,11 @@ function submitChallanForm() {
     if (is_valid) {
         $.post(actionUrl, $('#form-challan').serialize(),
             function (data, status) {
+                $(':input', '#form-challan')
+                    .not(':button, :submit, :reset, :hidden')
+                    .val('')
+                    .prop('checked', false)
+                    .prop('selected', false);
                 $("#adddata tbody").append(data.data);
                 $('#challan-submit').html('Add More');
                 $('#challan-submit').prop('disabled', false)
