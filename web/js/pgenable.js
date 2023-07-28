@@ -25,15 +25,23 @@ $(function () {
         format:'Y-m-d'
        });
 
-       jQuery('.timepick').datetimepicker({
+       $('.timepick').timepicker({
+        template: false,
+        showInputs: false,
+        minuteStep: 5
+        });
+
+    
+
+       /*jQuery('.timepick').datetimepicker({
         datepicker:false,
-        formatTime:'h:m a',
+        formatTime:'h:m',
         format:'h:m',
         onChangeDateTime:function(dp,$input){
            
             // alert($input.val())
           }
-    });
+    });*/
 
     /*$('.timepick').daterangepicker({
         singleDatePicker: true,
@@ -49,10 +57,16 @@ $(function () {
 
     $('body').on('focus', ".timepick", function () {
 
-        $(this).datetimepicker({
+        /*$(this).datetimepicker({
             datepicker:false,
             formatTime:'h:m a',
-            format:'h:m'
+            format:'h:m a'
+        });*/
+
+        $(this).timepicker({
+            template: false,
+            showInputs: false,
+            minuteStep: 5
         });
 
        /* $(this).daterangepicker({
