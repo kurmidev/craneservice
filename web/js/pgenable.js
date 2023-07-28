@@ -26,9 +26,10 @@ $(function () {
     });
 
     $('.timepick').timepicker({
-        template: false,
-        showInputs: false,
-        minuteStep: 5
+        timeFormat: 'h:mm p',
+        scrollbar: true,
+        dropdown: true,
+        dynamic: false,
     });
 
 
@@ -64,9 +65,10 @@ $(function () {
         });*/
 
         $(this).timepicker({
-            template: false,
-            showInputs: false,
-            minuteStep: 5
+            timeFormat: 'h:mm p',
+            scrollbar: true,
+            dropdown: true,
+            dynamic: false,
         });
 
         /* $(this).daterangepicker({

@@ -24,8 +24,8 @@ class AppAsset extends AssetBundle
         'css/bootstrap.css',
         "css/fonts.css",
         "css/font.css",
-        //"css/daterangetime.css",
         "css/datetime.css",
+        "css/daterangetime.css",
         'css/site.css',
         'css/select2.min.css',
     ];
