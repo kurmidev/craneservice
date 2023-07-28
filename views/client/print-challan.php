@@ -171,7 +171,7 @@ use app\components\Constants as C;
                                         <td style="border:1px solid #000; border-collapse: collapse;padding:5px;"><?= date('H:i', mktime(0, (strtotime($model->plan_end_time) - strtotime($model->plan_start_time)) / 60)); ?>Hrs</td>
                                         <td style="border:1px solid #000; border-collapse: collapse;padding:5px;"><?= date('H:i', mktime(0, $extraHrs / 60)); ?>Hrs</td>
                                         <td style="border:1px solid #000; border-collapse: collapse;padding:5px;"><?= $model->extra ?></td>
-                                        <td style="border:1px solid #000; border-collapse: collapse;padding:5px;"><?= $model->total ?></td>
+                                        <td style="border:1px solid #000; border-collapse: collapse;padding:5px;"><?= $model->amount ?></td>
                                 <?php
                                         break;
                                     default:
