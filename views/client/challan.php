@@ -76,7 +76,12 @@ if (empty($pg)) {
                         return $model->base_amount;
                     },
                 ],
-                "amount",
+                [
+                    'attribute' => 'amount', 'label' => 'Amount',
+                    'content' => function ($model) {
+                        return $model->amount + $model->extra;
+                    },
+                ],
                 [
                     'attribute' => 'invoice_id', 'label' => 'Is Invoice Generated',
                     'content' => function ($model) {
