@@ -119,7 +119,7 @@ $bank = !empty($model->client->company->banks[1]) ? $model->client->company->ban
                                 <td><?= round($challan->amount, 2) ?></td>
                                 <?php $base_amount += $challan->amount ?>
                                 <?php $tax += $challan->tax ?>
-                                <?php $total += ($model->invoice_type== C::INVOICE_TYPE_GST)?($challan->amount + $challan->extra + $challan->tax) :(($challan->amount + $challan->extra) ?>
+                                <?php $total += ($model->invoice_type== C::INVOICE_TYPE_GST)?($challan->amount + $challan->extra + $challan->tax) :(($challan->amount + $challan->extra)) ?>
                             </tr>
                         <?php } ?>
                         <?php if ($model->invoice_type == C::INVOICE_TYPE_GST) { ?>
