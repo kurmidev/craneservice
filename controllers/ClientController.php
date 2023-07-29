@@ -5,6 +5,7 @@ namespace app\controllers;
 use app\models\ClientMaster;
 use app\models\ClientMasterSearch;
 use app\controllers\BaseController;
+use yii\data\ActiveDataProvider;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use app\components\Constants as C;
@@ -22,6 +23,7 @@ use app\forms\QuotationForm;
 use app\models\AuditLogsSearch;
 use app\models\ClientPlanMapping;
 use app\models\ClientPlanMappingSearch;
+use app\models\LedgerReportSearch;
 use app\models\PaymentNotes;
 use app\models\PaymentNotesSearch;
 use app\models\Payments;
@@ -116,6 +118,12 @@ class ClientController extends BaseController
             $customPriceDataProvider->query->andWhere(["client_id" => $model->id]);
             $customPriceDataProvider->pagination->pageSize = 10;
 
+            $ledgerSearchModel = new LedgerReportSearch();
+            $ledgerDataProvider = $ledgerSearchModel->search($this->request->queryParams);
+            $ledgerDataProvider->query->andWhere(["client_id" => $model->id]);
+            $ledgerDataProvider->pagination->pageSize = 10;
+
+
 
             $logSearchModel = new AuditLogsSearch();
             $logDataProvider = $logSearchModel->search($this->request->queryParams);
@@ -125,6 +133,7 @@ class ClientController extends BaseController
             $totalChallanAmount = Challan::find()->active()->andWhere(['client_id' => $model->id, 'client_type' => $model->client_type])->sum("amount");
             $totalinvoiceAmount = InvoiceMaster::find()->active()->andWhere(['client_id' => $model->id, 'client_type' => $model->client_type])->sum("total-payment");
             $paymentAmount = Payments::find()->active()->andWhere(['client_id' => $model->id, 'client_type' => $model->client_type])->sum("amount_paid");
+
             return $this->render('@app/views/client/view', [
                 'model' => $model,
                 "title" => $this->title,
@@ -154,8 +163,8 @@ class ClientController extends BaseController
                 "customPriceSearchModel" => $customPriceSearchModel,
                 "logSearchModel" => $logSearchModel,
                 "logDataProvider" => $logDataProvider,
-
-
+                "ledgerSearchModel" => $ledgerSearchModel,
+                "ledgerDataProvider" => $ledgerDataProvider,
                 "viewPaymentDetails" => $this->clientType == C::CLIENT_TYPE_CUSTOMER ? "customer/pay-details" : "vendor/pay-details",
                 "printPayment" => $this->clientType == C::CLIENT_TYPE_CUSTOMER ? "customer/print-receipt" : "vendor/print-receipt",
                 "noteAddUrl" => $this->clientType == C::CLIENT_TYPE_CUSTOMER ?   "customer/add-note" : "vendor/add-note",
@@ -472,7 +481,7 @@ class ClientController extends BaseController
             return $this->redirect([$redirectUrl]);
         }
         $model = new Payments(['scenario' => Payments::SCENARIO_CREATE]);
-       
+
         if ($this->request->isPost) {
             $model->load($this->request->post());
             $model->client_id = $client->id;
@@ -940,10 +949,10 @@ class ClientController extends BaseController
     {
         if ($this->request->isPost) {
             $request = Yii::$app->request->post();
-            
+
             $challans = Challan::find()->where(['add_group_id' => $request['ChallanForm']['add_group_id'], 'status' => C::STATUS_PENDING]);
-            if(!empty($request['challan'])){
-                $challans->andWhere(['id'=>$request['challan']]);
+            if (!empty($request['challan'])) {
+                $challans->andWhere(['id' => $request['challan']]);
             }
             $response = [];
             $client_id = $client_type = null;

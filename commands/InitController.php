@@ -9,6 +9,7 @@ use app\components\Constants as C;
 use app\models\City;
 use app\models\ExpenseCategory;
 use app\models\User;
+use Yii;
 
 class InitController extends Controller
 {
@@ -1359,5 +1360,26 @@ class InitController extends Controller
             }
 
         }
+    }
+
+    public function actionCreateView(){
+        /***
+         * Create view for Ledger table joining invoice and payment tables
+         */
+        $payment_particular = [];
+        foreach(C::PAYMENT_MODE_LIST as $paymode=>$paylabel){
+            $payment_particular[]= " when payment_mode={$paymode} then '{$paylabel}' ";
+        }
+
+        $paymodes = "case ". implode("  ",$payment_particular)." end"; 
+
+        $query = "create view ledger_report as select client_id,client_type,invoice_date as date, description as particular, invoice_no as invoice_no, total as debit, 0 as credit 
+        from invoice_master where status=1 
+        union
+        select client_id,client_type,payment_date as date,".$paymodes." as particular ,receipt_no as invoice_no, 0 as debit, amount_paid as credit 
+        from payments  where status=1";
+
+        Yii::$app->db->createCommand($query)->execute();
+
     }
 }
