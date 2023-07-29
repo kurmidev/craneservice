@@ -106,9 +106,7 @@ use app\components\Constants as C;
                                         <th style="border:1px solid #000; border-collapse: collapse;padding:5px;">Start Time</th>
                                         <th style="border:1px solid #000; border-collapse: collapse;padding:5px;">End Time</th>
                                         <th style="border:1px solid #000; border-collapse: collapse;padding:5px;">Hours</th>
-                                        <th style="border:1px solid #000; border-collapse: collapse;padding:5px;">Extra</th>
-                                        <th style="border:1px solid #000; border-collapse: collapse;padding:5px;">Extra Amt </th>
-                                        <th style="border:1px solid #000; border-collapse: collapse;padding:5px;">Total Amt</th>
+                                        <th style="border:1px solid #000; border-collapse: collapse;padding:5px;">Amount</th>
                                 <?php
                                         break;
 
@@ -119,46 +117,56 @@ use app\components\Constants as C;
                             </tr>
                         </thead>
                         <tbody>
-                            <tr>
+                            
                                 <?php
                                 switch ($model->plan->type) {
                                     case C::PACKAGE_WISE_CHALLAN: ?>
+                                    <tr>
                                         <td style="border:1px solid #000; border-collapse: collapse;padding:5px;"><?= $model->plan_start_time ?></td>
                                         <td style="border:1px solid #000; border-collapse: collapse;padding:5px;"><?= $model->plan_end_time ?></td>
                                         <td style="border:1px solid #000; border-collapse: collapse;padding:5px;"><?= $model->break_time ?></td>
                                         <td style="border:1px solid #000; border-collapse: collapse;padding:5px;"><?= $model->up_time ?></td>
                                         <td style="border:1px solid #000; border-collapse: collapse;padding:5px;"><?= $model->down_time ?></td>
                                         <td style="border:1px solid #000; border-collapse: collapse;padding:5px;"><?= date('H:i', mktime(0, (strtotime($model->plan_end_time) - strtotime($model->plan_start_time)) / 60)); ?></td>
+                                    </tr>
                                     <?php break;
                                     case C::PACKAGE_WISE_DAY: ?>
+                                    <tr>
                                         <td style="border:1px solid #000; border-collapse: collapse;padding:5px;"><?= $model->plan->name ?></td>
                                         <td style="border:1px solid #000; border-collapse: collapse;padding:5px;"><?= $model->vehicle->name ?></td>
                                         <td style="border:1px solid #000; border-collapse: collapse;padding:5px;"><?= !empty(C::DAYWISE_LABEL[$model->day_wise]) ? C::DAYWISE_LABEL[$model->day_wise] : "" ?></td>
                                         <td style="border:1px solid #000; border-collapse: collapse;padding:5px;"><?= round($model->amount, 2) ?></td>
                                         <td style="border:1px solid #000; border-collapse: collapse;padding:5px;"></td>
+                                    </tr>
                                     <?php break;
                                     case C::PACKAGE_WISE_TRIP: ?>
+                                    <tr>
                                         <td style="border:1px solid #000; border-collapse: collapse;padding:5px;"><?= $model->plan->name ?></td>
                                         <td style="border:1px solid #000; border-collapse: collapse;padding:5px;"><?= $model->vehicle->name ?></td>
                                         <td style="border:1px solid #000; border-collapse: collapse;padding:5px;"><?= $model->plan_trip ?></td>
                                         <td style="border:1px solid #000; border-collapse: collapse;padding:5px;"><?= $model->plan_measure ?></td>
                                         <td style="border:1px solid #000; border-collapse: collapse;padding:5px;"><?= round($model->amount, 2) ?></td>
                                         <td style="border:1px solid #000; border-collapse: collapse;padding:5px;"></td>
+                                    </tr>
                                     <?php break;
                                     case C::PACKAGE_WISE_DESTINATION: ?>
+                                    <tr>
                                         <td style="border:1px solid #000; border-collapse: collapse;padding:5px;"><?= $model->plan->name ?></td>
                                         <td style="border:1px solid #000; border-collapse: collapse;padding:5px;"><?= $model->from_destination ?></td>
                                         <td style="border:1px solid #000; border-collapse: collapse;padding:5px;"><?= $model->to_destination ?></td>
                                         <td style="border:1px solid #000; border-collapse: collapse;padding:5px;"><?= round($model->amount, 2) ?></td>
                                         <td style="border:1px solid #000; border-collapse: collapse;padding:5px;"></td>
+                                    </tr>
                                     <?php
                                         break;
                                     case C::PACKAGE_WISE_MONTH: ?>
+                                    <tr>
                                         <td style="border:1px solid #000; border-collapse: collapse;padding:5px;"><?= $model->challan_date ?></td>
                                         <td style="border:1px solid #000; border-collapse: collapse;padding:5px;"><?= $model->plan_start_time ?></td>
                                         <td style="border:1px solid #000; border-collapse: collapse;padding:5px;"><?= $model->plan_end_time ?></td>
                                         <td style="border:1px solid #000; border-collapse: collapse;padding:5px;"><?= date('H:i', mktime(0, (strtotime($model->plan_end_time) - strtotime($model->plan_start_time)) / 60)); ?></td>
                                         <td style="border:1px solid #000; border-collapse: collapse;padding:5px;">0Hrs</td>
+                                    </tr>
                                     <?php
 
                                         break;
@@ -166,12 +174,18 @@ use app\components\Constants as C;
                                         $totalHrs = (strtotime($model->plan_end_time) - strtotime($model->plan_start_time));
                                         $extraHrs = $totalHrs > $model->plan->shift_hrs ?  $totalHrs - $model->plan->shift_hrs : 0;
                                     ?>
+                                    <tr>
                                         <td style="border:1px solid #000; border-collapse: collapse;padding:5px;"><?= $model->plan_start_time ?></td>
                                         <td style="border:1px solid #000; border-collapse: collapse;padding:5px;"><?= $model->plan_end_time ?></td>
                                         <td style="border:1px solid #000; border-collapse: collapse;padding:5px;"><?= date('H:i', mktime(0, (strtotime($model->plan_end_time) - strtotime($model->plan_start_time)) / 60)); ?>Hrs</td>
+                                        <td style="border:1px solid #000; border-collapse: collapse;padding:5px;"><?= $model->amount ?></td>
+                                    </tr>
+                                    <tr>
+                                        <td style="border:1px solid #000; border-collapse: collapse;padding:5px;"></td>
+                                        <td style="border:1px solid #000; border-collapse: collapse;padding:5px;"></td>
                                         <td style="border:1px solid #000; border-collapse: collapse;padding:5px;"><?= date('H:i', mktime(0, $extraHrs / 60)); ?>Hrs</td>
                                         <td style="border:1px solid #000; border-collapse: collapse;padding:5px;"><?= $model->extra ?></td>
-                                        <td style="border:1px solid #000; border-collapse: collapse;padding:5px;"><?= $model->amount ?></td>
+                                    </tr>
                                 <?php
                                         break;
                                     default:

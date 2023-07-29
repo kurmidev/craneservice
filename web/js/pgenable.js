@@ -120,14 +120,12 @@ $(function () {
         $("#up_time").show();
         $("#down_time").show();
 
-        if (plan_type === "6") {
-            $("#break_time").hide();
-        }
+        alert(plan_type);
 
         if (plan_type === "3") {
             $("#plan_trip").show();
             $("#plan_measure").show();
-        } else if (plan_type === "5" || plan_type === "1" || plan_type === "6") {
+        } else if (plan_type === "5" || plan_type === "1") {
             $("#plan_start_time").show();
             $("#plan_end_time").show();
         } else if (plan_type === "2") {
@@ -135,11 +133,20 @@ $(function () {
         } else if (plan_type === "4") {
             $("#from_destination").show();
             $("#to_destination").show();
+        }else if(plan_type === "6"){
+            $("#up_time").hide();
+            $("#down_time").hide();
+            $("#plan_start_time").show();
+            $("#plan_end_time").show();
+            $("#plan_extra_hours").show();
+            $("#plan_shift_type").show();
+            $("#break_time").hide();
         }
         $("#amount").val(price);
     });
 
-    $(".caldiff").on("change", function (event) {
+    $(".caldiff").on("click", function (event) {
+        console.log("e.kdsn");
         calculateTotalTime();
     });
 
@@ -161,6 +168,12 @@ $('document').ready(function () {
             .find('#modal-delete').attr('url', url).end()
             .modal('show');
     });
+
+    $(".caldiff").on("click", function (event) {
+        console.log("e.kdsn");
+        calculateTotalTime();
+    });
+
 });
 
 function validateform(value, plan_type) {
@@ -206,7 +219,7 @@ function calculateTotalTime() {
         if ($("#challanform-plan_start_time").val() !== "" && $("#challanform-plan_end_time").val() !== "") {
             var start = $("#challanform-plan_start_time").val();
             var end = $("#challanform-plan_end_time").val();
-
+            console.log(start,end);
             var timeStart = new Date("01/01/2007 " + start);
             var timeEnd = new Date("01/01/2007 " + end);
             var diff = (timeEnd - timeStart) / 60000;
@@ -216,7 +229,7 @@ function calculateTotalTime() {
             diff = diff - parseInt(break_time) + parseInt(up_time) - parseInt(down_time);
             var minutes = diff % 60;
             var hours = (diff - minutes) / 60;
-            $("#total_time").html(hours + ":" + minutes + "hrs");
+            $("#challanform-plan_extra_hours").val(hours + ":" + minutes + "hrs");
         }
     }
 }
