@@ -241,10 +241,10 @@ class ChallanForm extends BaseForm
                 if ($challan->plan_shift_type == C::PACKAGE_SHIFT_TYPE_HOURS) {
                     $perhrs = $challan->base_amount;
                     $extra =  ($totalHrs - $plan->shift_hrs) * $perhrs;
-                    $amount = $challan->base_amount + $plan->shift_hrs;
+                    $amount = $perhrs * $plan->shift_hrs;
                 } else {
                     $extra = ($totalHrs < $plan->shift_hrs) ? 0 : ((($totalHrs - $plan->shift_hrs) > 4 ? $challan->base_amount : ($challan->base_amount  / 2)));
-                    $amount = $challan->base_amount + $extra;
+                    $amount = $challan->base_amount;
                 }
                 break;
             case C::PACKAGE_WISE_TRIP:
