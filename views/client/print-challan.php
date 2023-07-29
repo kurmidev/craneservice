@@ -69,6 +69,7 @@ use app\components\Constants as C;
                                         <th style="border:1px solid #000; border-collapse: collapse;padding:5px;">Up-Time</th>
                                         <th style="border:1px solid #000; border-collapse: collapse;padding:5px;">Down Time </th>
                                         <th style="border:1px solid #000; border-collapse: collapse;padding:5px;">Hours</th>
+                                        <th style="border:1px solid #000; border-collapse: collapse;padding:5px;">Amount</th>
                                     <?php break;
                                     case C::PACKAGE_WISE_DAY: ?>
                                         <th style="border:1px solid #000; border-collapse: collapse;padding:5px;">Package Name</th>
@@ -128,6 +129,7 @@ use app\components\Constants as C;
                                         <td style="border:1px solid #000; border-collapse: collapse;padding:5px;"><?= $model->up_time ?></td>
                                         <td style="border:1px solid #000; border-collapse: collapse;padding:5px;"><?= $model->down_time ?></td>
                                         <td style="border:1px solid #000; border-collapse: collapse;padding:5px;"><?= date('H:i', mktime(0, (strtotime($model->plan_end_time) - strtotime($model->plan_start_time)) / 60)); ?></td>
+                                        <td style="border:1px solid #000; border-collapse: collapse;padding:5px;"><?= round($model->amount, 2) ?></td>
                                     </tr>
                                     <?php break;
                                     case C::PACKAGE_WISE_DAY: ?>
