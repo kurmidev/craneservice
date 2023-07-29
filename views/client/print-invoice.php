@@ -116,7 +116,7 @@ $bank = !empty($model->client->company->banks[1]) ? $model->client->company->ban
                                     <td><?= round(($challan->tax / 2), 2) ?></td>
                                     <td><?= round(($challan->tax / 2), 2) ?></td>
                                 <?php } ?>
-                                <td><?= round($challan->amount, 2) ?></td>
+                                <td><?= round($challan->amount + $challan->extra, 2) ?></td>
                                 <?php $base_amount += $challan->amount ?>
                                 <?php $tax += $challan->tax ?>
                                 <?php $total += ($model->invoice_type== C::INVOICE_TYPE_GST)?($challan->amount + $challan->extra + $challan->tax) :(($challan->amount + $challan->extra)) ?>
@@ -135,7 +135,7 @@ $bank = !empty($model->client->company->banks[1]) ? $model->client->company->ban
                             </tr>
                         <?php } ?>
                         <tr>
-                            <td colspan="6"></td>
+                            <td colspan="<?=($model->invoice_type== C::INVOICE_TYPE_GST)?6:4?>"></td>
                             <td colspan="2">Payable Amount</td>
                             <td colspan="2" style="text-align:right;"><?= $total ?></td>
                         </tr>
