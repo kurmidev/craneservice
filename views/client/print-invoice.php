@@ -5,7 +5,7 @@ use yii\bootstrap5\Html;
 
 $i = 1;
 $total = $base_amount = $tax = 0;
-$f = new NumberFormatter("en", NumberFormatter::SPELLOUT);
+$f = new NumberFormatter("in", NumberFormatter::SPELLOUT);
 $bank = !empty($model->client->company->banks[1]) ? $model->client->company->banks[1] : (!empty($model->client->company->banks[0]) ? $model->client->company->banks[0] : []);
 
 ?>
