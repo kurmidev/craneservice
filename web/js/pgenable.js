@@ -30,6 +30,7 @@ $(function () {
         scrollbar: true,
         dropdown: true,
         dynamic: false,
+        change: calculateTotalTime
     });
 
 
@@ -69,6 +70,7 @@ $(function () {
             scrollbar: true,
             dropdown: true,
             dynamic: false,
+            change:calculateTotalTime
         });
 
         /* $(this).daterangepicker({
