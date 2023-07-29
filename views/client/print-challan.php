@@ -183,7 +183,7 @@ use app\components\Constants as C;
                                     <tr>
                                         <td style="border:1px solid #000; border-collapse: collapse;padding:5px;"></td>
                                         <td style="border:1px solid #000; border-collapse: collapse;padding:5px;"></td>
-                                        <td style="border:1px solid #000; border-collapse: collapse;padding:5px;"><?= date('H:i', mktime(0, $extraHrs / 60)); ?>Hrs</td>
+                                        <td style="border:1px solid #000; border-collapse: collapse;padding:5px;"><?= $model->plan_extra_hours ?>Hrs</td>
                                         <td style="border:1px solid #000; border-collapse: collapse;padding:5px;"><?= $model->extra ?></td>
                                     </tr>
                                 <?php

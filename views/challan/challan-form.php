@@ -206,7 +206,7 @@ if (!empty($model->client_id)) {
             <div class="row">
                 <div class="col-lg-12 col-sm-12 col-xs-12 col-sm-offset-3">
                     <?=Html::activeHiddenInput($model,'add_group_id',['value'=>$time])?>
-                    <?= Html::button('Create', ['class' => 'btn btn-secondary','id'=>'challan-submit']) ?>
+                    <?= Html::button('Add More', ['class' => 'btn btn-secondary','id'=>'challan-submit']) ?>
                 </div>
             </div>
         </div>

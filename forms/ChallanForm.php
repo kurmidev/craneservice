@@ -207,7 +207,7 @@ class ChallanForm extends BaseForm
             $model->break_time = $this->break_time;
             $model->up_time = $this->up_time;
             $model->down_time = $this->down_time;
-            $model->plan_extra_hours = $this->plan_extra_hours;
+            //$model->plan_extra_hours = $this->plan_extra_hours;
             $model->plan_shift_type = $this->plan_shift_type;
             $model->invoice_id = null;
             $model->is_processed = C::STATUS_INACTIVE;
@@ -216,7 +216,7 @@ class ChallanForm extends BaseForm
             $model->amount = $model->base_amount;
             $model->extra = 0;
             $model->add_group_id = $this->add_group_id;
-            list($model->extra, $model->amount)  = self::calculateChallanAmount($model);
+            list($model->extra, $model->amount,$model->plan_extra_hours )  = self::calculateChallanAmount($model);
             $totalAmount = $model->extra + $model->amount;
             $model->tax = F::calculateTax($totalAmount, $this->plan->tax_slot);
             if ($model->validate() && $model->save()) {
@@ -232,11 +232,12 @@ class ChallanForm extends BaseForm
 
     public static function calculateChallanAmount(Challan $challan)
     {
-        $extra = $amount = 0;
+        $extra = $amount = $extrahrs = 0;
         $plan = PlanMaster::findOne(['id' => $challan->plan_id]);
         switch ($challan->plan_type) {
             case C::PACKAGE_WISE_SHIFT:
                 $totalHrs =  date("H", strtotime($challan->plan_end_time) - strtotime($challan->plan_start_time));
+                $extrahrs = $totalHrs - $plan->shift_hrs;
                 if ($challan->plan_shift_type == C::PACKAGE_SHIFT_TYPE_HOURS) {
                     $perhrs = $challan->base_amount;
                     $extra =  ($totalHrs - $plan->shift_hrs) * $perhrs;
@@ -253,6 +254,6 @@ class ChallanForm extends BaseForm
                 $amount = $challan->base_amount;
                 break;
         }
-        return [$extra, $amount];
+        return [$extra, $amount,$extrahrs];
     }
 }
