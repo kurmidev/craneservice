@@ -99,7 +99,7 @@ if (!empty($model->client_id)) {
                         <select id="challanform-plan_id" class="form-control" name="ChallanForm[plan_id]" aria-required="true">
                             <option value="">Select option</option>>
                             <?php foreach ($planList as $plan_id => $plan_data) { ?>
-                                <option value="<?= $plan_id ?>" price="<?= !empty($assignedList[$plan_id]) ? $assignedList[$plan_id]['custom_price'] : $plan_data['price'] ?>" plan_type="<?= $plan_data['type'] ?>"><?= $plan_data['name'] ?><?= !empty($plan_data['shift_hrs']) ? "(" . $plan_data['shift_hrs'] . "hrs)" : "" ?></option>
+                                <option value="<?= $plan_id ?>" price="<?= !empty($assignedList[$plan_id]) ? $assignedList[$plan_id]['custom_price'] : $plan_data['price'] ?>" plan_type="<?= $plan_data['type'] ?>" shift_hrs="<?=$plan_data['shift_hrs']?>" ><?= $plan_data['name'] ?><?= !empty($plan_data['shift_hrs']) ? "(" . $plan_data['shift_hrs'] . "hrs)" : "" ?></option>
                             <?php } ?>
                         </select>
                         <?= Html::error($model, 'plan_id', ['class' => 'error help-block', 'id' => "error_plan_id"]) ?>

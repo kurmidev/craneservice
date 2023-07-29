@@ -122,8 +122,6 @@ $(function () {
         $("#up_time").show();
         $("#down_time").show();
 
-        alert(plan_type);
-
         if (plan_type === "3") {
             $("#plan_trip").show();
             $("#plan_measure").show();
@@ -221,7 +219,8 @@ function calculateTotalTime() {
         if ($("#challanform-plan_start_time").val() !== "" && $("#challanform-plan_end_time").val() !== "") {
             var start = $("#challanform-plan_start_time").val();
             var end = $("#challanform-plan_end_time").val();
-            console.log(start,end);
+            var shift_hrs = $('option:selected', $("#challanform-plan_id")).attr('shift_hrs');
+            console.log(start,end,shift_hrs);
             var timeStart = new Date("01/01/2007 " + start);
             var timeEnd = new Date("01/01/2007 " + end);
             var diff = (timeEnd - timeStart) / 60000;
@@ -230,7 +229,7 @@ function calculateTotalTime() {
             var down_time = $("#challanform-down_time").val() || 0;
             diff = diff - parseInt(break_time) + parseInt(up_time) - parseInt(down_time);
             var minutes = diff % 60;
-            var hours = (diff - minutes) / 60;
+            var hours = ((diff - minutes) / 60)- parseInt(shift_hrs);
             $("#challanform-plan_extra_hours").val(hours + ":" + minutes + "hrs");
         }
     }
