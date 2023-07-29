@@ -95,8 +95,10 @@ $bank = !empty($model->client->company->banks[1]) ? $model->client->company->ban
                             <th>Qty/Day</th>
                             <th>Unit</th>
                             <th>Rate</th>
-                            <th>CGST</th>
-                            <th>SGST</th>
+                            <?php if ($model->invoice_type == C::INVOICE_TYPE_GST) { ?>
+                                <th>CGST</th>
+                                <th>SGST</th>
+                            <?php } ?>
                             <th>Total</th>
                         </tr>
                     </thead>
@@ -110,24 +112,28 @@ $bank = !empty($model->client->company->banks[1]) ? $model->client->company->ban
                                 <td><?= !empty($challan->day_wise) ? $challan->day_wise : (!empty($challan->package_trip) ? $challan->package_trip : (!empty($challan->from_destination) ? $challan->from_destination : date("H:m", (strtotime($challan->plan_end_time) - strtotime($challan->plan_start_time))) . "hr")) ?></td>
                                 <td><?= !empty($challan->day_wise_check) ? $challan->day_wise_check : (!empty($challan->package_measure) ? $challan->package_measure : (!empty($challan->to_destination) ? $challan->to_destination : $challan->plan_end_time)) ?></td>
                                 <td><?= $challan->base_amount ?></td>
-                                <td><?= round(($challan->tax / 2), 2) ?></td>
-                                <td><?= round(($challan->tax / 2), 2) ?></td>
+                                <?php if ($model->invoice_type == C::INVOICE_TYPE_GST) { ?>
+                                    <td><?= round(($challan->tax / 2), 2) ?></td>
+                                    <td><?= round(($challan->tax / 2), 2) ?></td>
+                                <?php } ?>
                                 <td><?= round($challan->amount, 2) ?></td>
                                 <?php $base_amount += $challan->amount ?>
                                 <?php $tax += $challan->tax ?>
-                                <?php $total += $challan->total ?>
+                                <?php $total += ($model->invoice_type== C::INVOICE_TYPE_GST)?($challan->amount + $challan->extra + $challan->tax) :(($challan->amount + $challan->extra) ?>
                             </tr>
                         <?php } ?>
-                        <tr>
-                            <td colspan="6"></td>
-                            <td colspan="2">Taxable Amount</td>
-                            <td colspan="2" style="text-align:right;"><?= $base_amount ?></td>
-                        </tr>
-                        <tr>
-                            <td colspan="6"></td>
-                            <td colspan="2">Tax Amount</td>
-                            <td colspan="2" style="text-align:right;"><?= $tax ?></td>
-                        </tr>
+                        <?php if ($model->invoice_type == C::INVOICE_TYPE_GST) { ?>
+                            <tr>
+                                <td colspan="6"></td>
+                                <td colspan="2">Taxable Amount</td>
+                                <td colspan="2" style="text-align:right;"><?= $base_amount ?></td>
+                            </tr>
+                            <tr>
+                                <td colspan="6"></td>
+                                <td colspan="2">Tax Amount</td>
+                                <td colspan="2" style="text-align:right;"><?= $tax ?></td>
+                            </tr>
+                        <?php } ?>
                         <tr>
                             <td colspan="6"></td>
                             <td colspan="2">Payable Amount</td>
@@ -139,7 +145,7 @@ $bank = !empty($model->client->company->banks[1]) ? $model->client->company->ban
         </tr>
         <tr>
             <td colspan="13" style="border-top:1px solid #000;border-bottom:1px solid #000;padding:3px;">
-                Amount Chargeable (in words) : <b><?= ucwords($f->format(round($total,2)))." only" ?></b>
+                Amount Chargeable (in words) : <b><?= ucwords($f->format(round($total, 2))) . " only" ?></b>
             </td>
         </tr>
         <tr>
@@ -185,7 +191,7 @@ $bank = !empty($model->client->company->banks[1]) ? $model->client->company->ban
                                 RECEIVER SIGN
                             </td>
                             <td style="text-align:right;">
-                                FOR <?=SITE_NAME?>
+                                FOR <?= SITE_NAME ?>
                                 <br><br><br>
 
                                 PROPRIETOR

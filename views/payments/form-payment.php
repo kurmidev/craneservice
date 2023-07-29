@@ -151,7 +151,7 @@ id = $("#"+this.id).attr("rel");
 var balance_amount = $("#balance_amount_"+id).val() || 0;
 var deduction_amount = $("#deduction_amount_"+id).val() || 0;
 var tds_amount = $("#tds_amount_"+id).val() || 0;
-var total = parseFloat(balance_amount) - parseFloat(deduction_amount) + parseFloat(tds_amount);
+var total = parseFloat(balance_amount) - parseFloat(deduction_amount) - parseFloat(tds_amount);
 $("#amount_paid_"+id).val(total);
 })
 

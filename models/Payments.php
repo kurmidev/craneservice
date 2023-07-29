@@ -183,7 +183,6 @@ class Payments extends \app\models\BaseModel
                     $invoice->payment += $total_payment;
                     $invoice->payment_id = $this->id;
                     if ($invoice->validate() && $invoice->save()) {
-                        
                         //$this->settleChallans($invoice->id, $this->challans[$invoice->id]['amount_paid']);
                         $this->markPaymentDetails($invoice);
                         $paid_amount += !empty($this->challans[$invoice->id]['amount_paid']) ? $this->challans[$invoice->id]['amount_paid'] : 0;
