@@ -7,8 +7,8 @@ $baseUrl = MenuHelper::getCurrentAction();
 <aside class="main-sidebar sidebar-dark-primary elevation-4">
     <!-- Brand Logo -->
     <a href="/" class="brand-link">
-        <img src="<?= SITE_LOGO ?>" alt="Crane Service" class="brand-image img-circle elevation-3" style="opacity:1;">
-        <span class="brand-text font-weight-light">Crane Service</span>
+        <img src="<?= SITE_LOGO ?>" alt="<?=SITE_NAME?>" class="brand-image img-circle elevation-3" style="opacity:1;">
+        <span class="brand-text font-weight-light"><?=SITE_NAME?></span>
     </a>
     <!-- Sidebar -->
     <div class="sidebar">
