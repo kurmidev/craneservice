@@ -10,7 +10,7 @@ use yii\bootstrap5\Html;
 $this->title = 'Login';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
-<div class="container" style="padding:7rem 0;">
+<div class="container" style="padding:3rem 0;">
     <div class="row">
         <div class="col-md-6 order-md-2">
             <img src="./dist/img/login_page.svg" alt="Image" class="img-fluid">
