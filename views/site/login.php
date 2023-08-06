@@ -10,14 +10,19 @@ use yii\bootstrap5\Html;
 $this->title = 'Login';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
-<section class="vh-100" >
-    <div class="container">
-        <div class="row d-flex align-items-center">
-            <div class="col-md-4 col-lg-4 col-xl-4 card m-10">
-                <div class="card-header">
-                    <h3 class="card-title">Crane Service</h3>
-                </div>
-                <div class="card-body">
+<div class="container" style="padding:7rem 0;">
+    <div class="row">
+        <div class="col-md-6 order-md-2">
+            <img src="./dist/img/login_page.svg" alt="Image" class="img-fluid">
+        </div>
+        <div class="col-md-6 contents">
+            <div class="row justify-content-center">
+                <div class="col-md-8">
+                    <div class="mb-4">
+                        <img src="./dist/img/logo.png" alt="<?=SITE_NAME?>" style="height:200px">
+                        <h3>Welcome back to <strong><?=SITE_NAME?></strong></h3>
+                        <p class="mb-4">Please enter your username to log in..</p>
+                    </div>
                     <?php $form = ActiveForm::begin([
                         'id' => 'login-form',
                         'layout' => 'horizontal',
@@ -58,5 +63,4 @@ $this->params['breadcrumbs'][] = $this->title;
             </div>
         </div>
     </div>
-    </div>
-</section>
+</div>

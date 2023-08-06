@@ -5,52 +5,34 @@ use app\components\Constants as C;
 $baseUrl = $client_type == C::CLIENT_TYPE_CUSTOMER ? "customer" : "vendor";
 
 ?>
-<div class="row" style="padding: 20px;">
-    <div class="col-md-9">
-        &nbsp;
-    </div>
-    <div class="col-md-3 float-right">
-        <div class="btn-group float-right">
-            <a href="<?= Yii::$app->urlManager->createUrl([$baseUrl . "/add-challan"]) ?>" title="Create Challan">
-                <button type="button" class="btn btn-info">
-                    <i class="fas fa-shopping-cart"></i>
-                </button>
-            </a>
-            <a href="<?= Yii::$app->urlManager->createUrl([$baseUrl . "/add-invoice"]) ?>" title="Create Invoice">
-                <button type="button" class="btn btn-info">
-                    <i class="fas fa-atom"></i>
-                </button>
-            </a>
-        </div>
-    </div>
-</div>
 <div class="row">
     <?= $this->render('_level1', ['model' => $model]); ?>
 </div>
 <div class="row">
-    <div class="col-md-6">
+    <div class="col-md-4">
         <?= $this->render('_table', [
             "title" => "  Customer Invoice Summary",
             "header" => ["Month", "Count", "Amount"],
             "response" => $model->monthlyOutstanding
         ]) ?>
     </div>
-    <div class="col-md-6">
+    <div class="col-md-4">
         <?= $this->render('_table', [
             "title" => "Customer Challan Summary ",
             "header" => ["Month", "Count", "Amount"],
             "response" => $model->monthlyChallanOutstanding
         ]) ?>
     </div>
-</div>
-<div class="row">
-    <div class="col-md-6">
+    <div class="col-md-4">
         <?= $this->render('_details_table', [
             "title" => "Invoice Summary",
             "header" => ["Month", "Count", "Amount"],
             "response" => $model->customerInvoiceSummary
         ]) ?>
     </div>
+</div>
+<div class="row">
+    
     <div class="col-md-6">
         <?= $this->render('_details_table', [
             "title" => " Challan Summary",
@@ -58,13 +40,24 @@ $baseUrl = $client_type == C::CLIENT_TYPE_CUSTOMER ? "customer" : "vendor";
             "response" => $model->customerChallanSummary
         ]) ?>
     </div>
-</div>
-<div class="row">
     <div class="col-md-6">
         <?= $this->render('_table', [
             "title" => " Vehicle Summary",
             "header" => ["Vehicle No", "Sales Amount", "Expenses Amount", "Profit/Loss"],
             "response" => $model->vehicleSummary
+        ]) ?>
+    </div>
+</div>
+<div class="row">
+  
+    <div class="col-md-6">
+        <?= $this->render('bar_chart', [
+            "title" => "Invoice",
+            "response" => [
+                "id"=>"invoicebargraph",
+                "invoice_gst" => $model->getMonthlyInvoiceWithoutGst(false),
+                "invoice" => $model->getMonthlyInvoiceGst(false)
+            ]
         ]) ?>
     </div>
     <div class="col-md-6">

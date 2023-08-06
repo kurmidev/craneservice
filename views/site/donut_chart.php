@@ -1,5 +1,5 @@
 
-<div class="card">
+<div class="card card-primary">
     <div class="card-header">
         <h3 class="header-title"><?=$title?></h3>
     </div>

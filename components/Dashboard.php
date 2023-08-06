@@ -265,7 +265,7 @@ class Dashboard extends Model
     }
 
 
-    public function getMonthlyInvoiceGst()
+    public function getMonthlyInvoiceGst($is_link=true)
     {
         $model = InvoiceMaster::find()
             ->select(["invoice_date" => new Expression("left(invoice_date,7)"), "pending_count" => "count(id)", "pending_amount" => "sum(total-payment)"])
@@ -276,12 +276,12 @@ class Dashboard extends Model
         $response = [];
         foreach ($model as $d) {
             $response[] = [
-                "invoice_month" => Html::a(date("Y-m-01", strtotime($d['invoice_date'])),
+                "invoice_month" => $is_link? Html::a(date("Y-m-01", strtotime($d['invoice_date'])),
                             Yii::$app->urlManager->createUrl(["report/".$this->baseUrl."-invoice","InvoiceMasterSearch[invoice_date_start]"=>date("Y-m-01", strtotime($d['invoice_date'])),
                             "InvoiceMasterSearch[invoice_date_end]"=>date("Y-m-t", strtotime($d['invoice_date'])),
                             "InvoiceMasterSearch[invoice_type]"=> C::INVOICE_TYPE_GST,
                             "InvoiceMasterSearch[client_type]"=>  $this->client_type
-                        ])),
+                        ])):date("Y-m-01", strtotime($d['invoice_date'])),
                 "pending_count" => $d['pending_count'],
                 "pending_amount" => round($d['pending_amount'], 2)
             ];
@@ -289,7 +289,7 @@ class Dashboard extends Model
         return $response;
     }
 
-    public function getMonthlyInvoiceWithoutGst()
+    public function getMonthlyInvoiceWithoutGst($is_link=true)
     {
         $model = InvoiceMaster::find()
             ->select(["invoice_date" => new Expression("left(invoice_date,7)"), "pending_count" => "count(id)", "pending_amount" => "sum(total-payment)"])
@@ -300,12 +300,12 @@ class Dashboard extends Model
         $response = [];
         foreach ($model as $d) {
             $response[] = [
-                "invoice_month" => Html::a(date("Y-m-01", strtotime($d['invoice_date'])),
+                "invoice_month" => $is_link? Html::a(date("Y-m-01", strtotime($d['invoice_date'])),
                             Yii::$app->urlManager->createUrl(["report/".$this->baseUrl."-invoice","InvoiceMasterSearch[invoice_date_start]"=>date("Y-m-01", strtotime($d['invoice_date'])),
                             "InvoiceMasterSearch[invoice_date_end]"=>date("Y-m-t", strtotime($d['invoice_date'])),
                             "InvoiceMasterSearch[invoice_type]"=> C::INVOICE_TYPE_PERFORMA,
                             "InvoiceMasterSearch[client_type]"=>  $this->client_type
-                        ])),
+                        ])):date("Y-m-01", strtotime($d['invoice_date'])),   
                 "pending_count" => $d['pending_count'],
                 "pending_amount" => round($d['pending_amount'], 2)
             ];

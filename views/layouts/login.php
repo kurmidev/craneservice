@@ -20,21 +20,11 @@ $this->registerMetaTag(['name' => 'keywords', 'content' => $this->params['meta_k
 $this->registerLinkTag(['rel' => 'icon', 'type' => 'image/x-icon', 'href' => Yii::getAlias('@web/favicon.ico')]);
 ?>
 <style type="text/css">
-    section{
-        background-image: url('../dist/img/loginpage.jpg') !important;
-        background-size: 100%;
-        background-repeat: no-repeat;
-    }
-    .vh-100{
-     background-color: #ffffff;   
-     width: 100%;
-    }
-    .divider:after,
-    .divider:before {
-        content: "";
-        flex: 1;
-        height: 1px;
-        background: #eee;
+    .order-md-2 {
+        padding-top: 50px;
+        -webkit-box-ordinal-group: 3;
+        -ms-flex-order: 2;
+        order: 2;
     }
 </style>
 <?php $this->beginPage() ?>

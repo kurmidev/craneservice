@@ -10,6 +10,11 @@ use yii\helpers\ArrayHelper;
 class MenuHelper
 {
 
+    public static  function getCurrentAction()
+    {
+        return (Yii::$app->controller->id == "customer" ? "customer" : "vendor");
+    }
+
     public static $menu = [
         "dashboard" => [
             "config" => ["class" => "nav-icon fas fa-home"],
@@ -193,15 +198,15 @@ class MenuHelper
                     ['module' => '', 'controller' => 'report', 'action' => 'package-summary', 'label' => 'Package Summary', 'is_menu' => true, 'icon' => "icon icon ion-ios-photos-outline"]
                 ],
             ]
-            ],
-            "logout" => [
-                "config" => ["class" => "nav-icon fas fa-sign-out-alt"],
-                "items" => [
-                    "logout" => [
-                        ['module' => '', 'controller' => 'site', 'action' => 'logout', 'label' => 'Logout', 'is_menu' => true, 'icon' => "icon icon ion-ios-photos-outline"]
-                    ],
-                ]
+        ],
+        "logout" => [
+            "config" => ["class" => "nav-icon fas fa-sign-out-alt"],
+            "items" => [
+                "logout" => [
+                    ['module' => '', 'controller' => 'site', 'action' => 'logout', 'label' => 'Logout', 'is_menu' => true, 'icon' => "icon icon ion-ios-photos-outline"]
+                ],
             ]
+        ]
     ];
 
 
@@ -217,16 +222,16 @@ class MenuHelper
                 foreach ($menuItems as $k => $m) {
                     if ($is_submenu) {
                         $label = self::styleMenuLabel($key, $menuConfig);
-                         $arr = ArrayHelper::getColumn($m,'controller');   
-                        $openMain = in_array(Yii::$app->controller->id, (array) $arr[0])?" menu-is-opening menu-open":"";
-                        $setActiveMain = in_array(Yii::$app->controller->id,(array) $arr[0])?"active":"";
+                        $arr = ArrayHelper::getColumn($m, 'controller');
+                        $openMain = in_array(Yii::$app->controller->id, (array) $arr[0]) ? " menu-is-opening menu-open" : "";
+                        $setActiveMain = in_array(Yii::$app->controller->id, (array) $arr[0]) ? "active" : "";
                         $result[$key] = [
                             'url' => "#",
                             'label' => $label,
-                            'options' => ['class' => 'nav-item '.$openMain],
+                            'options' => ['class' => 'nav-item ' . $openMain],
                             'items' => array_values(self::getDisplayMenu($menuItems)),
                             'submenuTemplate' => "\n<ul class='nav nav-treeview'>\n{items}\n</ul>\n",
-                            "template" => '<a href="{url}" class="nav-link '.$setActiveMain.' "><i class="nav-icon fas ' . $mvalues['config']['class'] . '"></i><p>{label}<i class="right fas fa-angle-left"></i> </p></a>'
+                            "template" => '<a href="{url}" class="nav-link ' . $setActiveMain . ' "><i class="nav-icon fas ' . $mvalues['config']['class'] . '"></i><p>{label}<i class="right fas fa-angle-left"></i> </p></a>'
                         ];
                     } else {
                         $mv = current($m);
@@ -234,8 +239,8 @@ class MenuHelper
                         $result[$k] = [
                             'url' => \Yii::$app->urlManager->createUrl(implode("/", [$mv['module'], $mv['controller'], $mv['action']])),
                             'label' => $label,
-                            'options' => ['class' => 'nav-item cc'.(Yii::$app->controller->id==$mv['controller']?"menu-open":"")],
-                            "template" => '<a href="{url}" class="nav-link '.(Yii::$app->controller->id==$mv['controller']?"active":"").'"><i class="' . $mvalues['config']['class'] . '"></i><p>{label}</p></a>'
+                            'options' => ['class' => 'nav-item cc' . (Yii::$app->controller->id == $mv['controller'] ? "menu-open" : "")],
+                            "template" => '<a href="{url}" class="nav-link ' . (Yii::$app->controller->id == $mv['controller'] ? "active" : "") . '"><i class="' . $mvalues['config']['class'] . '"></i><p>{label}</p></a>'
                         ];
                     }
                 }
@@ -245,7 +250,7 @@ class MenuHelper
                         $result[$key] = [
                             'url' => \Yii::$app->urlManager->createUrl(implode("/", [$mv['module'], $mv['controller'], $mv['action']])),
                             'label' => $mv['label'],
-                            "template" => '<a href="{url}" class="nav-link '.(Yii::$app->controller->action->id==$mv['action']?"active":"").'"><i class="fa fa-angle-double-right nav-icon"></i><p>{label}</p></a>',
+                            "template" => '<a href="{url}" class="nav-link ' . (Yii::$app->controller->action->id == $mv['action'] ? "active" : "") . '"><i class="fa fa-angle-double-right nav-icon"></i><p>{label}</p></a>',
                             'options' => ['class' => "nav-item "],
                         ];
                     }
