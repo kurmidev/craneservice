@@ -47,8 +47,8 @@ class ChallanForm extends BaseForm
     public function scenarios()
     {
         return [
-            Challan::SCENARIO_CREATE => ["challan_no", "challan_date", "site_address", "helper_id", "operator_id", "plan_id", "vehicle_id", "plan_start_time", "day_wise", "plan_trip", "from_destination", "plan_end_time", "plan_measure", "to_destination", "amount", "break_time", "up_time", "plan_extra_hours", "down_time", "plan_shift_type",'add_group_id'],
-            Challan::SCENARIO_UPDATE => ["challan_no", "challan_date", "site_address", "helper_id", "operator_id", "plan_id", "vehicle_id", "plan_start_time", "day_wise", "plan_trip", "from_destination", "plan_end_time", "plan_measure", "to_destination", "amount", "break_time", "up_time", "plan_extra_hours", "down_time", "plan_shift_type",'add_group_id']
+            Challan::SCENARIO_CREATE => ["challan_no", "challan_date", "site_address", "helper_id", "operator_id", "plan_id", "vehicle_id", "plan_start_time", "day_wise", "plan_trip", "from_destination", "plan_end_time", "plan_measure", "to_destination", "amount", "break_time", "up_time", "plan_extra_hours", "down_time", "plan_shift_type",'add_group_id','client_id'],
+            Challan::SCENARIO_UPDATE => ["challan_no", "challan_date", "site_address", "helper_id", "operator_id", "plan_id", "vehicle_id", "plan_start_time", "day_wise", "plan_trip", "from_destination", "plan_end_time", "plan_measure", "to_destination", "amount", "break_time", "up_time", "plan_extra_hours", "down_time", "plan_shift_type",'add_group_id','client_id']
         ];
     }
 

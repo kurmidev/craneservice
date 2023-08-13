@@ -12,7 +12,7 @@ class MenuHelper
 
     public static  function getCurrentAction()
     {
-        return (Yii::$app->controller->id == "customer" ? "customer" : "vendor");
+        return (Yii::$app->controller->id == "vendor" ? "vendor" : "customer");
     }
 
     public static $menu = [
