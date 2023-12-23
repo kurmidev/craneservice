@@ -19,7 +19,7 @@ $this->params['breadcrumbs'][] = $this->title;
             <div class="row justify-content-center">
                 <div class="col-md-8">
                     <div class="mb-4">
-                        <img src="./dist/img/logo.png" alt="<?=SITE_NAME?>" style="height:200px">
+                        <img src="./dist/img/logo.png" alt="<?=SITE_NAME?>" style="height:50px;width:200px;margin-bottom:20px;">
                         <h3>Welcome back to <strong><?=SITE_NAME?></strong></h3>
                         <p class="mb-4">Please enter your username to log in..</p>
                     </div>
