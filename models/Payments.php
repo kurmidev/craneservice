@@ -180,6 +180,7 @@ class Payments extends \app\models\BaseModel
                     $invoice->scenario = InvoiceMaster::SCENARIO_UPDATE;
                     $total_payment = !empty($this->challans[$invoice->id]['amount_paid']) ? (float) $this->challans[$invoice->id]['amount_paid'] : 0;
                     $total_payment += !empty($this->challans[$invoice->id]['deduction_amount']) ? (float) $this->challans[$invoice->id]['deduction_amount'] : 0;
+                    $total_payment += !empty($this->challans[$invoice->id]['tds_number']) ? (float) $this->challans[$invoice->id]['tds_number'] : 0;
                     $invoice->payment += $total_payment;
                     $invoice->payment_id = $this->id;
                     if ($invoice->validate() && $invoice->save()) {
